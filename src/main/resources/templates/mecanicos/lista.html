@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main :: layout(~{::section})}">
+
+<section class="container py-4">
+
+  <!-- TITULO -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-1">Gestión de Mecánicos</h2>
+      <p class="text-muted mb-0">Administración del personal técnico del taller</p>
+    </div>
+    <a th:href="@{/usuarios/nuevo}"
+       class="btn rounded-3 px-3 py-2"
+       style="background:#e85d26;color:#fff;font-size:0.85rem;"
+       sec:authorize="hasRole('ADMIN')">
+      <i class="fas fa-plus me-2"></i>Nuevo Mecánico
+    </a>
+  </div>
+
+  <!-- STATS -->
+  <div class="row mb-4 g-3">
+
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body d-flex align-items-center gap-3 px-4 py-3">
+          <div class="rounded-3 d-flex align-items-center justify-content-center"
+               style="width:42px;height:42px;background:#FAECE7;flex-shrink:0;">
+            <i class="fas fa-users" style="color:#e85d26;font-size:1.1rem;"></i>
+          </div>
+          <div>
+            <h6 class="text-muted mb-0" style="font-size:0.78rem;">Total Mecánicos</h6>
+            <h4 class="fw-bold mb-0" th:text="${totalMecanicos}">8</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body d-flex align-items-center gap-3 px-4 py-3">
+          <div class="rounded-3 d-flex align-items-center justify-content-center"
+               style="width:42px;height:42px;background:#E1F5EE;flex-shrink:0;">
+            <i class="fas fa-check-circle" style="color:#1D9E75;font-size:1.1rem;"></i>
+          </div>
+          <div>
+            <h6 class="text-muted mb-0" style="font-size:0.78rem;">Activos</h6>
+            <h4 class="fw-bold mb-0 text-success" th:text="${activos}">6</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body d-flex align-items-center gap-3 px-4 py-3">
+          <div class="rounded-3 d-flex align-items-center justify-content-center"
+               style="width:42px;height:42px;background:#FAEEDA;flex-shrink:0;">
+            <i class="fas fa-pause-circle" style="color:#BA7517;font-size:1.1rem;"></i>
+          </div>
+          <div>
+            <h6 class="text-muted mb-0" style="font-size:0.78rem;">En Descanso</h6>
+            <h4 class="fw-bold mb-0 text-warning" th:text="${enDescanso}">2</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FILTROS -->
+  <div class="card shadow-sm mb-4 border-0 rounded-4">
+    <div class="card-body">
+      <div class="row g-3">
+
+        <div class="col-md-4">
+          <input type="text"
+                 class="form-control rounded-3 mecanico-input"
+                 style="background:#f8f8f8;border:1px solid #eee;font-size:0.88rem;"
+                 placeholder="Buscar mecánico...">
+        </div>
+
+        <div class="col-md-3">
+          <select class="form-select rounded-3 mecanico-input"
+                  style="background:#f8f8f8;border:1px solid #eee;font-size:0.88rem;">
+            <option>Especialidad</option>
+            <option>Motor</option>
+            <option>Electricidad</option>
+            <option>Frenos</option>
+          </select>
+        </div>
+
+        <div class="col-md-2">
+          <button class="btn w-100 rounded-3"
+                  style="background:#1a1a2e;color:#fff;font-size:0.88rem;">
+            Buscar
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLA -->
+  <div class="card shadow-sm border-0 rounded-4">
+    <div class="card-body p-0">
+      <table class="table table-hover align-middle mb-0">
+
+        <thead>
+          <tr style="background:#1a1a2e;">
+            <th style="color:#fff;font-size:0.82rem;font-weight:500;padding:14px 18px;border:none;">ID</th>
+            <th style="color:#fff;font-size:0.82rem;font-weight:500;padding:14px 18px;border:none;">Mecánico</th>
+            <th style="color:#fff;font-size:0.82rem;font-weight:500;padding:14px 18px;border:none;">Especialidad</th>
+            <th style="color:#fff;font-size:0.82rem;font-weight:500;padding:14px 18px;border:none;">Teléfono</th>
+            <th style="color:#fff;font-size:0.82rem;font-weight:500;padding:14px 18px;border:none;">Estado</th>
+            <th style="color:#fff;font-size:0.82rem;font-weight:500;padding:14px 18px;border:none;">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr th:each="mecanico : ${mecanicos}">
+
+            <td style="font-size:0.88rem;padding:13px 18px;" th:text="${mecanico.id}"></td>
+
+            <td style="font-size:0.88rem;padding:13px 18px;" th:text="${mecanico.nombreCompleto}"></td>
+
+            <td style="font-size:0.88rem;padding:13px 18px;" th:text="${mecanico.especialidad}"></td>
+
+            <td style="font-size:0.88rem;padding:13px 18px;" th:text="${mecanico.telefono}"></td>
+
+            <td style="padding:13px 18px;">
+              <span class="badge rounded-pill px-3 py-2"
+                    th:if="${mecanico.estado == 'Activo'}"
+                    style="background:#E1F5EE;color:#085041;font-size:0.78rem;font-weight:500;"
+                    th:text="${mecanico.estado}">
+              </span>
+              <span class="badge rounded-pill px-3 py-2"
+                    th:if="${mecanico.estado == 'En Descanso'}"
+                    style="background:#FAEEDA;color:#633806;font-size:0.78rem;font-weight:500;"
+                    th:text="${mecanico.estado}">
+              </span>
+            </td>
+
+            <td style="padding:13px 18px;">
+              <div class="d-flex gap-2" sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/usuarios/editar/{id}(id=${mecanico.id})}"
+                   class="btn btn-sm rounded-3"
+                   style="background:#FAEEDA;color:#633806;border:none;font-size:0.78rem;">
+                  <i class="fas fa-edit me-1"></i>Editar
+                </a>
+                <a th:href="@{/usuarios/eliminar/{id}(id=${mecanico.id})}"
+                   class="btn btn-sm rounded-3"
+                   style="background:#FAECE7;color:#e85d26;border:none;font-size:0.78rem;">
+                  <i class="fas fa-trash me-1"></i>Eliminar
+                </a>
+              </div>
+            </td>
+
+          </tr>
+        </tbody>
+
+      </table>
+    </div>
+  </div>
+
+  <style>
+    .mecanico-input { box-shadow: none !important; transition: border 0.2s, background 0.2s; }
+    .mecanico-input:focus { border: 1px solid #e85d26 !important; background: #fff !important; box-shadow: 0 0 0 3px rgba(232,93,38,0.08) !important; }
+    .table tbody tr:hover { background: #fafafa; }
+  </style>
+
+</section>
+</html>

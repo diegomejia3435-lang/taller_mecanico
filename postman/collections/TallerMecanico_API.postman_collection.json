@@ -1,0 +1,359 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+		"name": "Taller Mecánico API - Pruebas REST (APF1)",
+		"description": "Colección completa de pruebas automatizadas para la API REST de Taller Mecánico según el estándar APF1. Incluye variables de colección, validación de encabezados Location, actualización PUT/PATCH, eliminación DELETE y casos de error 4xx (404 Not Found y 400 Bad Request).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "1234",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "admin",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "clienteId",
+			"value": "1",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "1. Listar Clientes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code es 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test('Respuesta es un array JSON', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(Array.isArray(jsonData)).to.be.true;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/clientes",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"clientes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2. Crear Cliente (201 Created)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code es 201 Created', function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"pm.test('Header Location esta presente y contiene /api/clientes', function () {",
+							"    pm.expect(pm.response.headers.get('Location')).to.exist;",
+							"    pm.expect(pm.response.headers.get('Location')).to.include('/api/clientes/');",
+							"});",
+							"var data = pm.response.json();",
+							"pm.test('Cliente creado retorna un ID valido', function () {",
+							"    pm.expect(data.id).to.be.a('number');",
+							"});",
+							"pm.collectionVariables.set('clienteId', data.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"nombreCompleto\": \"Cliente Postman PRUEBA\",\n  \"dni\": \"88776655\",\n  \"telefono\": \"987654321\",\n  \"correo\": \"postman.test@gmail.com\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/clientes",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"clientes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3. Obtener Cliente Creado por ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code es 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"var data = pm.response.json();",
+							"pm.test('Nombre completo coincide con el creado', function () {",
+							"    pm.expect(data.nombreCompleto).to.eql('Cliente Postman PRUEBA');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/clientes/{{clienteId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"clientes",
+						"{{clienteId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4. Actualizar Cliente Completo (PUT)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code es 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"var data = pm.response.json();",
+							"pm.test('Telefono actualizado correctamente', function () {",
+							"    pm.expect(data.telefono).to.eql('999000111');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"nombreCompleto\": \"Cliente Postman MODIFICADO\",\n  \"dni\": \"88776655\",\n  \"telefono\": \"999000111\",\n  \"correo\": \"postman.mod@gmail.com\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/clientes/{{clienteId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"clientes",
+						"{{clienteId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5. Actualizacion Parcial (PATCH)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code es 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"var data = pm.response.json();",
+							"pm.test('Correo actualizado via PATCH', function () {",
+							"    pm.expect(data.correo).to.eql('patch.nuevo@gmail.com');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"correo\": \"patch.nuevo@gmail.com\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/clientes/{{clienteId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"clientes",
+						"{{clienteId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "6. Eliminar Cliente (204 No Content)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code es 204 No Content', function () {",
+							"    pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/clientes/{{clienteId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"clientes",
+						"{{clienteId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "7. Error 404 - Consultar ID Inexistente",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code es 404 Not Found', function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"var data = pm.response.json();",
+							"pm.test('Mensaje de error contiene not found', function () {",
+							"    pm.expect(data.error).to.eql('Not Found');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/clientes/999999",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"clientes",
+						"999999"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "8. Error 400 - Crear con Datos Invalidos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code es 400 Bad Request', function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"var data = pm.response.json();",
+							"pm.test('Respuesta contiene fieldErrors de validacion', function () {",
+							"    pm.expect(data.fieldErrors).to.exist;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"nombreCompleto\": \"\",\n  \"dni\": \"123\",\n  \"correo\": \"correoInvalido\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/clientes",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"clientes"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

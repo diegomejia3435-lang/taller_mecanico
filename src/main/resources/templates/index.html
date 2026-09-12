@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layouts/main :: layout(~{::section})}">
+
+<section class="container-fluid py-3">
+
+  <!-- TOPBAR -->
+  <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-white rounded-4 shadow-sm">
+    <div>
+      <h2 class="fw-500 mb-0" style="font-size:1.2rem;">Dashboard</h2>
+      <p class="text-muted mb-0" style="font-size:0.8rem;">Sistema de Gestión Vehicular</p>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+      <span class="badge px-3 py-2" style="background:#f1efe8;color:#5f5e5a;font-size:0.75rem;font-weight:500;">
+        <i class="fas fa-calendar-alt me-1"></i>
+        13 de mayo de 2026
+      </span>
+      <div class="d-flex align-items-center gap-2">
+        <div class="rounded-circle d-flex align-items-center justify-content-center"
+             style="width:34px;height:34px;background:#e85d26;">
+          <i class="fas fa-user text-white" style="font-size:0.85rem;"></i>
+        </div>
+        <div>
+          <div style="font-size:0.8rem;font-weight:500;">Administrador</div>
+          <div class="text-muted" style="font-size:0.7rem;">ADMIN</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="row g-3 mb-3">
+
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm rounded-4 h-100" style="border-top:3px solid #e85d26 !important;">
+        <div class="card-body d-flex justify-content-between align-items-center py-3">
+          <div>
+            <p class="text-muted mb-1" style="font-size:0.75rem;">Vehículos registrados</p>
+            <h3 class="fw-bold mb-0" th:text="${totalVehiculos}">120</h3>
+            <span class="badge mt-1" style="background:#EAF3DE;color:#3B6D11;font-size:0.7rem;">+12%</span>
+          </div>
+          <div class="rounded-3 d-flex align-items-center justify-content-center"
+               style="width:42px;height:42px;background:#FAECE7;">
+            <i class="fas fa-car" style="color:#993C1D;font-size:1.1rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm rounded-4 h-100" style="border-top:3px solid #378ADD !important;">
+        <div class="card-body d-flex justify-content-between align-items-center py-3">
+          <div>
+            <p class="text-muted mb-1" style="font-size:0.75rem;">Órdenes activas</p>
+            <h3 class="fw-bold mb-0" th:text="${totalOrdenes}">24</h3>
+            <span class="badge mt-1" style="background:#E6F1FB;color:#185FA5;font-size:0.7rem;">+5%</span>
+          </div>
+          <div class="rounded-3 d-flex align-items-center justify-content-center"
+               style="width:42px;height:42px;background:#E6F1FB;">
+            <i class="fas fa-clipboard-list" style="color:#185FA5;font-size:1.1rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm rounded-4 h-100" style="border-top:3px solid #639922 !important;">
+        <div class="card-body d-flex justify-content-between align-items-center py-3">
+          <div>
+            <p class="text-muted mb-1" style="font-size:0.75rem;">Servicios completados</p>
+            <h3 class="fw-bold mb-0" th:text="${ordenesTerminadas}">89</h3>
+            <span class="badge mt-1" style="background:#EAF3DE;color:#3B6D11;font-size:0.7rem;">+8%</span>
+          </div>
+          <div class="rounded-3 d-flex align-items-center justify-content-center"
+               style="width:42px;height:42px;background:#EAF3DE;">
+            <i class="fas fa-check-circle" style="color:#3B6D11;font-size:1.1rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm rounded-4 h-100" style="border-top:3px solid #BA7517 !important;">
+        <div class="card-body d-flex justify-content-between align-items-center py-3">
+          <div>
+            <p class="text-muted mb-1" style="font-size:0.75rem;">Mecánicos activos</p>
+            <h3 class="fw-bold mb-0" th:text="${totalUsuarios}">8</h3>
+            <span class="badge mt-1" style="background:#FAEEDA;color:#854F0B;font-size:0.7rem;">activos</span>
+          </div>
+          <div class="rounded-3 d-flex align-items-center justify-content-center"
+               style="width:42px;height:42px;background:#FAEEDA;">
+            <i class="fas fa-user-check" style="color:#854F0B;font-size:1.1rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SEGUNDA FILA: GRÁFICO + ESTADOS/ALERTAS -->
+  <div class="row g-3 mb-3">
+
+    <!-- SERVICIOS POR MES -->
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h6 class="fw-bold mb-0">Servicios por mes</h6>
+              <small class="text-muted">Ene – Jun 2026</small>
+            </div>
+          </div>
+          <div class="d-flex align-items-flex-end gap-2" style="height:100px;align-items:flex-end;">
+            <div class="d-flex flex-column align-items-center flex-fill gap-1">
+              <div class="rounded-top" style="height:50%;width:100%;background:#e85d26;opacity:0.45;"></div>
+              <small class="text-muted" style="font-size:0.65rem;">Ene</small>
+            </div>
+            <div class="d-flex flex-column align-items-center flex-fill gap-1">
+              <div class="rounded-top" style="height:65%;width:100%;background:#e85d26;opacity:0.55;"></div>
+              <small class="text-muted" style="font-size:0.65rem;">Feb</small>
+            </div>
+            <div class="d-flex flex-column align-items-center flex-fill gap-1">
+              <div class="rounded-top" style="height:55%;width:100%;background:#e85d26;opacity:0.65;"></div>
+              <small class="text-muted" style="font-size:0.65rem;">Mar</small>
+            </div>
+            <div class="d-flex flex-column align-items-center flex-fill gap-1">
+              <div class="rounded-top" style="height:80%;width:100%;background:#e85d26;opacity:0.75;"></div>
+              <small class="text-muted" style="font-size:0.65rem;">Abr</small>
+            </div>
+            <div class="d-flex flex-column align-items-center flex-fill gap-1">
+              <div class="rounded-top" style="height:70%;width:100%;background:#e85d26;opacity:0.85;"></div>
+              <small class="text-muted" style="font-size:0.65rem;">May</small>
+            </div>
+            <div class="d-flex flex-column align-items-center flex-fill gap-1">
+              <div class="rounded-top" style="height:100%;width:100%;background:#e85d26;"></div>
+              <small class="text-muted" style="font-size:0.65rem;">Jun</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESTADOS + ALERTAS -->
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body">
+
+          <h6 class="fw-bold mb-3">Órdenes por estado</h6>
+
+          <div class="d-flex align-items-center mb-2 gap-2">
+            <div class="rounded-circle" style="width:8px;height:8px;background:#BA7517;flex-shrink:0;"></div>
+            <span class="text-muted" style="font-size:0.78rem;width:80px;">Pendiente</span>
+            <div class="flex-fill bg-light rounded" style="height:5px;">
+              <div class="rounded" style="width:40%;height:100%;background:#BA7517;"></div>
+            </div>
+            <span style="font-size:0.78rem;font-weight:500;width:20px;">10</span>
+          </div>
+          <div class="d-flex align-items-center mb-2 gap-2">
+            <div class="rounded-circle" style="width:8px;height:8px;background:#185FA5;flex-shrink:0;"></div>
+            <span class="text-muted" style="font-size:0.78rem;width:80px;">En proceso</span>
+            <div class="flex-fill bg-light rounded" style="height:5px;">
+              <div class="rounded" style="width:55%;height:100%;background:#185FA5;"></div>
+            </div>
+            <span style="font-size:0.78rem;font-weight:500;width:20px;">24</span>
+          </div>
+          <div class="d-flex align-items-center mb-2 gap-2">
+            <div class="rounded-circle" style="width:8px;height:8px;background:#3B6D11;flex-shrink:0;"></div>
+            <span class="text-muted" style="font-size:0.78rem;width:80px;">Terminado</span>
+            <div class="flex-fill bg-light rounded" style="height:5px;">
+              <div class="rounded" style="width:90%;height:100%;background:#3B6D11;"></div>
+            </div>
+            <span style="font-size:0.78rem;font-weight:500;width:20px;">56</span>
+          </div>
+          <div class="d-flex align-items-center mb-3 gap-2">
+            <div class="rounded-circle" style="width:8px;height:8px;background:#A32D2D;flex-shrink:0;"></div>
+            <span class="text-muted" style="font-size:0.78rem;width:80px;">Cancelado</span>
+            <div class="flex-fill bg-light rounded" style="height:5px;">
+              <div class="rounded" style="width:12%;height:100%;background:#A32D2D;"></div>
+            </div>
+            <span style="font-size:0.78rem;font-weight:500;width:20px;">5</span>
+          </div>
+
+          <hr class="my-2">
+          <h6 class="fw-bold mb-2">Alertas</h6>
+
+          <div class="d-flex align-items-start gap-2 mb-2">
+            <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                 style="width:30px;height:30px;background:#FAEEDA;">
+              <i class="fas fa-exclamation-triangle" style="color:#854F0B;font-size:0.75rem;"></i>
+            </div>
+            <div>
+              <p class="mb-0" style="font-size:0.78rem;">5 órdenes pendientes por más de 2 días</p>
+              <small class="text-muted">Revisar y actualizar estado</small>
+            </div>
+          </div>
+          <div class="d-flex align-items-start gap-2 mb-2">
+            <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                 style="width:30px;height:30px;background:#EAF3DE;">
+              <i class="fas fa-check" style="color:#3B6D11;font-size:0.75rem;"></i>
+            </div>
+            <div>
+              <p class="mb-0" style="font-size:0.78rem;">2 vehículos listos para entregar</p>
+              <small class="text-muted">Ver detalles</small>
+            </div>
+          </div>
+          <div class="d-flex align-items-start gap-2">
+            <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                 style="width:30px;height:30px;background:#E6F1FB;">
+              <i class="fas fa-calendar" style="color:#185FA5;font-size:0.75rem;"></i>
+            </div>
+            <div>
+              <p class="mb-0" style="font-size:0.78rem;">3 mantenimientos programados para hoy</p>
+              <small class="text-muted">Revisar agenda del día</small>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MÓDULOS -->
+  <div class="row g-3 mb-3">
+
+    <div class="col-md-3" sec:authorize="hasAnyRole('ADMIN','RECEPCIONISTA')">
+      <a th:href="@{/clientes}" class="text-decoration-none">
+        <div class="card border-0 shadow-sm rounded-4 text-center h-100 module-card">
+          <div class="card-body py-3">
+            <div class="rounded-3 d-flex align-items-center justify-content-center mx-auto mb-2"
+                 style="width:42px;height:42px;background:#FAECE7;">
+              <i class="fas fa-users" style="color:#e85d26;font-size:1.1rem;"></i>
+            </div>
+            <h6 class="fw-bold mb-0">Clientes</h6>
+            <small class="text-muted">Gestión de clientes</small>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-md-3">
+      <a th:href="@{/vehiculos}" class="text-decoration-none">
+        <div class="card border-0 shadow-sm rounded-4 text-center h-100 module-card">
+          <div class="card-body py-3">
+            <div class="rounded-3 d-flex align-items-center justify-content-center mx-auto mb-2"
+                 style="width:42px;height:42px;background:#FAECE7;">
+              <i class="fas fa-car" style="color:#e85d26;font-size:1.1rem;"></i>
+            </div>
+            <h6 class="fw-bold mb-0">Vehículos</h6>
+            <small class="text-muted">Registro vehicular</small>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-md-3">
+      <a th:href="@{/ordenes}" class="text-decoration-none">
+        <div class="card border-0 shadow-sm rounded-4 text-center h-100 module-card">
+          <div class="card-body py-3">
+            <div class="rounded-3 d-flex align-items-center justify-content-center mx-auto mb-2"
+                 style="width:42px;height:42px;background:#FAECE7;">
+              <i class="fas fa-tools" style="color:#e85d26;font-size:1.1rem;"></i>
+            </div>
+            <h6 class="fw-bold mb-0">Órdenes</h6>
+            <small class="text-muted">Control de servicios</small>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-md-3">
+      <a th:href="@{/reportes}" class="text-decoration-none">
+        <div class="card border-0 shadow-sm rounded-4 text-center h-100 module-card">
+          <div class="card-body py-3">
+            <div class="rounded-3 d-flex align-items-center justify-content-center mx-auto mb-2"
+                 style="width:42px;height:42px;background:#FAECE7;">
+              <i class="fas fa-chart-line" style="color:#e85d26;font-size:1.1rem;"></i>
+            </div>
+            <h6 class="fw-bold mb-0">Reportes</h6>
+            <small class="text-muted">Estadísticas del sistema</small>
+          </div>
+        </div>
+      </a>
+    </div>
+
+  </div>
+
+  <!-- TABLA ÓRDENES RECIENTES -->
+  <div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-0">
+      <div class="d-flex justify-content-between align-items-center px-4 py-3"
+           style="border-bottom:1px solid #f0f0f0;">
+        <h6 class="fw-bold mb-0">Órdenes recientes</h6>
+        <a th:href="@{/ordenes}" class="text-decoration-none" style="color:#e85d26;font-size:0.8rem;">
+          Ver todas <i class="fas fa-arrow-right ms-1"></i>
+        </a>
+      </div>
+      <div class="table-responsive">
+        <table class="table align-middle mb-0" style="font-size:0.82rem;">
+          <thead style="background:#f8f8f8;">
+            <tr>
+              <th class="px-4 py-3 text-muted fw-500" style="font-size:0.75rem;">N° Orden</th>
+              <th class="py-3 text-muted fw-500" style="font-size:0.75rem;">Cliente</th>
+              <th class="py-3 text-muted fw-500" style="font-size:0.75rem;">Vehículo</th>
+              <th class="py-3 text-muted fw-500" style="font-size:0.75rem;">Servicio</th>
+              <th class="py-3 text-muted fw-500" style="font-size:0.75rem;">Estado</th>
+              <th class="py-3 text-muted fw-500" style="font-size:0.75rem;">Mecánico</th>
+              <th class="py-3 text-muted fw-500" style="font-size:0.75rem;">Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="px-4">OT-00025</td>
+              <td>Carlos Ruiz</td>
+              <td>Toyota Yaris</td>
+              <td>Cambio de aceite</td>
+              <td><span class="badge px-2 py-1" style="background:#E6F1FB;color:#185FA5;">En Proceso</span></td>
+              <td>Juan Pérez</td>
+              <td>21/05/2026</td>
+            </tr>
+            <tr>
+              <td class="px-4">OT-00024</td>
+              <td>Ana Torres</td>
+              <td>Kia Rio</td>
+              <td>Frenos delanteros</td>
+              <td><span class="badge px-2 py-1" style="background:#EAF3DE;color:#3B6D11;">Terminado</span></td>
+              <td>Luis Quispe</td>
+              <td>20/05/2026</td>
+            </tr>
+            <tr>
+              <td class="px-4">OT-00023</td>
+              <td>Diego Flores</td>
+              <td>Hyundai i10</td>
+              <td>Revisión general</td>
+              <td><span class="badge px-2 py-1" style="background:#FAEEDA;color:#854F0B;">Pendiente</span></td>
+              <td>Marco Silva</td>
+              <td>20/05/2026</td>
+            </tr>
+            <tr>
+              <td class="px-4">OT-00022</td>
+              <td>María López</td>
+              <td>Nissan Versa</td>
+              <td>Suspensión</td>
+              <td><span class="badge px-2 py-1" style="background:#E6F1FB;color:#185FA5;">En Proceso</span></td>
+              <td>Juan Pérez</td>
+              <td>19/05/2026</td>
+            </tr>
+            <tr>
+              <td class="px-4">OT-00021</td>
+              <td>Pedro Lima</td>
+              <td>Chevrolet Aveo</td>
+              <td>Cambio de filtros</td>
+              <td><span class="badge px-2 py-1" style="background:#FCEBEB;color:#A32D2D;">Cancelado</span></td>
+              <td>Luis Quispe</td>
+              <td>19/05/2026</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ESTILOS -->
+  <style>
+    .module-card { transition: transform 0.2s, box-shadow 0.2s; }
+    .module-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important; border: 1px solid #e85d26 !important; }
+  </style>
+
+</section>
+</html>

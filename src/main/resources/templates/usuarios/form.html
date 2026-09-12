@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main :: layout(~{::section})}">
+
+<head>
+  <title>Usuario</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+</head>
+
+<section class="container py-4">
+
+  <!-- TITULO -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-1">Formulario Usuario</h2>
+      <p class="text-muted mb-0">Registro y gestión de usuarios del sistema</p>
+    </div>
+    <a th:href="@{/usuarios}"
+       class="btn rounded-3 px-3 py-2"
+       style="background:#1a1a2e;color:#fff;font-size:0.85rem;">
+      <i class="fas fa-arrow-left me-2"></i>Volver
+    </a>
+  </div>
+
+  <!-- FORMULARIO -->
+  <div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-4">
+
+      <!-- HEADER TARJETA -->
+      <div class="d-flex align-items-center gap-3 mb-4 pb-3"
+           style="border-bottom:1px solid #f0f0f0;">
+        <div class="rounded-3 d-flex align-items-center justify-content-center"
+             style="width:42px;height:42px;background:#FAECE7;flex-shrink:0;">
+          <i class="fas fa-user-cog" style="color:#e85d26;font-size:1.1rem;"></i>
+        </div>
+        <div>
+          <h6 class="fw-bold mb-0">Datos del Usuario</h6>
+          <small class="text-muted">Complete todos los campos requeridos</small>
+        </div>
+      </div>
+
+      <form th:action="@{/usuarios/guardar}"
+            th:object="${usuario}"
+            method="post">
+
+        <input type="hidden" th:field="*{id}">
+
+        <div class="row g-4">
+
+          <!-- USERNAME -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold mb-1" style="font-size:0.82rem;color:#444;">
+              <i class="fas fa-at me-1" style="color:#e85d26;"></i>
+              Username
+            </label>
+            <input type="text"
+                   th:field="*{username}"
+                   class="form-control form-control-lg rounded-3 usuario-input"
+                   style="background:#f8f8f8;border:1px solid #eee;font-size:0.9rem;">
+          </div>
+
+          <!-- PASSWORD -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold mb-1" style="font-size:0.82rem;color:#444;">
+              <i class="fas fa-lock me-1" style="color:#e85d26;"></i>
+              Password
+            </label>
+            <small class="text-muted d-block mb-1" style="font-size:0.78rem;">
+              Dejar vacío para mantener la contraseña actual
+            </small>
+            <input type="password"
+                   th:field="*{password}"
+                   class="form-control form-control-lg rounded-3 usuario-input"
+                   style="background:#f8f8f8;border:1px solid #eee;font-size:0.9rem;">
+          </div>
+
+          <!-- NOMBRE COMPLETO -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold mb-1" style="font-size:0.82rem;color:#444;">
+              <i class="fas fa-user me-1" style="color:#e85d26;"></i>
+              Nombre Completo
+            </label>
+            <input type="text"
+                   th:field="*{nombreCompleto}"
+                   class="form-control form-control-lg rounded-3 usuario-input"
+                   style="background:#f8f8f8;border:1px solid #eee;font-size:0.9rem;">
+          </div>
+
+          <!-- ESPECIALIDAD -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold mb-1" style="font-size:0.82rem;color:#444;">
+              <i class="fas fa-star me-1" style="color:#e85d26;"></i>
+              Especialidad
+            </label>
+            <input type="text"
+                   th:field="*{especialidad}"
+                   class="form-control form-control-lg rounded-3 usuario-input"
+                   style="background:#f8f8f8;border:1px solid #eee;font-size:0.9rem;">
+          </div>
+
+          <!-- TELEFONO -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold mb-1" style="font-size:0.82rem;color:#444;">
+              <i class="fas fa-phone me-1" style="color:#e85d26;"></i>
+              Teléfono
+            </label>
+            <input type="text"
+                   th:field="*{telefono}"
+                   class="form-control form-control-lg rounded-3 usuario-input"
+                   style="background:#f8f8f8;border:1px solid #eee;font-size:0.9rem;">
+          </div>
+
+          <!-- ESTADO -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold mb-1" style="font-size:0.82rem;color:#444;">
+              <i class="fas fa-info-circle me-1" style="color:#e85d26;"></i>
+              Estado
+            </label>
+            <select th:field="*{estado}"
+                    class="form-select form-select-lg rounded-3 usuario-input"
+                    style="background:#f8f8f8;border:1px solid #eee;font-size:0.9rem;">
+              <option value="Activo">Activo</option>
+              <option value="En Descanso">En Descanso</option>
+            </select>
+          </div>
+
+          <!-- ROL -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold mb-1" style="font-size:0.82rem;color:#444;">
+              <i class="fas fa-shield-alt me-1" style="color:#e85d26;"></i>
+              Rol
+            </label>
+            <select th:field="*{rol}"
+                    class="form-select form-select-lg rounded-3 usuario-input"
+                    style="background:#f8f8f8;border:1px solid #eee;font-size:0.9rem;">
+              <option value="">Seleccione</option>
+              <option th:each="r : ${roles}"
+                      th:value="${r.id}"
+                      th:text="${r.nombre}">
+              </option>
+            </select>
+          </div>
+
+          <!-- ACTIVO -->
+          <div class="col-md-6 d-flex align-items-center">
+            <div class="form-check">
+              <input type="checkbox"
+                     th:field="*{enabled}"
+                     class="form-check-input"
+                     style="width:18px;height:18px;border-color:#eee;accent-color:#e85d26;">
+              <label class="form-check-label fw-semibold ms-2"
+                     style="font-size:0.88rem;color:#444;">
+                Usuario Activo
+              </label>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- BOTONES -->
+        <div class="mt-4 pt-3 d-flex gap-3" style="border-top:1px solid #f0f0f0;">
+          <button class="btn btn-lg px-4 rounded-3"
+                  style="background:#e85d26;color:#fff;font-size:0.88rem;">
+            <i class="fas fa-save me-2"></i>Guardar
+          </button>
+          <a th:href="@{/usuarios}"
+             class="btn btn-lg px-4 rounded-3"
+             style="background:#f8f8f8;color:#555;border:1px solid #eee;font-size:0.88rem;">
+            Cancelar
+          </a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <style>
+    .usuario-input { box-shadow: none !important; transition: border 0.2s, background 0.2s; }
+    .usuario-input:focus { border: 1px solid #e85d26 !important; background: #fff !important; box-shadow: 0 0 0 3px rgba(232,93,38,0.08) !important; }
+  </style>
+
+</section>
+</html>

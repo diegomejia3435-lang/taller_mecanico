@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main :: layout(~{::section})}">
+
+<section class="container py-4">
+
+  <!-- TITULO -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-1">Formulario Vehículo</h2>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0" style="font-size:0.8rem;">
+          <li class="breadcrumb-item">
+            <a th:href="@{/dashboard}" class="text-decoration-none text-muted">Dashboard</a>
+          </li>
+          <li class="breadcrumb-item">
+            <a th:href="@{/vehiculos}" class="text-decoration-none text-muted">Vehículos</a>
+          </li>
+          <li class="breadcrumb-item active" style="color:#e85d26;">Formulario</li>
+        </ol>
+      </nav>
+    </div>
+    <a th:href="@{/vehiculos}"
+       class="btn rounded-3 px-3 py-2"
+       style="background:#1a1a2e;color:#fff;font-size:0.85rem;">
+      <i class="fas fa-arrow-left me-2"></i>Volver
+    </a>
+  </div>
+
+  <!-- FORMULARIO -->
+  <div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-4">
+
+      <!-- HEADER TARJETA -->
+      <div class="d-flex align-items-center gap-3 mb-4 pb-3"
+           style="border-bottom:1px solid #f0f0f0;">
+        <div class="rounded-3 d-flex align-items-center justify-content-center"
+             style="width:42px;height:42px;background:#FAECE7;flex-shrink:0;">
+          <i class="fas fa-car" style="color:#e85d26;font-size:1.1rem;"></i>
+        </div>
+        <div>
+          <h6 class="fw-bold mb-0">Datos del vehículo</h6>
+          <small class="text-muted">Complete todos los campos requeridos</small>
+        </div>
+      </div>
+
+      <form th:action="@{/vehiculos/guardar}"
+            th:object="${vehiculo}"
+            method="post">
+
+        <input type="hidden" th:field="*{id}">
+
+        <div class="row g-4">
+
+          <!-- PLACA -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold mb-1" style="font-size:0.82rem;color:#444;">
+              <i class="fas fa-hashtag me-1" style="color:#e85d26;"></i>
+              Placa
+            </label>
+            <input type="text"
+                   th:field="*{placa}"
+                   class="form-control form-control-lg rounded-3 vehiculo-input"
+                   style="background:#f8f8f8;border:1px solid #eee;font-size:0.9rem;"
+                   placeholder="Ej: ABC-123">
+          </div>
+
+          <!-- MARCA -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold mb-1" style="font-size:0.82rem;color:#444;">
+              <i class="fas fa-tag me-1" style="color:#e85d26;"></i>
+              Marca
+            </label>
+            <input type="text"
+                   th:field="*{marca}"
+                   class="form-control form-control-lg rounded-3 vehiculo-input"
+                   style="background:#f8f8f8;border:1px solid #eee;font-size:0.9rem;"
+                   placeholder="Ej: Toyota">
+          </div>
+
+          <!-- MODELO -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold mb-1" style="font-size:0.82rem;color:#444;">
+              <i class="fas fa-car-side me-1" style="color:#e85d26;"></i>
+              Modelo
+            </label>
+            <input type="text"
+                   th:field="*{modelo}"
+                   class="form-control form-control-lg rounded-3 vehiculo-input"
+                   style="background:#f8f8f8;border:1px solid #eee;font-size:0.9rem;"
+                   placeholder="Ej: Corolla">
+          </div>
+
+          <!-- AÑO -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold mb-1" style="font-size:0.82rem;color:#444;">
+              <i class="fas fa-calendar-alt me-1" style="color:#e85d26;"></i>
+              Año
+            </label>
+            <input type="number"
+                   th:field="*{anio}"
+                   class="form-control form-control-lg rounded-3 vehiculo-input"
+                   style="background:#f8f8f8;border:1px solid #eee;font-size:0.9rem;"
+                   placeholder="Ej: 2020"
+                   min="1990"
+                   max="2026">
+          </div>
+
+          <!-- TIPO MOTOR -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold mb-1" style="font-size:0.82rem;color:#444;">
+              <i class="fas fa-cogs me-1" style="color:#e85d26;"></i>
+              Tipo Motor
+            </label>
+            <input type="text"
+                   th:field="*{tipoMotor}"
+                   class="form-control form-control-lg rounded-3 vehiculo-input"
+                   style="background:#f8f8f8;border:1px solid #eee;font-size:0.9rem;"
+                   placeholder="Ej: 1.6L, Diesel, Híbrido">
+          </div>
+
+          <!-- CLIENTE -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold mb-1" style="font-size:0.82rem;color:#444;">
+              <i class="fas fa-user me-1" style="color:#e85d26;"></i>
+              Propietario
+            </label>
+            <select th:field="*{cliente}"
+                    class="form-select form-select-lg rounded-3 vehiculo-input"
+                    style="background:#f8f8f8;border:1px solid #eee;font-size:0.9rem;">
+              <option value="">Seleccione un cliente</option>
+              <option th:each="cliente : ${clientes}"
+                      th:value="${cliente.id}"
+                      th:text="${cliente.nombreCompleto}">
+              </option>
+            </select>
+          </div>
+
+        </div>
+
+        <!-- BOTONES -->
+        <div class="mt-4 pt-3 d-flex gap-3" style="border-top:1px solid #f0f0f0;">
+          <button type="submit"
+                  class="btn btn-lg px-4 rounded-3"
+                  style="background:#e85d26;color:#fff;font-size:0.88rem;">
+            <i class="fas fa-save me-2"></i>Guardar Vehículo
+          </button>
+          <a th:href="@{/vehiculos}"
+             class="btn btn-lg px-4 rounded-3"
+             style="background:#f8f8f8;color:#555;border:1px solid #eee;font-size:0.88rem;">
+            Cancelar
+          </a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <style>
+    .vehiculo-input { box-shadow: none !important; transition: border 0.2s, background 0.2s; }
+    .vehiculo-input:focus { border: 1px solid #e85d26 !important; background: #fff !important; box-shadow: 0 0 0 3px rgba(232,93,38,0.08) !important; }
+  </style>
+
+</section>
+</html>

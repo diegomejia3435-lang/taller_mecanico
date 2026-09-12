@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main :: layout(~{::section})}">
+
+<section class="container py-4">
+
+  <!-- TITULO -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-1">Historial Vehicular</h2>
+      <p class="text-muted mb-0">Registro histórico de servicios realizados</p>
+    </div>
+  </div>
+
+  <!-- FILTRO -->
+  <div class="card shadow-sm mb-4 border-0 rounded-4" th:if="${!esCliente}">
+    <div class="card-body">
+      <form th:action="@{/historial}" method="get" class="row g-3">
+
+        <div class="col-md-4">
+          <input type="text"
+                 name="placa"
+                 th:value="${placa}"
+                 class="form-control rounded-3 historial-input"
+                 style="background:#f8f8f8;border:1px solid #eee;font-size:0.88rem;"
+                 placeholder="Buscar por placa...">
+        </div>
+
+        <div class="col-md-2">
+          <button type="submit"
+                  class="btn w-100 rounded-3"
+                  style="background:#1a1a2e;color:#fff;font-size:0.88rem;">
+            Buscar
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- TABLA -->
+  <div class="card shadow-sm border-0 rounded-4">
+    <div class="card-body p-0">
+      <table class="table table-hover align-middle mb-0">
+
+        <thead>
+          <tr style="background:#1a1a2e;">
+            <th style="color:#fff;font-size:0.82rem;font-weight:500;padding:14px 18px;border:none;">Fecha</th>
+            <th style="color:#fff;font-size:0.82rem;font-weight:500;padding:14px 18px;border:none;">Placa</th>
+            <th style="color:#fff;font-size:0.82rem;font-weight:500;padding:14px 18px;border:none;">Cliente</th>
+            <th style="color:#fff;font-size:0.82rem;font-weight:500;padding:14px 18px;border:none;">Servicio</th>
+            <th style="color:#fff;font-size:0.82rem;font-weight:500;padding:14px 18px;border:none;">Estado</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr th:each="orden : ${ordenes}">
+
+            <td style="font-size:0.88rem;padding:13px 18px;"
+                th:text="${#temporals.format(orden.fechaIngreso, 'dd/MM/yyyy HH:mm')}"></td>
+
+            <td style="font-size:0.88rem;padding:13px 18px;"
+                th:text="${orden.vehiculo.placa}"></td>
+
+            <td style="font-size:0.88rem;padding:13px 18px;"
+                th:text="${orden.vehiculo.cliente.nombreCompleto}"></td>
+
+            <td style="padding:13px 18px;">
+              <span th:each="servicio : ${orden.servicios}"
+                    class="badge rounded-pill me-1"
+                    style="background:#EEEDFE;color:#3C3489;font-size:0.78rem;font-weight:500;"
+                    th:text="${servicio.nombreServicio}">
+              </span>
+            </td>
+
+            <td style="padding:13px 18px;">
+              <span class="badge rounded-pill px-3 py-2"
+                    th:if="${orden.estado.name() == 'PENDIENTE'}"
+                    style="background:#FAEEDA;color:#633806;font-size:0.78rem;font-weight:500;">
+                Pendiente
+              </span>
+              <span class="badge rounded-pill px-3 py-2"
+                    th:if="${orden.estado.name() == 'EN_PROCESO'}"
+                    style="background:#E6F1FB;color:#0C447C;font-size:0.78rem;font-weight:500;">
+                En Proceso
+              </span>
+              <span class="badge rounded-pill px-3 py-2"
+                    th:if="${orden.estado.name() == 'TERMINADO'}"
+                    style="background:#E1F5EE;color:#085041;font-size:0.78rem;font-weight:500;">
+                Terminado
+              </span>
+            </td>
+
+          </tr>
+        </tbody>
+
+      </table>
+    </div>
+  </div>
+
+  <style>
+    .historial-input { box-shadow: none !important; transition: border 0.2s, background 0.2s; }
+    .historial-input:focus { border: 1px solid #e85d26 !important; background: #fff !important; box-shadow: 0 0 0 3px rgba(232,93,38,0.08) !important; }
+    .table tbody tr:hover { background: #fafafa; }
+  </style>
+
+</section>
+</html>
