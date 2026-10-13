@@ -20,6 +20,11 @@ public class VehiculoRestController {
         return vehiculoService.listarTodos();
     }
 
+    @GetMapping("/rango-anio")
+    public List<Vehiculo> buscarPorRangoAnio(@RequestParam Integer min, @RequestParam Integer max) {
+        return vehiculoService.buscarPorAnioEnRango(min, max);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Vehiculo> obtener(@PathVariable Long id) {
         Vehiculo v = vehiculoService.buscarPorId(id);

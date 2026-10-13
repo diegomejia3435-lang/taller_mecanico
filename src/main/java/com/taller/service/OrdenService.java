@@ -8,18 +8,19 @@ public interface OrdenService {
 
     List<OrdenMantenimiento> listarTodos();
 
-    OrdenMantenimiento guardar(
-            OrdenMantenimiento orden
-    );
+    OrdenMantenimiento guardar(OrdenMantenimiento orden);
 
     OrdenMantenimiento buscarPorId(Long id);
 
     void eliminar(Long id);
 
-    List<OrdenMantenimiento>
-    listarPorMecanico(String username);
+    List<OrdenMantenimiento> listarPorMecanico(String username);
 
     List<OrdenMantenimiento> buscarOrdenes(String query);
 
     List<OrdenMantenimiento> buscarOrdenesPorMecanico(String query, String username);
+
+    List<Object[]> contarOrdenesPorEstado();
+
+    OrdenMantenimiento reasignarMecanicoAtomiico(Long ordenId, Long nuevoMecanicoId);
 }

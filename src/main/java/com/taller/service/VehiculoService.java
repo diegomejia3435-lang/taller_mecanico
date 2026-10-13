@@ -15,4 +15,6 @@ public interface VehiculoService {
     void eliminar(Long id);
 
     List<Vehiculo> buscarVehiculos(String query);
+
+    List<Vehiculo> buscarPorAnioEnRango(Integer min, Integer max);
 }

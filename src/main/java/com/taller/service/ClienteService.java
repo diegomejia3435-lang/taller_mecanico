@@ -15,4 +15,6 @@ public interface ClienteService {
     void eliminar(Long id);
 
     List<Cliente> buscarPorNombreODni(String query);
+
+    List<Cliente> buscarPorNombreContiene(String texto);
 }

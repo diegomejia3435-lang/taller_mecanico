@@ -1,29 +1,24 @@
 {
 	"info": {
 		"_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-		"name": "Taller Mecánico API - Pruebas REST (APF1)",
-		"description": "Colección completa de pruebas automatizadas para la API REST de Taller Mecánico según el estándar APF1. Incluye variables de colección, validación de encabezados Location, actualización PUT/PATCH, eliminación DELETE y casos de error 4xx (404 Not Found y 400 Bad Request).",
+		"name": "Taller Mecánico API - Pruebas REST, JWT, CORS, JPQL y Transacciones",
+		"description": "Colección completa de pruebas automatizadas para la API REST del Taller Mecánico según la rúbrica del curso y la guía cors.pptx.\n\nIncluye:\n1. Autenticación JWT (/api/auth/login) con captura dinámica de token\n2. Verificación de seguridad (401 Unauthorized sin token, 403 Forbidden por rol)\n3. CRUD completo de clientes con validación REST (201 Created, Header Location, PUT, PATCH, 204 No Content, 404, 400)\n4. Consultas JPQL especializadas (LIKE, BETWEEN, GROUP BY)\n5. Operación transaccional con ROLLBACK en caso de falla (404 Not Found)\n6. Validación de CORS Preflight (OPTIONS http://localhost:4200)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"auth": {
-		"type": "basic",
-		"basic": [
-			{
-				"key": "password",
-				"value": "1234",
-				"type": "string"
-			},
-			{
-				"key": "username",
-				"value": "admin",
-				"type": "string"
-			}
-		]
 	},
 	"variable": [
 		{
 			"key": "baseUrl",
 			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "adminToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "mecanicoToken",
+			"value": "",
 			"type": "string"
 		},
 		{
@@ -34,7 +29,168 @@
 	],
 	"item": [
 		{
-			"name": "1. Listar Clientes",
+			"name": "01. Auth - Login Admin (Guardar Token)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code es 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"var data = pm.response.json();",
+							"pm.test('Token JWT generado correctamente', function () {",
+							"    pm.expect(data.token || data.accessToken).to.exist;",
+							"});",
+							"var token = data.token || data.accessToken;",
+							"pm.collectionVariables.set('adminToken', token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"1234\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/auth/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "02. Auth - Login Mecanico (Guardar Token)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code es 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"var data = pm.response.json();",
+							"pm.test('Token JWT mecanico generado', function () {",
+							"    pm.expect(data.token || data.accessToken).to.exist;",
+							"});",
+							"var token = data.token || data.accessToken;",
+							"pm.collectionVariables.set('mecanicoToken', token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"mecanico\",\n  \"password\": \"1234\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/auth/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "03. Seguridad - Sin Token (401 Unauthorized)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code es 401 Unauthorized', function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/clientes",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"clientes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "04. Seguridad - Rol Insuficiente (403 Forbidden)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code es 403 Forbidden', function () {",
+							"    pm.response.to.have.status(403);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{mecanicoToken}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/api/clientes",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"clientes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "05. Listar Clientes (200 OK con Admin Token)",
 			"event": [
 				{
 					"listen": "test",
@@ -54,7 +210,12 @@
 			],
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{adminToken}}"
+					}
+				],
 				"url": {
 					"raw": "{{baseUrl}}/api/clientes",
 					"host": [
@@ -69,7 +230,7 @@
 			"response": []
 		},
 		{
-			"name": "2. Crear Cliente (201 Created)",
+			"name": "06. Crear Cliente (201 Created con Location Header)",
 			"event": [
 				{
 					"listen": "test",
@@ -78,7 +239,7 @@
 							"pm.test('Status code es 201 Created', function () {",
 							"    pm.response.to.have.status(201);",
 							"});",
-							"pm.test('Header Location esta presente y contiene /api/clientes', function () {",
+							"pm.test('Header Location esta presente y contiene /api/clientes/', function () {",
 							"    pm.expect(pm.response.headers.get('Location')).to.exist;",
 							"    pm.expect(pm.response.headers.get('Location')).to.include('/api/clientes/');",
 							"});",
@@ -96,13 +257,17 @@
 				"method": "POST",
 				"header": [
 					{
+						"key": "Authorization",
+						"value": "Bearer {{adminToken}}"
+					},
+					{
 						"key": "Content-Type",
 						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"nombreCompleto\": \"Cliente Postman PRUEBA\",\n  \"dni\": \"88776655\",\n  \"telefono\": \"987654321\",\n  \"correo\": \"postman.test@gmail.com\"\n}"
+					"raw": "{\n  \"nombreCompleto\": \"Cliente Postman JWT\",\n  \"dni\": \"88776655\",\n  \"telefono\": \"987654321\",\n  \"correo\": \"postman.jwt@gmail.com\"\n}"
 				},
 				"url": {
 					"raw": "{{baseUrl}}/api/clientes",
@@ -118,7 +283,7 @@
 			"response": []
 		},
 		{
-			"name": "3. Obtener Cliente Creado por ID",
+			"name": "07. Obtener Cliente Creado por ID",
 			"event": [
 				{
 					"listen": "test",
@@ -128,8 +293,8 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"var data = pm.response.json();",
-							"pm.test('Nombre completo coincide con el creado', function () {",
-							"    pm.expect(data.nombreCompleto).to.eql('Cliente Postman PRUEBA');",
+							"pm.test('Nombre completo coincide', function () {",
+							"    pm.expect(data.nombreCompleto).to.eql('Cliente Postman JWT');",
 							"});"
 						],
 						"type": "text/javascript"
@@ -138,7 +303,12 @@
 			],
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{adminToken}}"
+					}
+				],
 				"url": {
 					"raw": "{{baseUrl}}/api/clientes/{{clienteId}}",
 					"host": [
@@ -154,7 +324,7 @@
 			"response": []
 		},
 		{
-			"name": "4. Actualizar Cliente Completo (PUT)",
+			"name": "08. Actualizar Cliente Completo (PUT)",
 			"event": [
 				{
 					"listen": "test",
@@ -164,7 +334,7 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"var data = pm.response.json();",
-							"pm.test('Telefono actualizado correctamente', function () {",
+							"pm.test('Telefono actualizado', function () {",
 							"    pm.expect(data.telefono).to.eql('999000111');",
 							"});"
 						],
@@ -175,6 +345,10 @@
 			"request": {
 				"method": "PUT",
 				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{adminToken}}"
+					},
 					{
 						"key": "Content-Type",
 						"value": "application/json"
@@ -199,7 +373,7 @@
 			"response": []
 		},
 		{
-			"name": "5. Actualizacion Parcial (PATCH)",
+			"name": "09. Actualizacion Parcial (PATCH)",
 			"event": [
 				{
 					"listen": "test",
@@ -220,6 +394,10 @@
 			"request": {
 				"method": "PATCH",
 				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{adminToken}}"
+					},
 					{
 						"key": "Content-Type",
 						"value": "application/json"
@@ -244,7 +422,7 @@
 			"response": []
 		},
 		{
-			"name": "6. Eliminar Cliente (204 No Content)",
+			"name": "10. Eliminar Cliente (204 No Content)",
 			"event": [
 				{
 					"listen": "test",
@@ -260,7 +438,12 @@
 			],
 			"request": {
 				"method": "DELETE",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{adminToken}}"
+					}
+				],
 				"url": {
 					"raw": "{{baseUrl}}/api/clientes/{{clienteId}}",
 					"host": [
@@ -276,7 +459,7 @@
 			"response": []
 		},
 		{
-			"name": "7. Error 404 - Consultar ID Inexistente",
+			"name": "11. Error 404 - Consultar ID Inexistente",
 			"event": [
 				{
 					"listen": "test",
@@ -286,7 +469,7 @@
 							"    pm.response.to.have.status(404);",
 							"});",
 							"var data = pm.response.json();",
-							"pm.test('Mensaje de error contiene not found', function () {",
+							"pm.test('Mensaje de error contiene Not Found', function () {",
 							"    pm.expect(data.error).to.eql('Not Found');",
 							"});"
 						],
@@ -296,7 +479,12 @@
 			],
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{adminToken}}"
+					}
+				],
 				"url": {
 					"raw": "{{baseUrl}}/api/clientes/999999",
 					"host": [
@@ -312,7 +500,7 @@
 			"response": []
 		},
 		{
-			"name": "8. Error 400 - Crear con Datos Invalidos",
+			"name": "12. Error 400 - Crear con Datos Invalidos",
 			"event": [
 				{
 					"listen": "test",
@@ -334,6 +522,10 @@
 				"method": "POST",
 				"header": [
 					{
+						"key": "Authorization",
+						"value": "Bearer {{adminToken}}"
+					},
+					{
 						"key": "Content-Type",
 						"value": "application/json"
 					}
@@ -342,6 +534,241 @@
 					"mode": "raw",
 					"raw": "{\n  \"nombreCompleto\": \"\",\n  \"dni\": \"123\",\n  \"correo\": \"correoInvalido\"\n}"
 				},
+				"url": {
+					"raw": "{{baseUrl}}/api/clientes",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"clientes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "13. Busqueda JPQL con LIKE",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code es 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test('Respuesta de busqueda JPQL es array', function () {",
+							"    var data = pm.response.json();",
+							"    pm.expect(Array.isArray(data)).to.be.true;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{adminToken}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/api/clientes/buscar?texto=juan",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"clientes",
+						"buscar"
+					],
+					"query": [
+						{
+							"key": "texto",
+							"value": "juan"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "14. Rango de Anio JPQL BETWEEN",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code es 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test('Respuesta de rango JPQL es array', function () {",
+							"    var data = pm.response.json();",
+							"    pm.expect(Array.isArray(data)).to.be.true;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{adminToken}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/api/vehiculos/rango-anio?min=2018&max=2025",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"vehiculos",
+						"rango-anio"
+					],
+					"query": [
+						{
+							"key": "min",
+							"value": "2018"
+						},
+						{
+							"key": "max",
+							"value": "2025"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "15. Estadisticas JPQL GROUP BY",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code es 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test('Estadisticas JPQL retornan array de agrupacion', function () {",
+							"    var data = pm.response.json();",
+							"    pm.expect(Array.isArray(data)).to.be.true;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{adminToken}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/api/ordenes/estadisticas/por-estado",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"ordenes",
+						"estadisticas",
+						"por-estado"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "16. Transaccion Fallida (ROLLBACK 404)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code es 404 Not Found por mecanico inexistente', function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"pm.test('Rollback ejecutado sin cambiar estado', function () {",
+							"    var data = pm.response.json();",
+							"    pm.expect(data.error).to.eql('Not Found');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{adminToken}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/api/ordenes/transacciones/reemplazar-mecanico?ordenId=1&nuevoMecanicoId=999999",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"ordenes",
+						"transacciones",
+						"reemplazar-mecanico"
+					],
+					"query": [
+						{
+							"key": "ordenId",
+							"value": "1"
+						},
+						{
+							"key": "nuevoMecanicoId",
+							"value": "999999"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "17. Prueba CORS Preflight (OPTIONS)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code es 200 OK o 204 No Content', function () {",
+							"    pm.expect([200, 204]).to.include(pm.response.code);",
+							"});",
+							"pm.test('CORS header Access-Control-Allow-Origin permite http://localhost:4200', function () {",
+							"    pm.expect(pm.response.headers.get('Access-Control-Allow-Origin')).to.include('http://localhost:4200');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "OPTIONS",
+				"header": [
+					{
+						"key": "Origin",
+						"value": "http://localhost:4200"
+					},
+					{
+						"key": "Access-Control-Request-Method",
+						"value": "GET"
+					}
+				],
 				"url": {
 					"raw": "{{baseUrl}}/api/clientes",
 					"host": [

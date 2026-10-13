@@ -25,13 +25,18 @@ public class ClienteRestController {
         return clienteService.listarTodos();
     }
 
+    @GetMapping("/buscar")
+    public List<Cliente> buscar(@RequestParam String texto) {
+        return clienteService.buscarPorNombreContiene(texto);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Cliente> obtener(@PathVariable Long id) {
         Cliente c = clienteService.buscarPorId(id);
         if (c == null) {
             throw new ResourceNotFoundException("Cliente con ID " + id + " no encontrado");
         }
-        return ResponseEntity.ok(c); //200 ok
+        return ResponseEntity.ok(c);
     }
 
     @PostMapping
@@ -42,7 +47,7 @@ public class ClienteRestController {
                 .path("/{id}")
                 .buildAndExpand(guardado.getId())
                 .toUri();
-        return ResponseEntity.created(location).body(guardado); //201 created
+        return ResponseEntity.created(location).body(guardado);
     }
 
     @PutMapping("/{id}")
@@ -53,7 +58,7 @@ public class ClienteRestController {
         }
         cliente.setId(id);
         Cliente actualizado = clienteService.guardar(cliente);
-        return ResponseEntity.ok(actualizado); //200 ok
+        return ResponseEntity.ok(actualizado);
     }
 
     @PatchMapping("/{id}")
@@ -72,7 +77,7 @@ public class ClienteRestController {
             existente.setNombreCompleto((String) campos.get("nombreCompleto"));
         }
         Cliente actualizado = clienteService.guardar(existente);
-        return ResponseEntity.ok(actualizado); //200ok
+        return ResponseEntity.ok(actualizado);
     }
 
     @DeleteMapping("/{id}")
@@ -82,6 +87,6 @@ public class ClienteRestController {
             throw new ResourceNotFoundException("Cliente con ID " + id + " no encontrado");
         }
         clienteService.eliminar(id);
-        return ResponseEntity.noContent().build(); //204 no content
+        return ResponseEntity.noContent().build();
     }
 }
