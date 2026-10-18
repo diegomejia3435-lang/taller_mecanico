@@ -37,6 +37,13 @@ Para ejecutar la suite completa de 13 pruebas automatizadas (Service, MockMvc, J
 
 Veras en la consola que todas las 13 pruebas compilan y pasan en VERDE (BUILD SUCCESS).
 
+¡¡¡EN CASO SOLICITE PRUEBAS ESPECIFICAS!!!!
+
+Seguridad y JWT: .\mvnw test -Dtest=AuthRestControllerTest
+Transaccion con Rollback: .\mvnw test -Dtest=OrdenServiceTransactionTest
+Consulta JPQL: .\mvnw test -Dtest=ClienteRepositoryTest
+Contrato REST: .\mvnw test -Dtest=ClienteRestControllerTest
+
 
 --------------------------------------------------------------------------------
 2. INTEGRACION DE TEMAS DEL 2DO AVANCE
