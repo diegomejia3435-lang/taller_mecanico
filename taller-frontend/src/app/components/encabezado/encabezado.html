@@ -1,0 +1,23 @@
+<header class="encabezado">
+  <div class="encabezado__contenedor">
+    <div class="encabezado__marca">
+      <div class="encabezado__icono">🚗</div>
+      <div>
+        <h1 class="encabezado__titulo">{{ titulo() }}</h1>
+        <p class="encabezado__subtitulo">{{ subtitulo() }}</p>
+      </div>
+    </div>
+
+    <div class="encabezado__acciones">
+      <div class="encabezado__contador">
+        <span class="encabezado__contador-icono">📋</span>
+        <span>Servicios Solicitados: <strong>{{ contador() }}</strong></span>
+      </div>
+      @if (contador() > 0) {
+        <button class="encabezado__btn-limpiar" (click)="onLimpiar()" title="Reiniciar selección">
+          Reiniciar
+        </button>
+      }
+    </div>
+  </div>
+</header>

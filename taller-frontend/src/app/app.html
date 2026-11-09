@@ -1,0 +1,35 @@
+<!-- Componente Hijo 1: Encabezado (Semana 11 - Slide 15) -->
+<app-encabezado
+  [titulo]="'Taller Mecánico Especializado'"
+  [subtitulo]="'Catálogo de Servicios Automotrices y Mantenimiento'"
+  [contador]="contador()"
+  (limpiar)="limpiarServicios()"
+/>
+
+<!-- Contenido Principal: Catálogo con Cuadrícula Responsive (Semana 11 - Slide 24 y 25) -->
+<main class="catalogo">
+  <div class="catalogo__contenedor">
+    <div class="catalogo__intro">
+      <div>
+        <h2 class="catalogo__titulo">Catálogo de Servicios Disponibles</h2>
+        <p class="catalogo__subtitulo">Seleccione los servicios requeridos para su orden de trabajo</p>
+      </div>
+      <div class="catalogo__badge">
+        <span>{{ servicios().length }} Servicios Registrados</span>
+      </div>
+    </div>
+
+    <!-- Representación de colección con @for y comunicación por Input/Output (Semana 11 - Slide 16, 17 y 18) -->
+    <div class="catalogo__grid">
+      @for (s of servicios(); track s.id) {
+        <app-tarjeta-servicio
+          [servicio]="s"
+          (solicitar)="agregarServicio($event)"
+        />
+      }
+    </div>
+  </div>
+
+  <!-- Router Outlet listo para soportar Criterio 2 (Rutas Principales) -->
+  <router-outlet />
+</main>

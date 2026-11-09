@@ -1,0 +1,26 @@
+// Tokens y variables globales de diseño SCSS (Semana 11 - Slide 20)
+$primary: #e85d26;       // Color primario del Taller Mecánico (Naranja mecánico)
+$primary-dark: #c94715;  // Tono oscuro para hover/activo
+$secondary: #1e293b;     // Azul pizarra para contraste
+$accent: #2563eb;        // Azul acento
+$success: #16a34a;       // Verde éxito
+$danger: #dc2626;        // Rojo error
+$warning: #f59e0b;       // Amarillo advertencia
+$background: #f8fafc;    // Fondo de aplicación
+$card-bg: #ffffff;       // Fondo de tarjetas
+$text-dark: #0f172a;     // Texto principal
+$text-muted: #64748b;    // Texto secundario
+$border-color: #e2e8f0;  // Bordes y divisores
+
+// Espaciados y dimensiones
+$radius: 14px;
+$radius-sm: 8px;
+$radius-lg: 20px;
+$space: 16px;
+$space-sm: 8px;
+$space-lg: 24px;
+
+// Sombras
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.08);

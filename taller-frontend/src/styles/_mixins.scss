@@ -1,0 +1,62 @@
+@use './variables' as *;
+
+// Mixin para botones configurables (Semana 11 - Slide 22)
+@mixin boton($color, $text-color: #ffffff) {
+  background: $color;
+  color: $text-color;
+  border: none;
+  border-radius: $radius-sm;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  &:hover {
+    filter: brightness(0.92);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: none;
+    transform: none;
+  }
+}
+
+// Mixin para tarjetas elevadas con hover (Semana 11 - Slide 21)
+@mixin tarjeta-base {
+  background: $card-bg;
+  border: 1px solid $border-color;
+  border-radius: $radius;
+  padding: $space;
+  box-shadow: $shadow-sm;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-lg;
+  }
+}
+
+// Mixins de Responsive (Semana 11 - Slide 24: Escritorio -> Tablet -> Móvil)
+@mixin tablet {
+  @media (max-width: 992px) {
+    @content;
+  }
+}
+
+@mixin mobile {
+  @media (max-width: 600px) {
+    @content;
+  }
+}

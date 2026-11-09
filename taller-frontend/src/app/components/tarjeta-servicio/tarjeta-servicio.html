@@ -1,0 +1,28 @@
+<article class="tarjeta" [class.tarjeta--agotado]="!servicio().disponible">
+  <div class="tarjeta__cabecera">
+    <span class="tarjeta__icono">{{ servicio().icono }}</span>
+    <span class="tarjeta__categoria">{{ servicio().categoria }}</span>
+  </div>
+
+  <div class="tarjeta__cuerpo">
+    <h3 class="tarjeta__titulo">{{ servicio().nombre }}</h3>
+    <p class="tarjeta__descripcion">{{ servicio().descripcion }}</p>
+  </div>
+
+  <div class="tarjeta__pie">
+    <div class="tarjeta__precio-bloque">
+      <span class="tarjeta__precio-etiqueta">Precio Base</span>
+      <span class="tarjeta__precio">S/ {{ servicio().precioBase.toFixed(2) }}</span>
+    </div>
+
+    @if (servicio().disponible) {
+      <button class="tarjeta__boton tarjeta__boton--disponible" (click)="onSolicitar()">
+        <span>+ Solicitar</span>
+      </button>
+    } @else {
+      <button class="tarjeta__boton tarjeta__boton--agotado" disabled>
+        <span>No Disponible</span>
+      </button>
+    }
+  </div>
+</article>

@@ -1,0 +1,67 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+.catalogo {
+  padding: 2.5rem 1.5rem 4rem;
+
+  &__contenedor {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  &__intro {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid $border-color;
+    gap: 1rem;
+
+    @include mobile {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  &__titulo {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: $secondary;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.25rem;
+  }
+
+  &__subtitulo {
+    font-size: 0.95rem;
+    color: $text-muted;
+  }
+
+  &__badge {
+    background: #ffffff;
+    border: 1px solid $border-color;
+    color: $secondary;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  // Cuadrícula Responsive: 3/4 columnas escritorio -> 2 columnas tablet -> 1 columna móvil (Semana 11 - Slide 24)
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+
+    @include tablet {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+    }
+
+    @include mobile {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
+}

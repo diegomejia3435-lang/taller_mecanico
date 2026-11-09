@@ -1,0 +1,96 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.encabezado {
+  background: $secondary;
+  color: #ffffff;
+  padding: 1.25rem 2rem;
+  box-shadow: $shadow-md;
+  border-bottom: 3px solid $primary;
+
+  &__contenedor {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+
+    @include mobile {
+      flex-direction: column;
+      text-align: center;
+      gap: 1rem;
+    }
+  }
+
+  &__marca {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    @include mobile {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+
+  &__icono {
+    font-size: 2.25rem;
+    background: rgba(255, 255, 255, 0.1);
+    width: 52px;
+    height: 52px;
+    border-radius: $radius-sm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__titulo {
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    margin-bottom: 0.2rem;
+  }
+
+  &__subtitulo {
+    font-size: 0.85rem;
+    color: $text-muted;
+    font-weight: 400;
+  }
+
+  &__acciones {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    @include mobile {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  &__contador {
+    background: rgba(232, 93, 38, 0.15);
+    border: 1px solid rgba(232, 93, 38, 0.4);
+    color: #ffffff;
+    padding: 0.6rem 1.1rem;
+    border-radius: 9999px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    strong {
+      color: $primary;
+      font-size: 1.1rem;
+    }
+  }
+
+  &__btn-limpiar {
+    @include boton($danger);
+    padding: 0.5rem 0.9rem;
+    font-size: 0.8rem;
+    border-radius: 9999px;
+  }
+}
