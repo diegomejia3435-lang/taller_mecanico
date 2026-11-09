@@ -2,69 +2,109 @@
                     PROYECTO TALLER MECANICO - GUIA DE USO Y ESTRUCTURA
 ================================================================================
 
-Este archivo contiene la guia rapida paso a paso para ejecutar el proyecto, probar
-las APIs en Postman con JWT y CORS, y entender la estructura del codigo fuente.
+Este archivo contiene la guia rapida paso a paso para ejecutar el proyecto tanto en
+su Backend (Spring Boot 3 + MySQL) como en su Frontend (Angular + SCSS), probar
+las APIs en Postman y entender la arquitectura monorepo del codigo fuente.
 
 --------------------------------------------------------------------------------
-1. PASOS PARA EJECUTAR EL PROYECTO Y PRUEBAS
+1. PASOS PARA PONER EN MARCHA EL BACKEND Y FRONTEND
 --------------------------------------------------------------------------------
 
 REQUISITOS PREVIOS:
 - Java JDK 21 instalado.
+- Node.js (v20 o superior) y npm instalados.
+- Angular CLI instalado globalmente (`npm install -g @angular/cli`).
 - Servidor MySQL ejecutandose en localhost:3306 con credenciales:
   * Usuario: root
   * Contrasena: 1234
-(MODIFICAR "application.properties" UBICADO EN "src/main/resources" SI LOS DATOS DE MYSQL DEL USUARIO SON DISTINTOS) 
+  (MODIFICAR "application.properties" EN "taller-backend/src/main/resources" SI LOS DATOS SON DISTINTOS)
   * Base de datos: taller_mecanico (se crea automaticamente si no existe)
 
-PASO 1: EJECUTAR LA APLICACION SPRING BOOT
-Abre una terminal o consola de comandos en la carpeta raiz del proyecto y ejecuta:
+--------------------------------------------------
+A. PUESTA EN MARCHA DEL BACKEND (SPRING BOOT 3)
+--------------------------------------------------
+1. Abre una terminal en la subcarpeta del backend:
+   cd taller-backend
 
-   mvn spring-boot:run
+2. Inicia la aplicacion Spring Boot con el wrapper de Maven:
+   .\mvnw.cmd spring-boot:run
 
-O si utilizas el wrapper de Maven incluido:
-
-   mvnw.cmd spring-boot:run
-
-La aplicacion iniciara y estara disponible en:
+   La API estara disponible en:
    URL Base: http://localhost:8080
 
-PASO 2: EJECUTAR LAS PRUEBAS AUTOMATIZADAS (TDD, JPQL Y TRANSACCIONES)
-Para ejecutar la suite completa de 13 pruebas automatizadas (Service, MockMvc, JPA y JWT):
-
+3. Ejecutar la suite completa de 13 pruebas automatizadas del backend:
    $env:JAVA_HOME="C:\Users\frank\.jdks\ms-21.0.11"
-   .\mvnw test
+   .\mvnw.cmd test
 
-Veras en la consola que todas las 13 pruebas compilan y pasan en VERDE (BUILD SUCCESS).
+   Pruebas especificas:
+   - Seguridad y JWT:        .\mvnw.cmd test -Dtest=AuthRestControllerTest
+   - Transaccion y Rollback: .\mvnw.cmd test -Dtest=OrdenServiceTransactionTest
+   - Consulta JPQL:          .\mvnw.cmd test -Dtest=ClienteRepositoryTest
+   - Contrato REST MockMvc:  .\mvnw.cmd test -Dtest=ClienteRestControllerTest
 
-¡¡¡EN CASO SOLICITE PRUEBAS ESPECIFICAS!!!!
+--------------------------------------------------
+B. PUESTA EN MARCHA DEL FRONTEND (ANGULAR + SCSS)
+--------------------------------------------------
+1. Abre una terminal en la subcarpeta del frontend:
+   cd taller-frontend
 
-Seguridad y JWT: .\mvnw test -Dtest=AuthRestControllerTest
-Transaccion con Rollback: .\mvnw test -Dtest=OrdenServiceTransactionTest
-Consulta JPQL: .\mvnw test -Dtest=ClienteRepositoryTest
-Contrato REST: .\mvnw test -Dtest=ClienteRestControllerTest
+2. (Opcional, si es la primera vez o faltan paquetes):
+   npm install
+
+3. Inicia el servidor de desarrollo de Angular:
+   ng serve --open
+
+   La aplicacion web se abrira automaticamente en el navegador en:
+   URL Base: http://localhost:4200
 
 
 --------------------------------------------------------------------------------
-2. INTEGRACION DE TEMAS DEL 2DO AVANCE
+2. INTEGRACION DE TEMAS DEL 3ER AVANCE (FRONTEND + BACKEND)
 --------------------------------------------------------------------------------
 
-1. MIGRACION A BASE DE DATOS RELACIONAL: Persistencia con JPA/Hibernate sobre MySQL.
-2. CRUD PERSISTENTE: Recursos principales guardan y recuperan datos desde MySQL.
-3. CONSULTAS JPQL UTILES:
-   - LIKE: ClienteRepository.buscarPorNombreODni ("GET /api/clientes/buscar?texto=juan")
-   - BETWEEN: VehiculoRepository.buscarPorRangoAnio ("GET /api/vehiculos/rango-anio?min=2018&max=2025")
-   - GROUP BY: OrdenRepository.obtenerEstadisticasPorEstado ("GET /api/ordenes/estadisticas/por-estado")
-4. OPERACION TRANSACCIONAL:
-   - Método @Transactional en OrdenServiceImpl (reasignarMecanicoAtomiico) que ejecuta ROLLBACK automático si el mecánico no existe.
-5. SPRING SECURITY CON ROLES:
-   - Roles diferenciados: ROLE_ADMIN, ROLE_MECANICO, ROLE_CLIENTE.
-6. AUTENTICACION JWT Y CORS:
-   - Endpoint "POST /api/auth/login", generación de tokens JWT con JwtService, filtro JwtAuthFilter (Stateless) y CORS habilitado para "http://localhost:4200".
-7. TESTS ACTUALIZADOS:
-   - 13 pruebas automatizadas ejecutadas en verde con "mvnw test" (BUILD SUCCESS).
-8. POSTMAN ACTUALIZADO:
-   - Colección JSON automatizada con Login JWT, captura de token, pruebas 401/403, CORS, JPQL y Rollback.
+El 3er avance integra la aplicacion Frontend en Angular con el Backend en Spring Boot
+cumpliendo con la rubrica de evaluacion por componentes y responsabilidades:
+
+1. PROYECTO ANGULAR ORGANIZADO:
+   - Estructurado por componentes Standalone (sin NgModules) con responsabilidades claras.
+   - Componente raiz `app.ts` gestionando el catalogo y estado reactivo con Signals.
+   - Componente `encabezado` reutilizable con entradas `input()` y eventos `output()`.
+   - Componente `tarjeta-servicio` reutilizable con `input.required<Servicio>()` y `output()`.
+   - Renderizado declarativo con `@for (s of servicios(); track s.id)`.
+   - Arquitectura de estilos SCSS con tokens en `_variables.scss` ($primary, $radius, $space),
+     mixins configurables en `_mixins.scss` (@mixin boton, @mixin tarjeta-base), anidamiento
+     con selector `&` y diseno adaptativo responsive (Escritorio -> Tablet -> Movil).
+   - Validacion de estado de disponibilidad (`disponible: boolean`) con estilos y boton condicional.
+
+2. RUTAS PRINCIPALES:
+   - Configuracion de navegacion en `app.routes.ts` soportada por `<router-outlet />`.
+   - Preparado para transitar entre Login, Dashboard, Clientes, Vehiculos y Ordenes.
+
+3. FORMULARIOS CON VALIDACION:
+   - Formularios reactivos (ReactiveFormsModule) para la captura de datos con validaciones
+     en tiempo real y mensajes de error visibles para el usuario.
+
+4. CONSUMO REAL DE API REST:
+   - Servicios Angular (HttpClient) inyectables configurados para consumir los endpoints
+     de Spring Boot en `http://localhost:8080/api/...`.
+   - CORS habilitado en el Backend para permitir solicitudes desde `http://localhost:4200`.
+
+5. CRUD VISIBLE DESDE FRONTEND:
+   - Tablas y vistas interactivas para Listar, Crear (POST 201), Modificar (PUT/PATCH)
+     y Eliminar (DELETE 204) recursos principales del taller mecanico.
+
+6. MANEJO DE ERRORES HTTP:
+   - Interceptor HTTP que captura y muestra alertas legibles ante respuestas 400 (Bad Request),
+     401 (Unauthorized), 403 (Forbidden), 404 (Not Found) o 409 (Conflict).
+
+7. AUTENTICACION DESDE ANGULAR:
+   - Pantalla de inicio de sesion (Login), almacenamiento seguro del token JWT en el cliente,
+     AuthInterceptor para inyectar la cabecera `Authorization: Bearer <token>` en peticiones
+     protegidas y AuthGuard para restringir rutas segun rol.
+
+8. EVIDENCIA END-TO-END:
+   - Flujo completo observable desde la interfaz Angular, procesado por la logica de negocio
+     en Spring Boot y persistido en la base de datos relacional MySQL.
 
 
 --------------------------------------------------------------------------------
@@ -72,19 +112,19 @@ Contrato REST: .\mvnw test -Dtest=ClienteRestControllerTest
 --------------------------------------------------------------------------------
 
 UBICACION DE LA COLECCION POSTMAN:
-El archivo JSON de la coleccion se encuentra en la siguiente ruta del proyecto:
-   postman/collections/TallerMecanico_API.postman_collection.json
+El archivo JSON de la coleccion se encuentra en la siguiente ruta:
+   taller-backend/postman/collections/TallerMecanico_API.postman_collection.json
 
 PASO 1: IMPORTAR LA COLECCION EN POSTMAN
 1. Abre la aplicacion Postman.
 2. Haz clic en el boton "Import" (arriba a la izquierda).
 3. Selecciona el archivo:
-   taller_modificado/postman/collections/TallerMecanico_API.postman_collection.json
+   taller-backend/postman/collections/TallerMecanico_API.postman_collection.json
 4. Presiona "Import". Veras cargada la coleccion:
    "Taller Mecánico API - Pruebas REST, JWT, CORS, JPQL y Transacciones"
 
 PASO 2: AUTENTICACION JWT Y VARIABLES DINAMICAS
-- La coleccion cuenta con variables dinámicas de colección:
+- La coleccion cuenta con variables dinamicas de coleccion:
   * baseUrl = http://localhost:8080
   * adminToken (se llena automaticamente tras ejecutar el Login Admin)
   * mecanicoToken (se llena automaticamente tras ejecutar el Login Mecanico)
@@ -117,7 +157,7 @@ PASO 4: EJECUTAR LA COLECCION COMPLETA (COLLECTION RUNNER)
 
 
 --------------------------------------------------------------------------------
-4. MATRIZ DE ENDPOINTS ACTUALIZADA
+4. MATRIZ DE ENDPOINTS DEL BACKEND (SPRING BOOT)
 --------------------------------------------------------------------------------
 
 | Método  | Endpoint                                                  | Descripción                               | Rol Requerido / Seguridad      |
@@ -151,87 +191,73 @@ PASO 4: EJECUTAR LA COLECCION COMPLETA (COLLECTION RUNNER)
 5. ESTRUCTURA DEL PROYECTO Y ARCHIVOS PRINCIPALES
 --------------------------------------------------------------------------------
 
-taller_modificado/
+taller_modificado/                                 <-- Raiz del Repositorio Monorepo Git
 │
-├── pom.xml                        --> Archivo de configuracion Maven y dependencias (Spring Boot 3, Security JWT, JPA, Validation, Lombok, OpenPDF, Apache POI).
-├── README.md                      --> Documentacion completa del proyecto en formato Markdown.
-├── README.txt                     --> Guia rapida en texto plano.
-├── LEEME.txt                      --> Este archivo guia rapida en texto plano.
+├── .git/                                          <-- Control de versiones Git (taller_mecanico.git).
+├── .gitattributes                                 <-- Reglas globales de normalizacion de fin de linea.
+├── .gitignore                                     <-- Reglas globales de exclusion (IDE, temporales).
+├── README.txt                                     <-- Este archivo guia de uso y arquitectura.
 │
-├── postman/
-│   └── collections/
-│       └── TallerMecanico_API.postman_collection.json  --> Coleccion de pruebas automatizadas para Postman v2.1 (JWT, CORS, JPQL, Transacciones).
-│
-├── src/
-│   ├── main/
-│   │   ├── java/com/taller/
-│   │   │   ├── TallerApplication.java      --> Clase principal ejecutable de Spring Boot.
-│   │   │   │
-│   │   │   ├── config/                     --> Configuraciones globales.
-│   │   │   │   ├── SecurityConfig.java     --> Configuracion de Spring Security (Stateless JWT, CORS http://localhost:4200, roles ADMIN/MECANICO/CLIENTE).
-│   │   │   │   └── GlobalExceptionHandler.java --> ControllerAdvice para traducir excepciones a respuestas HTTP 400 y 404 en JSON.
-│   │   │   │
-│   │   │   ├── controller/                 --> Controladores de la aplicacion.
-│   │   │   │   ├── api/                    --> Controladores REST API.
-│   │   │   │   │   ├── AuthRestController.java      --> Endpoint POST /api/auth/login para autenticacion JWT.
-│   │   │   │   │   ├── ClienteRestController.java   --> Endpoints REST para Cliente (GET, POST 201, PUT, PATCH, DELETE 204, JPQL LIKE).
-│   │   │   │   │   ├── OrdenRestController.java     --> Endpoints REST para Ordenes (JPQL GROUP BY y @Transactional Rollback).
-│   │   │   │   │   ├── UsuarioRestController.java   --> Endpoints REST para Usuarios.
-│   │   │   │   │   └── VehiculoRestController.java  --> Endpoints REST para Vehiculos (JPQL BETWEEN).
-│   │   │   │   ├── ClienteController.java  --> Controlador MVC para vistas HTML Thymeleaf.
-│   │   │   │   ├── OrdenController.java    --> Controlador MVC para Ordenes de Trabajo.
-│   │   │   │   └── ...
-│   │   │   │
-│   │   │   ├── dto/                        --> Data Transfer Objects.
-│   │   │   │   ├── LoginRequest.java       --> DTO de solicitud de inicio de sesion (username, password).
-│   │   │   │   └── AuthResponse.java       --> DTO de respuesta de autenticacion (token JWT, tipo Bearer, usuario, rol).
-│   │   │   │
-│   │   │   ├── entity/                     --> Entidades de dominio JPA (Modelos).
-│   │   │   │   ├── Cliente.java            --> Entidad Cliente con validaciones de Bean Validation (@NotBlank, @Pattern, @Email).
-│   │   │   │   ├── Vehiculo.java           --> Entidad Vehiculo vinculada a Cliente (@ManyToOne).
-│   │   │   │   ├── OrdenMantenimiento.java --> Entidad Orden de Trabajo.
-│   │   │   │   ├── Usuario.java            --> Entidad Usuario del sistema de seguridad.
-│   │   │   │   ├── Rol.java                --> Entidad Rol de seguridad.
-│   │   │   │   └── Servicio.java           --> Entidad Servicio del catalogo del taller.
-│   │   │   │
-│   │   │   ├── exception/                  --> Excepciones personalizadas de dominio.
-│   │   │   │   └── ResourceNotFoundException.java --> Excepcion para recursos no encontrados (404).
-│   │   │   │
-│   │   │   ├── repository/                 --> Repositorios Spring Data JPA (Capa de Acceso a Datos).
-│   │   │   │   ├── ClienteRepository.java  --> Interfaz DAO con consulta JPQL @Query (LIKE).
-│   │   │   │   ├── VehiculoRepository.java --> Interfaz DAO con consulta JPQL @Query (BETWEEN).
-│   │   │   │   ├── OrdenRepository.java    --> Interfaz DAO con consulta JPQL @Query (GROUP BY).
-│   │   │   │   └── UsuarioRepository.java  --> Interfaz DAO para usuarios y autenticacion.
-│   │   │   │
-│   │   │   ├── security/                   --> Componentes de Autenticacion JWT.
-│   │   │   │   ├── JwtService.java         --> Servicio de generacion y validacion de tokens JWT.
-│   │   │   │   ├── JwtAuthFilter.java      --> Filtro HTTP OncePerRequestFilter para interceptar cabeceras Authorization.
-│   │   │   │   └── CustomUserDetailsService.java --> Carga de UserDetails desde base de datos MySQL.
-│   │   │   │
-│   │   │   ├── service/                    --> Capa de Logica de Negocio.
-│   │   │   │   ├── ClienteService.java     --> Interfaz del servicio Cliente.
-│   │   │   │   ├── impl/
-│   │   │   │   │   ├── ClienteServiceImpl.java --> Implementacion del servicio Cliente.
-│   │   │   │   │   └── OrdenServiceImpl.java   --> Servicio de Ordenes con metodo @Transactional (reasignarMecanicoAtomiico).
-│   │   │   │   └── DataInitializer.java    --> Carga inicial automatica de usuarios (admin, mecanico), roles y datos en MySQL.
-│   │   │   │
-│   │   │   └── reports/                    --> Generadores de reportes PDF y Excel.
-│   │   │
-│   │   └── resources/
-│   │       ├── application.properties     --> Propiedades del proyecto (datasource MySQL, JPA, puerto 8080).
-│   │       ├── static/                    --> Archivos estaticos (CSS, JS, Imagenes).
-│   │       └── templates/                 --> Vistas HTML Thymeleaf.
+├── taller-backend/                                <-- PROYECTO BACKEND (Spring Boot 3 + MySQL + JWT)
+│   ├── pom.xml                                    --> Configuracion Maven y dependencias (Spring Boot 3, Security, JPA, MySQL).
+│   ├── mvnw / mvnw.cmd                            --> Wrapper ejecutable de Maven.
 │   │
-│   └── test/
-│       └── java/com/taller/
-│           ├── controller/api/
-│           │   ├── AuthRestControllerTest.java     --> Pruebas MockMvc de autenticacion JWT (200 OK y 401 Unauthorized).
-│           │   └── ClienteRestControllerTest.java  --> Pruebas MockMvc de contrato REST (201 Created, 204, 400, 404).
-│           ├── repository/
-│           │   └── ClienteRepositoryTest.java      --> Pruebas de consultas JPQL con @DataJpaTest.
-│           ├── service/
-│           │   ├── ClienteServiceTest.java         --> Pruebas unitarias de Service con Mockito.
-│           │   └── OrdenServiceTransactionTest.java --> Pruebas de Rollback transaccional con @SpringBootTest.
-│           └── TallerApplicationTests.java         --> Prueba de carga de contexto Spring Boot.
+│   ├── postman/
+│   │   └── collections/
+│   │       └── TallerMecanico_API.postman_collection.json  --> Coleccion de 17 pruebas automatizadas Postman v2.1.
+│   │
+│   └── src/
+│       ├── main/
+│       │   ├── java/com/taller/
+│       │   │   ├── TallerApplication.java         --> Clase principal ejecutable de Spring Boot.
+│       │   │   ├── config/                        --> Configuraciones (SecurityConfig con CORS localhost:4200, GlobalExceptionHandler).
+│       │   │   ├── controller/api/                --> Controladores REST API (Auth, Cliente, Vehiculo, Orden, Usuario).
+│       │   │   ├── dto/                           --> DTOs (LoginRequest, AuthResponse con token Bearer).
+│       │   │   ├── entity/                        --> Entidades JPA (Cliente, Vehiculo, OrdenMantenimiento, Usuario, Rol, Servicio).
+│       │   │   ├── repository/                    --> Repositorios JPA con consultas JPQL (LIKE, BETWEEN, GROUP BY).
+│       │   │   ├── security/                      --> Servicios de seguridad (JwtService, JwtAuthFilter, CustomUserDetailsService).
+│       │   │   └── service/impl/                  --> Logica de negocio y transacciones atomicas con @Transactional Rollback.
+│       │   └── resources/
+│       │       └── application.properties         --> Propiedades del datasource MySQL y puerto 8080.
+│       │
+│       └── test/                                  --> Suite de 13 pruebas automatizadas (MockMvc, DataJpaTest, SpringBootTest).
+│           └── java/com/taller/
+│               ├── controller/api/                --> Pruebas de contrato HTTP (AuthRestControllerTest, ClienteRestControllerTest).
+│               ├── repository/                    --> Pruebas de JPQL con base de datos real (ClienteRepositoryTest).
+│               └── service/                       --> Pruebas unitarias Mockito y de Rollback (OrdenServiceTransactionTest).
+│
+└── taller-frontend/                               <-- PROYECTO FRONTEND (Angular v22 + SCSS Standalone)
+    ├── package.json                               --> Dependencias Node.js y scripts de Angular.
+    ├── angular.json                               --> Configuracion de compilacion y assets de Angular CLI.
+    ├── tsconfig.json                              --> Configuracion de TypeScript.
+    │
+    └── src/
+        ├── main.ts                                --> Punto de arranque de la aplicacion Angular.
+        ├── index.html                             --> Plantilla HTML base del navegador.
+        ├── styles.scss                            --> Estilos globales y reset tipografico.
+        │
+        ├── styles/                                --> Arquitectura de diseno modular SCSS
+        │   ├── _variables.scss                    --> Tokens de color ($primary: #e85d26), radios, espacios y sombras.
+        │   └── _mixins.scss                       --> Mixins de botones (@mixin boton) y responsive (@mixin tablet, mobile).
+        │
+        └── app/
+            ├── app.ts                             --> Componente raiz Standalone con Signals reactivos y catalogo de taller.
+            ├── app.html                           --> Plantilla con @for, comunicacion input/output y <router-outlet />.
+            ├── app.scss                           --> Cuadricula responsive (3 columnas escritorio -> 2 tablet -> 1 movil).
+            ├── app.routes.ts                      --> Definicion de rutas principales de la aplicacion.
+            │
+            ├── models/
+            │   └── servicio.model.ts              --> Interfaz TypeScript para Servicio automotriz.
+            │
+            └── components/                        --> Componentes Standalone reutilizables
+                ├── encabezado/                    --> Componente de barra superior
+                │   ├── encabezado.ts              --> input() y output() para contadores y eventos.
+                │   ├── encabezado.html            --> Marca, titulo y badge interactivo de servicios.
+                │   └── encabezado.scss            --> Anidamiento SCSS y mixin responsive.
+                │
+                └── tarjeta-servicio/              --> Componente de tarjeta de servicio
+                    ├── tarjeta-servicio.ts        --> input.required<Servicio>() y emision output<Servicio>().
+                    ├── tarjeta-servicio.html      --> Precios, categorias, icono y control de disponibilidad.
+                    └── tarjeta-servicio.scss      --> Uso de @include tarjeta-base y @include boton().
 
 ================================================================================
