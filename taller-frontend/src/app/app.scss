@@ -1,67 +1,110 @@
 @use '../styles/variables' as *;
 @use '../styles/mixins' as *;
 
-.catalogo {
-  padding: 2.5rem 1.5rem 4rem;
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: $background;
+
+  &__contenido {
+    flex: 1 0 auto;
+    width: 100%;
+  }
+}
+
+.app-footer {
+  background: $secondary;
+  color: #f8fafc;
+  padding: 3rem 1.5rem 1.5rem;
+  margin-top: auto;
+  border-top: 3px solid $primary;
 
   &__contenedor {
     max-width: 1200px;
     margin: 0 auto;
-  }
-
-  &__intro {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid $border-color;
-    gap: 1rem;
-
-    @include mobile {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-  }
-
-  &__titulo {
-    font-size: 1.75rem;
-    font-weight: 800;
-    color: $secondary;
-    letter-spacing: -0.02em;
-    margin-bottom: 0.25rem;
-  }
-
-  &__subtitulo {
-    font-size: 0.95rem;
-    color: $text-muted;
-  }
-
-  &__badge {
-    background: #ffffff;
-    border: 1px solid $border-color;
-    color: $secondary;
-    padding: 0.5rem 1rem;
-    border-radius: 9999px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-
-  // Cuadrícula Responsive: 3/4 columnas escritorio -> 2 columnas tablet -> 1 columna móvil (Semana 11 - Slide 24)
-  &__grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
+    grid-template-columns: 2fr 1fr 1.2fr;
+    gap: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
     @include tablet {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1.25rem;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
     }
 
     @include mobile {
       grid-template-columns: 1fr;
-      gap: 1rem;
+      gap: 1.75rem;
     }
+  }
+
+  &__col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  &__marca {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    color: #ffffff;
+  }
+
+  &__icono {
+    font-size: 1.4rem;
+  }
+
+  &__descripcion {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: #94a3b8;
+  }
+
+  &__titulo {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+  }
+
+  &__links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    li a {
+      color: #cbd5e1;
+      text-decoration: none;
+      font-size: 0.88rem;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: $primary;
+        padding-left: 4px;
+      }
+    }
+  }
+
+  &__info {
+    font-size: 0.88rem;
+    color: #cbd5e1;
+    margin: 0;
+  }
+
+  &__copy {
+    max-width: 1200px;
+    margin: 1.5rem auto 0;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #64748b;
   }
 }

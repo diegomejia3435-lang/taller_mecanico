@@ -1,0 +1,70 @@
+<section class="servicios">
+  <!-- Cabecera de la Página -->
+  <div class="servicios__cabecera">
+    <div>
+      <h1 class="servicios__titulo">Catálogo Completo de Servicios</h1>
+      <p class="servicios__subtitulo">
+        Explore y filtre los servicios del taller automotriz con navegación declarativa y parámetros de búsqueda
+      </p>
+    </div>
+    <div class="servicios__badge-total">
+      <span>Mostrando {{ filtrados().length }} de {{ tallerService.servicios().length }} servicios</span>
+    </div>
+  </div>
+
+  <!-- Barra de Filtros y Búsqueda por Query Param (Semana 12 - Slide 15) -->
+  <div class="servicios__filtros">
+    <div class="servicios__buscador">
+      <span class="servicios__buscador-icono">🔍</span>
+      <input
+        type="text"
+        [value]="busqueda()"
+        (input)="onBuscar($any($event.target).value)"
+        placeholder="Buscar por nombre, categoría o descripción..."
+        class="servicios__input"
+      />
+      @if (busqueda()) {
+        <button type="button" class="servicios__btn-limpiar-busqueda" (click)="onBuscar('')">
+          ✕
+        </button>
+      }
+    </div>
+
+    <!-- Filtro por Categorías -->
+    <div class="servicios__categorias">
+      @for (cat of categorias; track cat) {
+        <button
+          type="button"
+          class="servicios__chip"
+          [class.activo]="categoriaSeleccionada() === cat"
+          (click)="onSeleccionarCategoria(cat)"
+        >
+          {{ cat }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Cuadrícula con Tarjetas y @for (Semana 12 - Slide 18, 21, 22, 23) -->
+  @if (filtrados().length > 0) {
+    <div class="servicios__grid">
+      @for (servicio of filtrados(); track servicio.id) {
+        <app-tarjeta-servicio
+          [servicio]="servicio"
+          [esFavorito]="favoritosService.esFavorito(servicio.id)"
+          (verDetalle)="irDetalle($event)"
+          (alternarFavorito)="favoritosService.alternar($event)"
+        />
+      }
+    </div>
+  } @else {
+    <div class="servicios__vacio">
+      <span class="servicios__vacio-icono">🔍</span>
+      <h3>No se encontraron servicios</h3>
+      <p>No existen coincidencias para el criterio de búsqueda "{{ busqueda() }}"</p>
+      <button type="button" class="servicios__btn-restablecer" (click)="onBuscar('')">
+        Ver todos los servicios
+      </button>
+    </div>
+  }
+</section>

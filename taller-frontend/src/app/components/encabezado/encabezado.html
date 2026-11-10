@@ -1,23 +1,45 @@
 <header class="encabezado">
   <div class="encabezado__contenedor">
-    <div class="encabezado__marca">
+    <!-- Marca del Taller Automotriz -->
+    <a routerLink="/inicio" class="encabezado__marca">
       <div class="encabezado__icono">🚗</div>
       <div>
-        <h1 class="encabezado__titulo">{{ titulo() }}</h1>
-        <p class="encabezado__subtitulo">{{ subtitulo() }}</p>
+        <h1 class="encabezado__titulo">Taller Mecánico</h1>
+        <p class="encabezado__subtitulo">Sistema de Servicios & Mantenimiento</p>
       </div>
-    </div>
+    </a>
 
-    <div class="encabezado__acciones">
-      <div class="encabezado__contador">
-        <span class="encabezado__contador-icono">📋</span>
-        <span>Servicios Solicitados: <strong>{{ contador() }}</strong></span>
-      </div>
-      @if (contador() > 0) {
-        <button class="encabezado__btn-limpiar" (click)="onLimpiar()" title="Reiniciar selección">
-          Reiniciar
-        </button>
-      }
-    </div>
+    <!-- Barra de Navegación SPA con routerLink (Semana 12 - Slide 12) -->
+    <nav class="encabezado__nav">
+      <a
+        routerLink="/inicio"
+        routerLinkActive="activo"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="encabezado__enlace"
+      >
+        <span class="encabezado__enlace-icono">🏠</span>
+        <span>Inicio</span>
+      </a>
+
+      <a
+        routerLink="/servicios"
+        routerLinkActive="activo"
+        class="encabezado__enlace"
+      >
+        <span class="encabezado__enlace-icono">🔧</span>
+        <span>Servicios</span>
+      </a>
+
+      <!-- Acceso a Favoritos con Contador Reactivo (Semana 12 - Slide 24 y 25) -->
+      <a
+        routerLink="/favoritos"
+        routerLinkActive="activo"
+        class="encabezado__enlace encabezado__enlace--favoritos"
+      >
+        <span class="encabezado__enlace-icono">⭐</span>
+        <span>Favoritos</span>
+        <span class="encabezado__badge">{{ favoritosService.cantidad() }}</span>
+      </a>
+    </nav>
   </div>
 </header>

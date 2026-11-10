@@ -1,12 +1,27 @@
 <article class="tarjeta" [class.tarjeta--agotado]="!servicio().disponible">
   <div class="tarjeta__cabecera">
     <span class="tarjeta__icono">{{ servicio().icono }}</span>
-    <span class="tarjeta__categoria">{{ servicio().categoria }}</span>
+    <div class="tarjeta__meta">
+      <span class="tarjeta__categoria">{{ servicio().categoria }}</span>
+      <button
+        type="button"
+        class="tarjeta__btn-favorito"
+        [class.activo]="esFavorito()"
+        (click)="onAlternarFavorito()"
+        [title]="esFavorito() ? 'Quitar de favoritos' : 'Guardar en favoritos'"
+      >
+        {{ esFavorito() ? '★' : '☆' }}
+      </button>
+    </div>
   </div>
 
   <div class="tarjeta__cuerpo">
     <h3 class="tarjeta__titulo">{{ servicio().nombre }}</h3>
     <p class="tarjeta__descripcion">{{ servicio().descripcion }}</p>
+    <div class="tarjeta__detalles-rapidos">
+      <span class="tarjeta__tiempo">⏱ {{ servicio().tiempoEstimado }}</span>
+      <span class="tarjeta__garantia">🛡 {{ servicio().garantia }}</span>
+    </div>
   </div>
 
   <div class="tarjeta__pie">
@@ -15,14 +30,14 @@
       <span class="tarjeta__precio">S/ {{ servicio().precioBase.toFixed(2) }}</span>
     </div>
 
-    @if (servicio().disponible) {
-      <button class="tarjeta__boton tarjeta__boton--disponible" (click)="onSolicitar()">
-        <span>+ Solicitar</span>
+    <div class="tarjeta__acciones">
+      <button
+        type="button"
+        class="tarjeta__boton tarjeta__boton--detalle"
+        (click)="onVerDetalle()"
+      >
+        Ver Detalle
       </button>
-    } @else {
-      <button class="tarjeta__boton tarjeta__boton--agotado" disabled>
-        <span>No Disponible</span>
-      </button>
-    }
+    </div>
   </div>
 </article>

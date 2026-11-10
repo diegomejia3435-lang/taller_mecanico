@@ -1,0 +1,61 @@
+<section class="inicio">
+  <!-- Hero Section -->
+  <div class="inicio__hero">
+    <div class="inicio__hero-contenido">
+      <span class="inicio__etiqueta">🔧 Taller Automotriz Profesional</span>
+      <h1 class="inicio__titulo">Mantenimiento y Reparación de Confianza</h1>
+      <p class="inicio__descripcion">
+        Especialistas en mecánica preventiva, correctiva y diagnóstico computarizado con tecnología de última generación y repuestos garantizados.
+      </p>
+      <div class="inicio__acciones">
+        <a routerLink="/servicios" class="inicio__btn-primario">
+          Explorar Servicios
+        </a>
+        <a routerLink="/favoritos" class="inicio__btn-secundario">
+          Mis Favoritos ({{ favoritosService.cantidad() }})
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Métricas Rápidas -->
+  <div class="inicio__metricas">
+    <div class="inicio__metrica-card">
+      <div class="inicio__metrica-num">100%</div>
+      <div class="inicio__metrica-texto">Técnicos Certificados</div>
+    </div>
+    <div class="inicio__metrica-card">
+      <div class="inicio__metrica-num">6 Meses</div>
+      <div class="inicio__metrica-texto">Garantía por Servicio</div>
+    </div>
+    <div class="inicio__metrica-card">
+      <div class="inicio__metrica-num">1h 15m</div>
+      <div class="inicio__metrica-texto">Tiempo Promedio</div>
+    </div>
+    <div class="inicio__metrica-card">
+      <div class="inicio__metrica-num">OBD-II</div>
+      <div class="inicio__metrica-texto">Escaneo Multimarca</div>
+    </div>
+  </div>
+
+  <!-- Servicios Destacados -->
+  <div class="inicio__seccion">
+    <div class="inicio__seccion-cabecera">
+      <div>
+        <h2 class="inicio__seccion-titulo">Servicios Más Solicitados</h2>
+        <p class="inicio__seccion-subtitulo">Consulte los servicios automotrices más demandados por nuestros clientes</p>
+      </div>
+      <a routerLink="/servicios" class="inicio__enlace-ver-mas">Ver todos &rarr;</a>
+    </div>
+
+    <div class="inicio__grid">
+      @for (servicio of destacados; track servicio.id) {
+        <app-tarjeta-servicio
+          [servicio]="servicio"
+          [esFavorito]="favoritosService.esFavorito(servicio.id)"
+          (alternarFavorito)="favoritosService.alternar($event)"
+        />
+      }
+    </div>
+  </div>
+</section>

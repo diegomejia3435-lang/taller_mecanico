@@ -7,8 +7,8 @@
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
+  position: relative;
 
-  // Anidamiento SCSS (Semana 11 - Slide 21)
   &__cabecera {
     display: flex;
     justify-content: space-between;
@@ -27,8 +27,14 @@
     justify-content: center;
   }
 
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
   &__categoria {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     text-transform: uppercase;
     font-weight: 700;
     letter-spacing: 0.05em;
@@ -36,6 +42,27 @@
     background: rgba(232, 93, 38, 0.08);
     padding: 0.25rem 0.6rem;
     border-radius: 9999px;
+  }
+
+  &__btn-favorito {
+    background: none;
+    border: none;
+    font-size: 1.35rem;
+    color: #94a3b8;
+    cursor: pointer;
+    line-height: 1;
+    transition: transform 0.15s ease, color 0.15s ease;
+    padding: 0.2rem;
+
+    &:hover {
+      transform: scale(1.2);
+      color: #f59e0b;
+    }
+
+    &.activo {
+      color: #f59e0b;
+      transform: scale(1.1);
+    }
   }
 
   &__cuerpo {
@@ -47,14 +74,27 @@
     font-size: 1.15rem;
     font-weight: 700;
     color: $text-dark;
-    margin-bottom: 0.5rem;
-    line-height: 1.3;
+    margin-bottom: 0.45rem;
+    line-height: 1.35;
   }
 
   &__descripcion {
-    font-size: 0.875rem;
+    font-size: 0.85rem;
     color: $text-muted;
     line-height: 1.45;
+    margin-bottom: 0.75rem;
+  }
+
+  &__detalles-rapidos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: $secondary;
+    background: #f8fafc;
+    padding: 0.4rem 0.6rem;
+    border-radius: $radius-sm;
+    border: 1px solid #f1f5f9;
   }
 
   &__pie {
@@ -75,6 +115,7 @@
     font-size: 0.7rem;
     color: $text-muted;
     text-transform: uppercase;
+    font-weight: 600;
   }
 
   &__precio {
@@ -83,25 +124,17 @@
     color: $secondary;
   }
 
-  // Uso de mixins configurables (Semana 11 - Slide 22)
   &__boton {
-    &--disponible {
+    &--detalle {
       @include boton($primary);
-    }
-
-    &--agotado {
-      @include boton($text-muted);
+      padding: 0.55rem 1rem;
+      font-size: 0.85rem;
     }
   }
 
-  // Modificador de estado no disponible (Semana 11 - Slide 28 Reto B)
   &--agotado {
     opacity: 0.75;
-    background: #f1f5f9;
-
-    .tarjeta__titulo {
-      color: $text-muted;
-    }
+    background: #f8fafc;
 
     .tarjeta__icono {
       filter: grayscale(1);
