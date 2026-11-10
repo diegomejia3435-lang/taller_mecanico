@@ -1,0 +1,56 @@
+<div class="login-wrapper">
+  <div class="login-card">
+    <div class="login-card__header">
+      <div class="login-card__logo">🚗</div>
+      <h2 class="login-card__titulo">Taller Mecánico</h2>
+      <p class="login-card__subtitulo">Sistema de Gestión Vehicular & Órdenes</p>
+    </div>
+
+    @if (errorMensaje()) {
+      <div class="login-alerta">
+        <span>⚠️</span>
+        <span>{{ errorMensaje() }}</span>
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="ingresar()" class="login-form">
+      <div class="campo">
+        <label class="campo__label">Usuario / Identificador</label>
+        <input
+          type="text"
+          formControlName="username"
+          class="campo__input"
+          placeholder="Ej: admin, carlos, 77777777"
+        />
+        @if (form.get('username')?.invalid && form.get('username')?.touched) {
+          <small class="campo__error">El usuario es requerido</small>
+        }
+      </div>
+
+      <div class="campo">
+        <label class="campo__label">Contraseña</label>
+        <input
+          type="password"
+          formControlName="password"
+          class="campo__input"
+          placeholder="••••••••"
+        />
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
+          <small class="campo__error">La contraseña es requerida</small>
+        }
+      </div>
+
+      <button type="submit" class="login-btn" [disabled]="form.invalid">
+        Ingresar al Sistema
+      </button>
+
+      <div class="login-pistas">
+        <p class="login-pistas__titulo">Usuarios de Demostración:</p>
+        <div class="login-pistas__tags">
+          <span class="pista-tag"><strong>Admin:</strong> admin / 1234</span>
+          <span class="pista-tag"><strong>Mecánico:</strong> carlos / 1234</span>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

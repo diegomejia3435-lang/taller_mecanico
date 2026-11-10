@@ -1,0 +1,374 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.modulo-ordenes {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  &__titulo {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: $secondary;
+    margin: 0 0 0.25rem;
+  }
+
+  &__breadcrumb {
+    font-size: 0.82rem;
+    color: $text-muted;
+
+    a {
+      color: $text-muted;
+      text-decoration: none;
+
+      &:hover {
+        color: $primary;
+      }
+    }
+
+    span {
+      color: $primary;
+      font-weight: 600;
+    }
+  }
+
+  &__btn-nuevo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: $primary;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 0.65rem 1.25rem;
+    border-radius: $radius-sm;
+    font-size: 0.88rem;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(232, 93, 38, 0.25);
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: $primary-dark;
+      transform: translateY(-2px);
+    }
+  }
+
+  &__filtros-card {
+    background: #ffffff;
+    border: 1px solid $border-color;
+    border-radius: $radius;
+    padding: 1rem 1.25rem;
+    box-shadow: $shadow-sm;
+  }
+
+  &__filtros-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  &__buscador {
+    flex: 1;
+    min-width: 250px;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    background: #f8fafc;
+    border: 1px solid $border-color;
+    border-radius: $radius-sm;
+    padding: 0.35rem 0.85rem;
+    transition: border-color 0.2s ease;
+
+    &:focus-within {
+      border-color: $primary;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(232, 93, 38, 0.15);
+    }
+  }
+
+  &__icono {
+    font-size: 0.95rem;
+    opacity: 0.6;
+  }
+
+  &__input {
+    border: none;
+    outline: none;
+    background: transparent;
+    width: 100%;
+    font-size: 0.9rem;
+    color: $text-dark;
+    padding: 0.4rem 0;
+  }
+
+  &__btn-limpiar {
+    background: none;
+    border: none;
+    color: $text-muted;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0.2rem;
+
+    &:hover {
+      color: $danger;
+    }
+  }
+
+  &__filtro-estado {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__filtro-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: $text-muted;
+  }
+
+  &__select {
+    background: #f8fafc;
+    border: 1px solid $border-color;
+    border-radius: $radius-sm;
+    padding: 0.45rem 0.85rem;
+    font-size: 0.85rem;
+    color: $text-dark;
+    outline: none;
+
+    &:focus {
+      border-color: $primary;
+    }
+  }
+
+  &__tabla-card {
+    background: #ffffff;
+    border: 1px solid $border-color;
+    border-radius: $radius;
+    box-shadow: $shadow-sm;
+    overflow: hidden;
+  }
+
+  &__tabla-cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid $border-color;
+  }
+
+  &__tabla-titulo {
+    font-size: 1rem;
+    font-weight: 700;
+    color: $secondary;
+    margin: 0;
+  }
+
+  &__tabla-conteo {
+    font-size: 0.8rem;
+    color: $text-muted;
+  }
+
+  &__tabla-responsive {
+    overflow-x: auto;
+  }
+
+  &__tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+
+    thead {
+      background: #f8fafc;
+      border-bottom: 1px solid $border-color;
+
+      th {
+        padding: 0.85rem 1.25rem;
+        text-align: left;
+        font-size: 0.76rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: $text-muted;
+        font-weight: 700;
+      }
+    }
+
+    tbody {
+      tr {
+        border-bottom: 1px solid #f1f5f9;
+        transition: background 0.15s ease;
+
+        &:hover {
+          background: #fafafa;
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+
+      td {
+        padding: 0.95rem 1.25rem;
+        vertical-align: middle;
+        color: $text-dark;
+      }
+    }
+  }
+}
+
+.orden-id {
+  color: $primary;
+  font-weight: 800;
+}
+
+.badge-placa {
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  color: #92400e;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 0.78rem;
+  margin-right: 0.4rem;
+}
+
+.vehiculo-nombre {
+  font-weight: 600;
+  color: $secondary;
+}
+
+.cliente-nombre {
+  color: $text-dark;
+  font-size: 0.85rem;
+}
+
+.mecanico-tag {
+  font-size: 0.82rem;
+  color: #475569;
+  background: #f1f5f9;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+}
+
+.fecha-ingreso {
+  font-size: 0.8rem;
+  color: $text-muted;
+}
+
+.badge-estado {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+
+  &--pendiente {
+    background: #faeeda;
+    color: #854f0b;
+  }
+
+  &--proceso {
+    background: #e6f1fb;
+    color: #185fa5;
+  }
+
+  &--terminado {
+    background: #eaf3de;
+    color: #3b6d11;
+  }
+}
+
+.diagnostico-texto {
+  font-size: 0.82rem;
+  color: $text-dark;
+  margin: 0 0 0.25rem;
+  max-width: 280px;
+}
+
+.monto-total {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: $primary;
+}
+
+.acciones-orden {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-estado {
+  border: none;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &--proceso {
+    background: #e6f1fb;
+    color: #185fa5;
+
+    &:hover {
+      background: #cce4f7;
+    }
+  }
+
+  &--terminado {
+    background: #eaf3de;
+    color: #3b6d11;
+
+    &:hover {
+      background: #d4ebd0;
+    }
+  }
+}
+
+.texto-completado {
+  font-size: 0.76rem;
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.btn-eliminar {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0.2rem;
+  opacity: 0.6;
+
+  &:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+.tabla-vacia {
+  text-align: center;
+  padding: 3rem 1.5rem !important;
+
+  &__icono {
+    font-size: 2.5rem;
+    opacity: 0.3;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  &__texto {
+    font-size: 0.9rem;
+    color: $text-muted;
+    margin: 0;
+  }
+}

@@ -1,0 +1,50 @@
+<section class="modulo-reportes">
+  <div class="modulo-reportes__header">
+    <div>
+      <h2 class="modulo-reportes__titulo">Reportes Estadísticos</h2>
+      <p class="modulo-reportes__subtitulo">Métricas de rendimiento e ingresos operativos del taller</p>
+    </div>
+  </div>
+
+  <div class="modulo-reportes__stats-grid">
+    <div class="stat-card">
+      <span class="stat-card__label">Ingresos del Mes</span>
+      <h3 class="stat-card__val stat-card__val--naranja">S/ 16,030.00</h3>
+      <small class="stat-card__sub">+14% vs mes anterior</small>
+    </div>
+    <div class="stat-card">
+      <span class="stat-card__label">Servicios Realizados</span>
+      <h3 class="stat-card__val stat-card__val--azul">124</h3>
+      <small class="stat-card__sub">Promedio: 4.8 por día</small>
+    </div>
+    <div class="stat-card">
+      <span class="stat-card__label">Tiempo Promedio Atención</span>
+      <h3 class="stat-card__val stat-card__val--verde">2.4 hrs</h3>
+      <small class="stat-card__sub">Eficiencia en bahías</small>
+    </div>
+  </div>
+
+  <div class="modulo-reportes__card">
+    <div class="modulo-reportes__cabecera">
+      <h3>Servicios con Mayor Demanda</h3>
+    </div>
+    <table class="modulo-reportes__tabla">
+      <thead>
+        <tr>
+          <th>Servicio Automotriz</th>
+          <th>Cantidad Atendida</th>
+          <th>Ingresos Generados</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (s of serviciosTop; track s.nombre) {
+          <tr>
+            <td><strong>🔧 {{ s.nombre }}</strong></td>
+            <td>{{ s.total }} servicios</td>
+            <td><strong>S/ {{ s.ingresos.toFixed(2) }}</strong></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

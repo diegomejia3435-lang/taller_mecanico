@@ -1,0 +1,61 @@
+<section class="modulo-mecanicos">
+  <div class="modulo-mecanicos__header">
+    <div>
+      <h2 class="modulo-mecanicos__titulo">Gestión de Mecánicos</h2>
+      <p class="modulo-mecanicos__subtitulo">Administración del personal técnico calificado del taller</p>
+    </div>
+  </div>
+
+  <div class="modulo-mecanicos__stats">
+    <div class="stat-card">
+      <span class="stat-card__label">Total Mecánicos</span>
+      <h3 class="stat-card__val">{{ mecanicos().length }}</h3>
+    </div>
+    <div class="stat-card">
+      <span class="stat-card__label">Activos en Taller</span>
+      <h3 class="stat-card__val stat-card__val--verde">3</h3>
+    </div>
+    <div class="stat-card">
+      <span class="stat-card__label">En Bahía / Ocupados</span>
+      <h3 class="stat-card__val stat-card__val--ambar">2</h3>
+    </div>
+  </div>
+
+  <div class="modulo-mecanicos__tabla-card">
+    <div class="modulo-mecanicos__tabla-cabecera">
+      <h3>Plantilla Técnica</h3>
+    </div>
+    <table class="modulo-mecanicos__tabla">
+      <thead>
+        <tr>
+          <th>N°</th>
+          <th>Nombre del Mecánico</th>
+          <th>Especialidad</th>
+          <th>Teléfono</th>
+          <th>Estado</th>
+          <th>Órdenes Asignadas</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (m of mecanicos(); track m.id; let i = $index) {
+          <tr>
+            <td>{{ i + 1 }}</td>
+            <td>
+              <strong>👨‍🔧 {{ m.nombre }}</strong>
+            </td>
+            <td>{{ m.especialidad }}</td>
+            <td>{{ m.telefono }}</td>
+            <td>
+              <span class="badge-estado" [class.badge-estado--activo]="m.estado === 'Activo'">
+                {{ m.estado }}
+              </span>
+            </td>
+            <td>
+              <strong>{{ m.ordenes }} órdenes</strong>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

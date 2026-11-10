@@ -1,0 +1,170 @@
+<section class="form-vehiculo">
+  <!-- CABECERA -->
+  <div class="form-vehiculo__header">
+    <div>
+      <h2 class="form-vehiculo__titulo">
+        {{ esEdicion ? 'Editar Vehículo' : 'Nuevo Vehículo' }}
+      </h2>
+      <p class="form-vehiculo__subtitulo">Registro técnico y asociación de flota en el taller</p>
+    </div>
+    <a routerLink="/vehiculos" class="form-vehiculo__btn-volver">
+      <span>←</span>
+      <span>Volver a Vehículos</span>
+    </a>
+  </div>
+
+  <!-- TARJETA DEL FORMULARIO -->
+  <div class="form-vehiculo__card">
+    <div class="form-vehiculo__card-cabecera">
+      <div class="form-vehiculo__icono-wrap">
+        <span>🚗</span>
+      </div>
+      <div>
+        <h3 class="form-vehiculo__card-titulo">Datos del vehículo y propietario</h3>
+        <small class="form-vehiculo__card-subtitulo">Ingrese los datos técnicos para aperturar órdenes de trabajo</small>
+      </div>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="guardar()" class="form-vehiculo__form">
+      <div class="form-vehiculo__grid">
+        <!-- PLACA -->
+        <div class="campo">
+          <label class="campo__label">
+            <span class="campo__icono">🏷️</span>
+            <span>Placa (Formato ABC-123) *</span>
+          </label>
+          <input
+            type="text"
+            formControlName="placa"
+            maxlength="7"
+            class="campo__input campo__input--uppercase"
+            [class.campo__input--error]="form.get('placa')?.invalid && form.get('placa')?.touched"
+            placeholder="Ej: ABC-123"
+          />
+          @if (form.get('placa')?.invalid && form.get('placa')?.touched) {
+            <div class="campo__error">
+              La placa debe tener el formato estándar peruano (Ej: ABC-123).
+            </div>
+          }
+        </div>
+
+        <!-- MARCA -->
+        <div class="campo">
+          <label class="campo__label">
+            <span class="campo__icono">🚘</span>
+            <span>Marca *</span>
+          </label>
+          <input
+            type="text"
+            formControlName="marca"
+            class="campo__input"
+            [class.campo__input--error]="form.get('marca')?.invalid && form.get('marca')?.touched"
+            placeholder="Ej: Toyota, Nissan, Hyundai"
+          />
+          @if (form.get('marca')?.invalid && form.get('marca')?.touched) {
+            <div class="campo__error">
+              La marca del vehículo es obligatoria.
+            </div>
+          }
+        </div>
+
+        <!-- MODELO -->
+        <div class="campo">
+          <label class="campo__label">
+            <span class="campo__icono">🏎️</span>
+            <span>Modelo *</span>
+          </label>
+          <input
+            type="text"
+            formControlName="modelo"
+            class="campo__input"
+            [class.campo__input--error]="form.get('modelo')?.invalid && form.get('modelo')?.touched"
+            placeholder="Ej: Corolla, Sentra, Tucson"
+          />
+          @if (form.get('modelo')?.invalid && form.get('modelo')?.touched) {
+            <div class="campo__error">
+              El modelo del vehículo es obligatorio.
+            </div>
+          }
+        </div>
+
+        <!-- AÑO DE FABRICACIÓN -->
+        <div class="campo">
+          <label class="campo__label">
+            <span class="campo__icono">📅</span>
+            <span>Año de Fabricación *</span>
+          </label>
+          <input
+            type="number"
+            formControlName="anio"
+            min="1980"
+            max="2027"
+            class="campo__input"
+            [class.campo__input--error]="form.get('anio')?.invalid && form.get('anio')?.touched"
+          />
+          @if (form.get('anio')?.invalid && form.get('anio')?.touched) {
+            <div class="campo__error">
+              Ingrese un año válido entre 1980 y 2027.
+            </div>
+          }
+        </div>
+
+        <!-- TIPO DE MOTOR -->
+        <div class="campo">
+          <label class="campo__label">
+            <span class="campo__icono">⚙️</span>
+            <span>Tipo de Combustible / Motor</span>
+          </label>
+          <select formControlName="tipoMotor" class="campo__input">
+            <option value="Gasolina">Gasolina</option>
+            <option value="Diésel">Diésel</option>
+            <option value="GLP / GNV">GLP / GNV (Dual)</option>
+            <option value="Híbrido">Híbrido</option>
+            <option value="Eléctrico">Eléctrico</option>
+          </select>
+        </div>
+
+        <!-- CLIENTE PROPIETARIO -->
+        <div class="campo">
+          <label class="campo__label">
+            <span class="campo__icono">👤</span>
+            <span>Cliente Propietario *</span>
+          </label>
+          <select
+            formControlName="clienteId"
+            class="campo__input"
+            [class.campo__input--error]="form.get('clienteId')?.invalid && form.get('clienteId')?.touched"
+          >
+            <option [ngValue]="null">-- Seleccione el cliente dueño --</option>
+            @for (c of clienteService.clientes(); track c.id) {
+              <option [value]="c.id">
+                {{ c.nombreCompleto }} (DNI: {{ c.dni }})
+              </option>
+            }
+          </select>
+          @if (form.get('clienteId')?.invalid && form.get('clienteId')?.touched) {
+            <div class="campo__error">
+              Debe vincular el vehículo a un cliente registrado.
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- BOTONES -->
+      <div class="form-vehiculo__acciones">
+        <button
+          type="submit"
+          class="form-vehiculo__btn-guardar"
+          [disabled]="form.invalid"
+        >
+          <span>💾</span>
+          <span>{{ esEdicion ? 'Actualizar Vehículo' : 'Guardar Vehículo' }}</span>
+        </button>
+
+        <a routerLink="/vehiculos" class="form-vehiculo__btn-cancelar">
+          Cancelar
+        </a>
+      </div>
+    </form>
+  </div>
+</section>

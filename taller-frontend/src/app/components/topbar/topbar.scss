@@ -1,0 +1,124 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.topbar {
+  background: #ffffff;
+  padding: 1rem 1.75rem;
+  border-radius: $radius;
+  box-shadow: $shadow-sm;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.75rem;
+  border: 1px solid $border-color;
+  gap: 1rem;
+  flex-wrap: wrap;
+
+  &__izq {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  &__titulo {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: $secondary;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  &__subtitulo {
+    font-size: 0.8rem;
+    color: $text-muted;
+    margin: 0;
+  }
+
+  &__der {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  &__fecha {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: #f1f5f9;
+    padding: 0.45rem 0.9rem;
+    border-radius: 9999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #475569;
+    border: 1px solid $border-color;
+  }
+
+  &__usuario {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+  }
+
+  &__avatar {
+    width: 36px;
+    height: 36px;
+    background: $primary;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 6px rgba(232, 93, 38, 0.3);
+  }
+
+  &__usuario-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+  }
+
+  &__usuario-nombre {
+    font-size: 0.85rem;
+    color: $secondary;
+  }
+
+  &__usuario-rol {
+    font-size: 0.7rem;
+    color: $text-muted;
+    font-weight: 700;
+  }
+
+  &__btn-logout {
+    background: #dc2626;
+    color: #ffffff;
+    border: none;
+    padding: 0.45rem 0.95rem;
+    border-radius: $radius-sm;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #b91c1c;
+      transform: translateY(-1px);
+    }
+  }
+
+  &__btn-login {
+    background: $primary;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 0.45rem 1rem;
+    border-radius: $radius-sm;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: $primary-dark;
+    }
+  }
+}

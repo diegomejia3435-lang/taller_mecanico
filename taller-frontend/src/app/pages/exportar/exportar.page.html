@@ -1,0 +1,93 @@
+<section class="modulo-exportar">
+  <div class="modulo-exportar__header">
+    <div>
+      <h2 class="modulo-exportar__titulo">Exportar Información</h2>
+      <p class="modulo-exportar__subtitulo">Descarga de reportes estructurados en formato PDF y Microsoft Excel</p>
+    </div>
+  </div>
+
+  @if (mensajeDescarga()) {
+    <div class="mensaje-exito">
+      <span>📥</span>
+      <span>{{ mensajeDescarga() }}</span>
+    </div>
+  }
+
+  <div class="modulo-exportar__grid">
+    <!-- Card Clientes -->
+    <div class="export-card">
+      <div class="export-card__header">
+        <span class="export-card__icono">👥</span>
+        <div>
+          <h4>Exportar Clientes</h4>
+          <p>Base de datos de clientes registrados</p>
+        </div>
+      </div>
+      <div class="export-card__acciones">
+        <button type="button" class="btn-export btn-export--excel" (click)="exportar('Clientes', 'Excel')">
+          📊 Excel (.xlsx)
+        </button>
+        <button type="button" class="btn-export btn-export--pdf" (click)="exportar('Clientes', 'PDF')">
+          📄 PDF (.pdf)
+        </button>
+      </div>
+    </div>
+
+    <!-- Card Vehículos -->
+    <div class="export-card">
+      <div class="export-card__header">
+        <span class="export-card__icono">🚗</span>
+        <div>
+          <h4>Exportar Vehículos</h4>
+          <p>Catálogo de vehículos y propietarios</p>
+        </div>
+      </div>
+      <div class="export-card__acciones">
+        <button type="button" class="btn-export btn-export--excel" (click)="exportar('Vehículos', 'Excel')">
+          📊 Excel (.xlsx)
+        </button>
+        <button type="button" class="btn-export btn-export--pdf" (click)="exportar('Vehículos', 'PDF')">
+          📄 PDF (.pdf)
+        </button>
+      </div>
+    </div>
+
+    <!-- Card Órdenes -->
+    <div class="export-card">
+      <div class="export-card__header">
+        <span class="export-card__icono">📋</span>
+        <div>
+          <h4>Exportar Órdenes</h4>
+          <p>Órdenes de servicio y estados</p>
+        </div>
+      </div>
+      <div class="export-card__acciones">
+        <button type="button" class="btn-export btn-export--excel" (click)="exportar('Órdenes', 'Excel')">
+          📊 Excel (.xlsx)
+        </button>
+        <button type="button" class="btn-export btn-export--pdf" (click)="exportar('Órdenes', 'PDF')">
+          📄 PDF (.pdf)
+        </button>
+      </div>
+    </div>
+
+    <!-- Card Historial -->
+    <div class="export-card">
+      <div class="export-card__header">
+        <span class="export-card__icono">📜</span>
+        <div>
+          <h4>Exportar Historial</h4>
+          <p>Registro histórico completo de intervenciones</p>
+        </div>
+      </div>
+      <div class="export-card__acciones">
+        <button type="button" class="btn-export btn-export--excel" (click)="exportar('Historial', 'Excel')">
+          📊 Excel (.xlsx)
+        </button>
+        <button type="button" class="btn-export btn-export--pdf" (click)="exportar('Historial', 'PDF')">
+          📄 PDF (.pdf)
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

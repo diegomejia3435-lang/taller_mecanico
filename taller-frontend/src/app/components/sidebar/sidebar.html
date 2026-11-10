@@ -1,0 +1,107 @@
+<aside class="sidebar">
+  <div class="sidebar__brand">
+    <div class="sidebar__logo">🚗</div>
+    <div>
+      <h2 class="sidebar__title">Taller Mecánico</h2>
+      <span class="sidebar__badge">Gestión Vehicular</span>
+    </div>
+  </div>
+
+  <nav class="sidebar__nav">
+    <div class="sidebar__section-title">PRINCIPAL</div>
+
+    <a
+      routerLink="/dashboard"
+      routerLinkActive="activo"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="sidebar__link"
+    >
+      <span class="sidebar__icon">📊</span>
+      <span>Dashboard</span>
+    </a>
+
+    <div class="sidebar__section-title">GESTIÓN</div>
+
+    <a
+      routerLink="/clientes"
+      routerLinkActive="activo"
+      class="sidebar__link"
+    >
+      <span class="sidebar__icon">👥</span>
+      <span>Clientes</span>
+    </a>
+
+    <a
+      routerLink="/vehiculos"
+      routerLinkActive="activo"
+      class="sidebar__link"
+    >
+      <span class="sidebar__icon">🚗</span>
+      <span>Vehículos</span>
+    </a>
+
+    <a
+      routerLink="/ordenes"
+      routerLinkActive="activo"
+      class="sidebar__link"
+    >
+      <span class="sidebar__icon">📋</span>
+      <span>Órdenes de Trabajo</span>
+    </a>
+
+    <div class="sidebar__section-title">OPERACIONES</div>
+
+    <a
+      routerLink="/mecanicos"
+      routerLinkActive="activo"
+      class="sidebar__link"
+    >
+      <span class="sidebar__icon">🔧</span>
+      <span>Mecánicos</span>
+    </a>
+
+    <a
+      routerLink="/historial"
+      routerLinkActive="activo"
+      class="sidebar__link"
+    >
+      <span class="sidebar__icon">📜</span>
+      <span>Historial</span>
+    </a>
+
+    <a
+      routerLink="/reportes"
+      routerLinkActive="activo"
+      class="sidebar__link"
+    >
+      <span class="sidebar__icon">📈</span>
+      <span>Reportes</span>
+    </a>
+
+    <a
+      routerLink="/exportar"
+      routerLinkActive="activo"
+      class="sidebar__link"
+    >
+      <span class="sidebar__icon">📦</span>
+      <span>Exportar</span>
+    </a>
+
+    @if (authService.esAdmin()) {
+      <div class="sidebar__section-title">SISTEMA</div>
+
+      <a
+        routerLink="/usuarios"
+        routerLinkActive="activo"
+        class="sidebar__link"
+      >
+        <span class="sidebar__icon">👤</span>
+        <span>Usuarios & Roles</span>
+      </a>
+    }
+  </nav>
+
+  <div class="sidebar__footer">
+    <div class="sidebar__version">v2.0 • Angular Standalone</div>
+  </div>
+</aside>

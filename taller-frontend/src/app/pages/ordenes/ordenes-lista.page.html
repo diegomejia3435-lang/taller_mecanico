@@ -1,0 +1,172 @@
+<section class="modulo-ordenes">
+  <!-- CABECERA -->
+  <div class="modulo-ordenes__header">
+    <div>
+      <h2 class="modulo-ordenes__titulo">Órdenes de Servicio</h2>
+      <nav class="modulo-ordenes__breadcrumb">
+        <a routerLink="/dashboard">Dashboard</a> /
+        <span>Órdenes</span>
+      </nav>
+    </div>
+    <a routerLink="/ordenes/nuevo" class="modulo-ordenes__btn-nuevo">
+      <span>➕</span>
+      <span>Nueva Orden</span>
+    </a>
+  </div>
+
+  <!-- BUSCADOR Y FILTROS POR ESTADO (Thymeleaf ordenes/lista.html) -->
+  <div class="modulo-ordenes__filtros-card">
+    <div class="modulo-ordenes__filtros-wrap">
+      <!-- Buscador -->
+      <div class="modulo-ordenes__buscador">
+        <span class="modulo-ordenes__icono">🔍</span>
+        <input
+          type="text"
+          class="modulo-ordenes__input"
+          placeholder="Buscar por placa, cliente o diagnóstico..."
+          [ngModel]="filtroTexto()"
+          (ngModelChange)="filtroTexto.set($event)"
+        />
+        @if (filtroTexto()) {
+          <button
+            type="button"
+            class="modulo-ordenes__btn-limpiar"
+            (click)="filtroTexto.set('')"
+          >
+            ✕
+          </button>
+        }
+      </div>
+
+      <!-- Selector de estado -->
+      <div class="modulo-ordenes__filtro-estado">
+        <label class="modulo-ordenes__filtro-label">Estado:</label>
+        <select
+          class="modulo-ordenes__select"
+          [ngModel]="filtroEstado()"
+          (ngModelChange)="filtroEstado.set($event)"
+        >
+          <option value="TODOS">Todos los estados</option>
+          <option value="PENDIENTE">Pendientes</option>
+          <option value="EN_PROCESO">En Proceso</option>
+          <option value="TERMINADO">Terminados</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLA DE ÓRDENES -->
+  <div class="modulo-ordenes__tabla-card">
+    <div class="modulo-ordenes__tabla-cabecera">
+      <h3 class="modulo-ordenes__tabla-titulo">Órdenes Activas e Históricas</h3>
+      <span class="modulo-ordenes__tabla-conteo">
+        {{ ordenesFiltradas().length }} órdenes en listado
+      </span>
+    </div>
+
+    <div class="modulo-ordenes__tabla-responsive">
+      <table class="modulo-ordenes__tabla">
+        <thead>
+          <tr>
+            <th style="width: 70px;">N° Orden</th>
+            <th>Vehículo</th>
+            <th>Cliente</th>
+            <th>Mecánico</th>
+            <th>Ingreso</th>
+            <th>Estado</th>
+            <th>Diagnóstico / Monto</th>
+            <th style="width: 140px; text-align: center;">Acción Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (o of ordenesFiltradas(); track o.id) {
+            <tr>
+              <td>
+                <strong class="orden-id">#{{ o.id }}</strong>
+              </td>
+              <td>
+                <span class="badge-placa">{{ o.vehiculo.placa }}</span>
+                <span class="vehiculo-nombre">{{ o.vehiculo.marca }}</span>
+              </td>
+              <td>
+                <strong class="cliente-nombre">
+                  {{ o.vehiculo.cliente?.nombreCompleto || 'Sin registrar' }}
+                </strong>
+              </td>
+              <td>
+                <span class="mecanico-tag">
+                  👨‍🔧 {{ o.mecanico?.nombreCompleto || 'Por asignar' }}
+                </span>
+              </td>
+              <td class="fecha-ingreso">{{ o.fechaIngreso }}</td>
+              <td>
+                @switch (o.estado) {
+                  @case ('PENDIENTE') {
+                    <span class="badge-estado badge-estado--pendiente">Pendiente</span>
+                  }
+                  @case ('EN_PROCESO') {
+                    <span class="badge-estado badge-estado--proceso">En Proceso</span>
+                  }
+                  @case ('TERMINADO') {
+                    <span class="badge-estado badge-estado--terminado">Terminado</span>
+                  }
+                  @default {
+                    <span class="badge-estado">{{ o.estado }}</span>
+                  }
+                }
+              </td>
+              <td>
+                <p class="diagnostico-texto">{{ o.diagnosticoTecnico }}</p>
+                @if (o.montoTotal) {
+                  <span class="monto-total">S/ {{ o.montoTotal.toFixed(2) }}</span>
+                }
+              </td>
+              <td>
+                <div class="acciones-orden">
+                  @if (o.estado === 'PENDIENTE') {
+                    <button
+                      type="button"
+                      class="btn-estado btn-estado--proceso"
+                      (click)="cambiarEstado(o.id!, 'EN_PROCESO')"
+                      title="Pasar a En Proceso"
+                    >
+                      ▶ Iniciar
+                    </button>
+                  }
+                  @if (o.estado === 'EN_PROCESO') {
+                    <button
+                      type="button"
+                      class="btn-estado btn-estado--terminado"
+                      (click)="cambiarEstado(o.id!, 'TERMINADO')"
+                      title="Marcar como Terminado"
+                    >
+                      ✓ Finalizar
+                    </button>
+                  }
+                  @if (o.estado === 'TERMINADO') {
+                    <span class="texto-completado">✓ Listo</span>
+                  }
+                  <button
+                    type="button"
+                    class="btn-eliminar"
+                    (click)="eliminar(o.id!)"
+                    title="Anular orden"
+                  >
+                    🗑
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="8" class="tabla-vacia">
+                <span class="tabla-vacia__icono">📋</span>
+                <p class="tabla-vacia__texto">No se encontraron órdenes que coincidan con los filtros seleccionados.</p>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

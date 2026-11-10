@@ -1,0 +1,158 @@
+<section class="dashboard">
+  <!-- STAT CARDS (Métricas Principales) -->
+  <div class="dashboard__stats-grid">
+    <!-- Card 1: Vehículos Registrados -->
+    <div class="stat-card stat-card--naranja">
+      <div class="stat-card__contenido">
+        <div>
+          <span class="stat-card__etiqueta">Vehículos registrados</span>
+          <h3 class="stat-card__valor">{{ dashboardService.stats().totalVehiculos }}</h3>
+          <span class="stat-card__badge stat-card__badge--verde">+12% este mes</span>
+        </div>
+        <div class="stat-card__icono-wrap stat-card__icono-wrap--naranja">
+          <span class="stat-card__icono">🚗</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: Órdenes Activas -->
+    <div class="stat-card stat-card--azul">
+      <div class="stat-card__contenido">
+        <div>
+          <span class="stat-card__etiqueta">Órdenes activas</span>
+          <h3 class="stat-card__valor">{{ dashboardService.stats().totalOrdenes }}</h3>
+          <span class="stat-card__badge stat-card__badge--azul">+5% en taller</span>
+        </div>
+        <div class="stat-card__icono-wrap stat-card__icono-wrap--azul">
+          <span class="stat-card__icono">📋</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3: Servicios Completados -->
+    <div class="stat-card stat-card--verde">
+      <div class="stat-card__contenido">
+        <div>
+          <span class="stat-card__etiqueta">Servicios completados</span>
+          <h3 class="stat-card__valor">{{ dashboardService.stats().ordenesTerminadas }}</h3>
+          <span class="stat-card__badge stat-card__badge--verde">+8% satisfacción</span>
+        </div>
+        <div class="stat-card__icono-wrap stat-card__icono-wrap--verde">
+          <span class="stat-card__icono">✅</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4: Mecánicos Activos -->
+    <div class="stat-card stat-card--ambar">
+      <div class="stat-card__contenido">
+        <div>
+          <span class="stat-card__etiqueta">Mecánicos activos</span>
+          <h3 class="stat-card__valor">{{ dashboardService.stats().totalUsuarios }}</h3>
+          <span class="stat-card__badge stat-card__badge--ambar">Disponibles</span>
+        </div>
+        <div class="stat-card__icono-wrap stat-card__icono-wrap--ambar">
+          <span class="stat-card__icono">👨‍🔧</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEGUNDA FILA: GRÁFICO + ESTADOS Y ALERTAS -->
+  <div class="dashboard__paneles-grid">
+    <!-- SERVICIOS POR MES -->
+    <div class="dashboard-panel">
+      <div class="dashboard-panel__cabecera">
+        <div>
+          <h4 class="dashboard-panel__titulo">Servicios atendidos por mes</h4>
+          <span class="dashboard-panel__subtitulo">Ene – Jun 2026</span>
+        </div>
+        <a routerLink="/ordenes" class="dashboard-panel__enlace">Ver órdenes →</a>
+      </div>
+
+      <div class="grafico-barras">
+        @for (item of dashboardService.serviciosPorMes(); track item.mes) {
+          <div class="grafico-barras__col">
+            <div class="grafico-barras__pilar-wrap">
+              <div
+                class="grafico-barras__pilar"
+                [style.height.%]="item.porcentaje"
+                [title]="item.cantidad + ' servicios'"
+              ></div>
+            </div>
+            <span class="grafico-barras__etiqueta">{{ item.mes }}</span>
+            <span class="grafico-barras__cantidad">{{ item.cantidad }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- ESTADOS DE ÓRDENES + ALERTAS -->
+    <div class="dashboard-panel">
+      <div class="dashboard-panel__cabecera">
+        <div>
+          <h4 class="dashboard-panel__titulo">Órdenes por estado</h4>
+          <span class="dashboard-panel__subtitulo">Distribución actual en bahías</span>
+        </div>
+      </div>
+
+      <div class="estados-lista">
+        @for (item of dashboardService.ordenesPorEstado(); track item.estado) {
+          <div class="estado-item">
+            <div class="estado-item__info">
+              <span class="estado-item__punto" [style.background-color]="item.color"></span>
+              <span class="estado-item__nombre">{{ item.estado }}</span>
+            </div>
+            <div class="estado-item__barra-fondo">
+              <div
+                class="estado-item__barra-progreso"
+                [style.width.%]="item.porcentaje"
+                [style.background-color]="item.color"
+              ></div>
+            </div>
+            <span class="estado-item__cantidad">{{ item.cantidad }}</span>
+          </div>
+        }
+      </div>
+
+      <hr class="dashboard-panel__divisor" />
+
+      <h5 class="dashboard-panel__subseccion-titulo">Alertas y Notificaciones</h5>
+
+      <div class="alertas-lista">
+        @for (alerta of dashboardService.alertas(); track alerta.id) {
+          <div class="alerta-card" [class.alerta-card--advertencia]="alerta.tipo === 'advertencia'">
+            <span class="alerta-card__icono">
+              {{ alerta.tipo === 'advertencia' ? '⚠️' : '✅' }}
+            </span>
+            <div>
+              <p class="alerta-card__titulo">{{ alerta.titulo }}</p>
+              <small class="alerta-card__subtitulo">{{ alerta.subtitulo }}</small>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- ACCESOS RÁPIDOS INFERIORES -->
+  <div class="dashboard__accesos">
+    <h4 class="dashboard__accesos-titulo">Acciones Rápidas del Sistema</h4>
+    <div class="dashboard__botones-grid">
+      <a routerLink="/ordenes/nuevo" class="dashboard-btn dashboard-btn--primario">
+        <span class="dashboard-btn__icono">➕</span>
+        <span>Crear Nueva Orden de Trabajo</span>
+      </a>
+
+      <a routerLink="/clientes/nuevo" class="dashboard-btn dashboard-btn--secundario">
+        <span class="dashboard-btn__icono">👤</span>
+        <span>Registrar Nuevo Cliente</span>
+      </a>
+
+      <a routerLink="/vehiculos/nuevo" class="dashboard-btn dashboard-btn--secundario">
+        <span class="dashboard-btn__icono">🚗</span>
+        <span>Registrar Nuevo Vehículo</span>
+      </a>
+    </div>
+  </div>
+</section>

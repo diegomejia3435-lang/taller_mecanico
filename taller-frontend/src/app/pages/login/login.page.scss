@@ -1,0 +1,120 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.login-wrapper {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border: 1px solid $border-color;
+  border-radius: $radius;
+  padding: 2.5rem 2rem;
+  box-shadow: $shadow-md;
+
+  &__header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  &__logo {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  &__titulo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: $secondary;
+    margin: 0 0 0.25rem;
+  }
+
+  &__subtitulo {
+    font-size: 0.82rem;
+    color: $text-muted;
+    margin: 0;
+  }
+}
+
+.login-alerta {
+  background: #fcebeb;
+  border: 1px solid #f7c5c5;
+  color: #a32d2d;
+  padding: 0.65rem 0.85rem;
+  border-radius: $radius-sm;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.login-btn {
+  background: $primary;
+  color: #ffffff;
+  border: none;
+  padding: 0.85rem;
+  border-radius: $radius-sm;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(232, 93, 38, 0.25);
+  transition: all 0.2s ease;
+  margin-top: 0.5rem;
+
+  &:hover:not(:disabled) {
+    background: $primary-dark;
+    transform: translateY(-2px);
+  }
+
+  &:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+.login-pistas {
+  border-top: 1px dashed $border-color;
+  padding-top: 1.25rem;
+  margin-top: 0.5rem;
+
+  &__titulo {
+    font-size: 0.72rem;
+    color: $text-muted;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+  }
+
+  &__tags {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+}
+
+.pista-tag {
+  background: #f8fafc;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.76rem;
+  color: #475569;
+  border: 1px solid #eef2f6;
+
+  strong {
+    color: $secondary;
+  }
+}

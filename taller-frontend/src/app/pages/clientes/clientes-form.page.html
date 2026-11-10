@@ -1,0 +1,130 @@
+<section class="form-cliente">
+  <!-- CABECERA -->
+  <div class="form-cliente__header">
+    <div>
+      <h2 class="form-cliente__titulo">
+        {{ esEdicion ? 'Editar Cliente' : 'Nuevo Cliente' }}
+      </h2>
+      <p class="form-cliente__subtitulo">Registro y gestión de clientes del taller</p>
+    </div>
+    <a routerLink="/clientes" class="form-cliente__btn-volver">
+      <span>←</span>
+      <span>Volver a Clientes</span>
+    </a>
+  </div>
+
+  <!-- TARJETA DEL FORMULARIO -->
+  <div class="form-cliente__card">
+    <div class="form-cliente__card-cabecera">
+      <div class="form-cliente__icono-wrap">
+        <span>👤</span>
+      </div>
+      <div>
+        <h3 class="form-cliente__card-titulo">Datos del cliente</h3>
+        <small class="form-cliente__card-subtitulo">Complete todos los campos requeridos para el registro</small>
+      </div>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="guardar()" class="form-cliente__form">
+      <div class="form-cliente__grid">
+        <!-- NOMBRE COMPLETO -->
+        <div class="campo">
+          <label class="campo__label">
+            <span class="campo__icono">👤</span>
+            <span>Nombre Completo *</span>
+          </label>
+          <input
+            type="text"
+            formControlName="nombreCompleto"
+            class="campo__input"
+            [class.campo__input--error]="form.get('nombreCompleto')?.invalid && form.get('nombreCompleto')?.touched"
+            placeholder="Ingrese nombres y apellidos"
+          />
+          @if (form.get('nombreCompleto')?.invalid && form.get('nombreCompleto')?.touched) {
+            <div class="campo__error">
+              El nombre completo es obligatorio (mínimo 3 caracteres).
+            </div>
+          }
+        </div>
+
+        <!-- DNI -->
+        <div class="campo">
+          <label class="campo__label">
+            <span class="campo__icono">🪪</span>
+            <span>DNI (8 dígitos) *</span>
+          </label>
+          <input
+            type="text"
+            formControlName="dni"
+            maxlength="8"
+            class="campo__input"
+            [class.campo__input--error]="form.get('dni')?.invalid && form.get('dni')?.touched"
+            placeholder="Ej: 77777777"
+          />
+          @if (form.get('dni')?.invalid && form.get('dni')?.touched) {
+            <div class="campo__error">
+              El DNI debe constar de exactamente 8 dígitos numéricos.
+            </div>
+          }
+        </div>
+
+        <!-- TELEFONO -->
+        <div class="campo">
+          <label class="campo__label">
+            <span class="campo__icono">📞</span>
+            <span>Teléfono / Celular</span>
+          </label>
+          <input
+            type="text"
+            formControlName="telefono"
+            maxlength="9"
+            class="campo__input"
+            [class.campo__input--error]="form.get('telefono')?.invalid && form.get('telefono')?.touched"
+            placeholder="Ej: 955555555"
+          />
+          @if (form.get('telefono')?.invalid && form.get('telefono')?.touched) {
+            <div class="campo__error">
+              El teléfono debe constar de 9 dígitos válidos.
+            </div>
+          }
+        </div>
+
+        <!-- CORREO ELECTRÓNICO -->
+        <div class="campo">
+          <label class="campo__label">
+            <span class="campo__icono">✉️</span>
+            <span>Correo Electrónico</span>
+          </label>
+          <input
+            type="email"
+            formControlName="correo"
+            class="campo__input"
+            [class.campo__input--error]="form.get('correo')?.invalid && form.get('correo')?.touched"
+            placeholder="ejemplo@correo.com"
+          />
+          @if (form.get('correo')?.invalid && form.get('correo')?.touched) {
+            <div class="campo__error">
+              Por favor ingrese un formato de correo electrónico válido.
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- BOTONES DE ACCIÓN -->
+      <div class="form-cliente__acciones">
+        <button
+          type="submit"
+          class="form-cliente__btn-guardar"
+          [disabled]="form.invalid"
+        >
+          <span>💾</span>
+          <span>{{ esEdicion ? 'Actualizar Cliente' : 'Guardar Cliente' }}</span>
+        </button>
+
+        <a routerLink="/clientes" class="form-cliente__btn-cancelar">
+          Cancelar
+        </a>
+      </div>
+    </form>
+  </div>
+</section>

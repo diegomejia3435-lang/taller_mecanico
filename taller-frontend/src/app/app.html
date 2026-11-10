@@ -1,44 +1,15 @@
-<div class="app-layout">
-  <!-- Encabezado de Navegación SPA (Semana 12 - Slide 12) -->
-  <app-encabezado />
+<div class="layout-app">
+  <!-- Barra lateral oscura corporativa del Taller Mecánico (Thymeleaf layouts/main.html) -->
+  <app-sidebar />
 
-  <!-- Espacio de Proyección de Rutas con router-outlet (Semana 12 - Slide 11) -->
-  <main class="app-layout__contenido">
-    <router-outlet />
-  </main>
+  <!-- Área de contenido principal -->
+  <div class="layout-app__principal">
+    <!-- Topbar superior con fecha, perfil de usuario y control de sesión -->
+    <app-topbar />
 
-  <!-- Pie de página institucional del Taller Mecánico -->
-  <footer class="app-footer">
-    <div class="app-footer__contenedor">
-      <div class="app-footer__col">
-        <div class="app-footer__marca">
-          <span class="app-footer__icono">🚗</span>
-          <strong>Taller Mecánico Especializado</strong>
-        </div>
-        <p class="app-footer__descripcion">
-          Soluciones mecánicas de alta precisión, mantenimiento preventivo y diagnóstico automotriz computarizado.
-        </p>
-      </div>
-
-      <div class="app-footer__col">
-        <h4 class="app-footer__titulo">Navegación</h4>
-        <ul class="app-footer__links">
-          <li><a routerLink="/inicio">Página de Inicio</a></li>
-          <li><a routerLink="/servicios">Catálogo de Servicios</a></li>
-          <li><a routerLink="/favoritos">Servicios Guardados</a></li>
-        </ul>
-      </div>
-
-      <div class="app-footer__col">
-        <h4 class="app-footer__titulo">Atención en Taller</h4>
-        <p class="app-footer__info">📍 Av. Industrial 450, Lima</p>
-        <p class="app-footer__info">📞 (01) 555-8290</p>
-        <p class="app-footer__info">⏱ Lun - Sáb: 8:00 AM - 6:00 PM</p>
-      </div>
-    </div>
-
-    <div class="app-footer__copy">
-      <p>© 2026 Taller Mecánico - Sistema Web Automotriz (Angular 19+ Standalone Routing)</p>
-    </div>
-  </footer>
+    <!-- Punto de inyección SPA de las páginas activas -->
+    <main class="layout-app__contenido">
+      <router-outlet />
+    </main>
+  </div>
 </div>

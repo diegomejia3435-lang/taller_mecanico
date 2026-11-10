@@ -1,0 +1,43 @@
+<section class="modulo-historial">
+  <div class="modulo-historial__header">
+    <div>
+      <h2 class="modulo-historial__titulo">Historial de Mantenimientos</h2>
+      <p class="modulo-historial__subtitulo">Registro histórico de atenciones concluidas e intervenciones</p>
+    </div>
+  </div>
+
+  <div class="modulo-historial__card">
+    <div class="modulo-historial__cabecera">
+      <h3>Bitácora de Servicios</h3>
+    </div>
+    <table class="modulo-historial__tabla">
+      <thead>
+        <tr>
+          <th>N° Orden</th>
+          <th>Vehículo</th>
+          <th>Propietario</th>
+          <th>Fecha Ingreso</th>
+          <th>Fecha Salida</th>
+          <th>Diagnóstico / Trabajo</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (o of ordenService.ordenes(); track o.id) {
+          <tr>
+            <td><strong>#{{ o.id }}</strong></td>
+            <td>
+              <span class="badge-placa">{{ o.vehiculo.placa }}</span>
+              <span>{{ o.vehiculo.marca }}</span>
+            </td>
+            <td>{{ o.vehiculo.cliente?.nombreCompleto }}</td>
+            <td>{{ o.fechaIngreso }}</td>
+            <td>{{ o.fechaSalida || 'En atención' }}</td>
+            <td>{{ o.diagnosticoTecnico }}</td>
+            <td><strong>S/ {{ o.montoTotal?.toFixed(2) }}</strong></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

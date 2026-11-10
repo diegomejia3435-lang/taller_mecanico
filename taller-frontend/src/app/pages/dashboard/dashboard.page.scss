@@ -1,0 +1,387 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+
+  &__stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+
+    @include tablet {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include mobile {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__paneles-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 1.5rem;
+
+    @include tablet {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__accesos {
+    background: #ffffff;
+    border: 1px solid $border-color;
+    border-radius: $radius;
+    padding: 1.5rem;
+    box-shadow: $shadow-sm;
+  }
+
+  &__accesos-titulo {
+    font-size: 1rem;
+    font-weight: 700;
+    color: $secondary;
+    margin-bottom: 1rem;
+  }
+
+  &__botones-grid {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+}
+
+/* Stat Cards */
+.stat-card {
+  background: #ffffff;
+  border-radius: $radius;
+  border: 1px solid $border-color;
+  padding: 1.25rem;
+  box-shadow: $shadow-sm;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: $shadow-md;
+  }
+
+  &--naranja {
+    border-top: 4px solid #e85d26;
+  }
+
+  &--azul {
+    border-top: 4px solid #378add;
+  }
+
+  &--verde {
+    border-top: 4px solid #16a34a;
+  }
+
+  &--ambar {
+    border-top: 4px solid #ba7517;
+  }
+
+  &__contenido {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__etiqueta {
+    font-size: 0.78rem;
+    color: $text-muted;
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+
+  &__valor {
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: $secondary;
+    margin: 0;
+    line-height: 1.1;
+  }
+
+  &__badge {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+
+    &--verde {
+      background: #eaf3de;
+      color: #3b6d11;
+    }
+
+    &--azul {
+      background: #e6f1fb;
+      color: #185fa5;
+    }
+
+    &--ambar {
+      background: #faeeda;
+      color: #854f0b;
+    }
+  }
+
+  &__icono-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+
+    &--naranja {
+      background: #faece7;
+    }
+
+    &--azul {
+      background: #e6f1fb;
+    }
+
+    &--verde {
+      background: #eaf3de;
+    }
+
+    &--ambar {
+      background: #faeeda;
+    }
+  }
+}
+
+/* Paneles del Dashboard */
+.dashboard-panel {
+  background: #ffffff;
+  border: 1px solid $border-color;
+  border-radius: $radius;
+  padding: 1.5rem;
+  box-shadow: $shadow-sm;
+  display: flex;
+  flex-direction: column;
+
+  &__cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+  }
+
+  &__titulo {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: $secondary;
+    margin: 0 0 0.2rem;
+  }
+
+  &__subtitulo {
+    font-size: 0.78rem;
+    color: $text-muted;
+  }
+
+  &__enlace {
+    font-size: 0.82rem;
+    color: $primary;
+    text-decoration: none;
+    font-weight: 600;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__divisor {
+    border: none;
+    border-top: 1px solid #f1f5f9;
+    margin: 1.5rem 0 1rem;
+  }
+
+  &__subseccion-titulo {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: $secondary;
+    margin-bottom: 0.85rem;
+  }
+}
+
+/* Gráfico de barras */
+.grafico-barras {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  height: 190px;
+  padding-top: 1rem;
+
+  &__col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    height: 100%;
+  }
+
+  &__pilar-wrap {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    background: #f8fafc;
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+  }
+
+  &__pilar {
+    width: 100%;
+    background: $primary;
+    border-radius: 6px 6px 0 0;
+    transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      background: $primary-dark;
+    }
+  }
+
+  &__etiqueta {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: $text-muted;
+  }
+
+  &__cantidad {
+    font-size: 0.68rem;
+    color: #94a3b8;
+  }
+}
+
+/* Lista de estados */
+.estados-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.estado-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  &__info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100px;
+    flex-shrink: 0;
+  }
+
+  &__punto {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+  }
+
+  &__nombre {
+    font-size: 0.8rem;
+    color: $text-dark;
+    font-weight: 500;
+  }
+
+  &__barra-fondo {
+    flex: 1;
+    height: 8px;
+    background: #f1f5f9;
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+
+  &__barra-progreso {
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 0.5s ease;
+  }
+
+  &__cantidad {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: $secondary;
+    width: 25px;
+    text-align: right;
+  }
+}
+
+/* Alertas */
+.alertas-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.alerta-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.75rem;
+  border-radius: $radius-sm;
+  background: #f8fafc;
+  border: 1px solid $border-color;
+
+  &--advertencia {
+    background: #faeeda;
+    border-color: #f5d8a0;
+  }
+
+  &__icono {
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  &__titulo {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: $secondary;
+    margin: 0;
+  }
+
+  &__subtitulo {
+    font-size: 0.74rem;
+    color: $text-muted;
+  }
+}
+
+/* Botones del Dashboard */
+.dashboard-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: $radius-sm;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+
+  &--primario {
+    background: $primary;
+    color: #ffffff;
+
+    &:hover {
+      background: $primary-dark;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(232, 93, 38, 0.25);
+    }
+  }
+
+  &--secundario {
+    background: #1e293b;
+    color: #ffffff;
+
+    &:hover {
+      background: #0f172a;
+      transform: translateY(-2px);
+    }
+  }
+}

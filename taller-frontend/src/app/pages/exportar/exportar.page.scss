@@ -1,0 +1,123 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.modulo-exportar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  &__titulo {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: $secondary;
+    margin: 0 0 0.25rem;
+  }
+
+  &__subtitulo {
+    font-size: 0.82rem;
+    color: $text-muted;
+    margin: 0;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+
+    @include mobile {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.mensaje-exito {
+  background: #eaf3de;
+  border: 1px solid #c2e2a3;
+  color: #3b6d11;
+  padding: 0.75rem 1rem;
+  border-radius: $radius-sm;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.export-card {
+  background: #ffffff;
+  border: 1px solid $border-color;
+  border-radius: $radius;
+  padding: 1.5rem;
+  box-shadow: $shadow-sm;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    h4 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: $secondary;
+      margin: 0 0 0.2rem;
+    }
+
+    p {
+      font-size: 0.78rem;
+      color: $text-muted;
+      margin: 0;
+    }
+  }
+
+  &__icono {
+    font-size: 1.8rem;
+    width: 48px;
+    height: 48px;
+    background: #f8fafc;
+    border: 1px solid $border-color;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__acciones {
+    display: flex;
+    gap: 0.75rem;
+  }
+}
+
+.btn-export {
+  flex: 1;
+  padding: 0.65rem;
+  border-radius: $radius-sm;
+  border: 1px solid $border-color;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &--excel {
+    background: #f0fdf4;
+    color: #166534;
+    border-color: #bbf7d0;
+
+    &:hover {
+      background: #dcfce7;
+      transform: translateY(-2px);
+    }
+  }
+
+  &--pdf {
+    background: #fef2f2;
+    color: #991b1b;
+    border-color: #fecaca;
+
+    &:hover {
+      background: #fee2e2;
+      transform: translateY(-2px);
+    }
+  }
+}

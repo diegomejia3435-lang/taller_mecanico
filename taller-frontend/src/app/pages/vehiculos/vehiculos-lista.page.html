@@ -1,0 +1,117 @@
+<section class="modulo-vehiculos">
+  <!-- CABECERA -->
+  <div class="modulo-vehiculos__header">
+    <div>
+      <h2 class="modulo-vehiculos__titulo">Gestión de Vehículos</h2>
+      <nav class="modulo-vehiculos__breadcrumb">
+        <a routerLink="/dashboard">Dashboard</a> /
+        <span>Vehículos</span>
+      </nav>
+    </div>
+    <a routerLink="/vehiculos/nuevo" class="modulo-vehiculos__btn-nuevo">
+      <span>➕</span>
+      <span>Nuevo Vehículo</span>
+    </a>
+  </div>
+
+  <!-- BUSCADOR (Thymeleaf vehiculos/lista.html) -->
+  <div class="modulo-vehiculos__buscador-card">
+    <div class="modulo-vehiculos__buscador">
+      <span class="modulo-vehiculos__buscador-icono">🔍</span>
+      <input
+        type="text"
+        class="modulo-vehiculos__input"
+        placeholder="Buscar por placa, marca, modelo o cliente..."
+        [ngModel]="terminoBusqueda()"
+        (ngModelChange)="terminoBusqueda.set($event)"
+      />
+      @if (terminoBusqueda()) {
+        <button
+          type="button"
+          class="modulo-vehiculos__btn-limpiar"
+          (click)="terminoBusqueda.set('')"
+        >
+          ✕
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- TABLA DE VEHÍCULOS -->
+  <div class="modulo-vehiculos__tabla-card">
+    <div class="modulo-vehiculos__tabla-cabecera">
+      <h3 class="modulo-vehiculos__tabla-titulo">Vehículos Registrados en el Taller</h3>
+      <span class="modulo-vehiculos__tabla-conteo">
+        {{ vehiculosFiltrados().length }} vehículos encontrados
+      </span>
+    </div>
+
+    <div class="modulo-vehiculos__tabla-responsive">
+      <table class="modulo-vehiculos__tabla">
+        <thead>
+          <tr>
+            <th style="width: 50px;">N°</th>
+            <th>Placa</th>
+            <th>Marca y Modelo</th>
+            <th>Año</th>
+            <th>Motor</th>
+            <th>Propietario</th>
+            <th style="width: 120px; text-align: center;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (v of vehiculosFiltrados(); track v.id; let i = $index) {
+            <tr>
+              <td class="texto-muted">{{ i + 1 }}</td>
+              <td>
+                <span class="badge-placa">{{ v.placa }}</span>
+              </td>
+              <td>
+                <strong class="vehiculo-marca">{{ v.marca }}</strong>
+                <span class="vehiculo-modelo">{{ v.modelo }}</span>
+              </td>
+              <td>{{ v.anio || '—' }}</td>
+              <td>
+                <span class="badge-motor">{{ v.tipoMotor || 'Gasolina' }}</span>
+              </td>
+              <td>
+                @if (v.cliente) {
+                  <span class="propietario-nombre">👤 {{ v.cliente.nombreCompleto }}</span>
+                } @else {
+                  <span class="texto-muted">Sin propietario</span>
+                }
+              </td>
+              <td>
+                <div class="acciones-btns">
+                  <button
+                    type="button"
+                    class="btn-accion btn-accion--editar"
+                    (click)="editar(v.id!)"
+                    title="Editar Vehículo"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-accion btn-accion--eliminar"
+                    (click)="eliminar(v.id!, v.placa)"
+                    title="Eliminar Vehículo"
+                  >
+                    🗑
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="tabla-vacia">
+                <span class="tabla-vacia__icono">🚗</span>
+                <p class="tabla-vacia__texto">No se encontraron vehículos registrados con esos criterios.</p>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

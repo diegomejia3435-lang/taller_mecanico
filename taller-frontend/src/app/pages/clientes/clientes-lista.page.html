@@ -1,0 +1,110 @@
+<section class="modulo-clientes">
+  <!-- CABECERA Y BREADCRUMB -->
+  <div class="modulo-clientes__header">
+    <div>
+      <h2 class="modulo-clientes__titulo">Gestión de Clientes</h2>
+      <nav class="modulo-clientes__breadcrumb">
+        <a routerLink="/dashboard">Dashboard</a> /
+        <span>Clientes</span>
+      </nav>
+    </div>
+    <a routerLink="/clientes/nuevo" class="modulo-clientes__btn-nuevo">
+      <span>➕</span>
+      <span>Nuevo Cliente</span>
+    </a>
+  </div>
+
+  <!-- BUSCADOR -->
+  <div class="modulo-clientes__buscador-card">
+    <div class="modulo-clientes__buscador">
+      <span class="modulo-clientes__buscador-icono">🔍</span>
+      <input
+        type="text"
+        class="modulo-clientes__input"
+        placeholder="Buscar cliente por nombre, DNI o correo..."
+        [ngModel]="terminoBusqueda()"
+        (ngModelChange)="terminoBusqueda.set($event)"
+      />
+      @if (terminoBusqueda()) {
+        <button
+          type="button"
+          class="modulo-clientes__btn-limpiar"
+          (click)="terminoBusqueda.set('')"
+        >
+          ✕
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- TABLA DE CLIENTES (Thymeleaf clientes/lista.html) -->
+  <div class="modulo-clientes__tabla-card">
+    <div class="modulo-clientes__tabla-cabecera">
+      <h3 class="modulo-clientes__tabla-titulo">Lista de Clientes Registrados</h3>
+      <span class="modulo-clientes__tabla-conteo">
+        {{ clientesFiltrados().length }} clientes registrados
+      </span>
+    </div>
+
+    <div class="modulo-clientes__tabla-responsive">
+      <table class="modulo-clientes__tabla">
+        <thead>
+          <tr>
+            <th style="width: 50px;">N°</th>
+            <th>Nombre Completo</th>
+            <th>DNI</th>
+            <th>Teléfono</th>
+            <th>Correo Electrónico</th>
+            <th style="width: 120px; text-align: center;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of clientesFiltrados(); track c.id; let i = $index) {
+            <tr>
+              <td class="texto-muted">{{ i + 1 }}</td>
+              <td>
+                <strong class="cliente-nombre">{{ c.nombreCompleto }}</strong>
+              </td>
+              <td>
+                <span class="badge-dni">{{ c.dni }}</span>
+              </td>
+              <td>{{ c.telefono || '—' }}</td>
+              <td>
+                <a [href]="'mailto:' + c.correo" class="cliente-email">
+                  {{ c.correo || '—' }}
+                </a>
+              </td>
+              <td>
+                <div class="acciones-btns">
+                  <button
+                    type="button"
+                    class="btn-accion btn-accion--editar"
+                    (click)="editar(c.id!)"
+                    title="Editar Cliente"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-accion btn-accion--eliminar"
+                    (click)="eliminar(c.id!, c.nombreCompleto)"
+                    title="Eliminar Cliente"
+                  >
+                    🗑
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="tabla-vacia">
+                <span class="tabla-vacia__icono">👥</span>
+                <p class="tabla-vacia__texto">No se encontraron clientes que coincidan con la búsqueda.</p>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

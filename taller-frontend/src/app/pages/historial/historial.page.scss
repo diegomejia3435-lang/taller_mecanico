@@ -1,0 +1,76 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.modulo-historial {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  &__titulo {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: $secondary;
+    margin: 0 0 0.25rem;
+  }
+
+  &__subtitulo {
+    font-size: 0.82rem;
+    color: $text-muted;
+    margin: 0;
+  }
+
+  &__card {
+    background: #ffffff;
+    border: 1px solid $border-color;
+    border-radius: $radius;
+    box-shadow: $shadow-sm;
+    overflow-x: auto;
+  }
+
+  &__cabecera {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid $border-color;
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: $secondary;
+      margin: 0;
+    }
+  }
+
+  &__tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+
+    th {
+      background: #f8fafc;
+      padding: 0.85rem 1.25rem;
+      text-align: left;
+      font-size: 0.76rem;
+      color: $text-muted;
+      text-transform: uppercase;
+      font-weight: 700;
+      border-bottom: 1px solid $border-color;
+    }
+
+    td {
+      padding: 0.95rem 1.25rem;
+      border-bottom: 1px solid #f1f5f9;
+      color: $text-dark;
+    }
+  }
+}
+
+.badge-placa {
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  color: #92400e;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 0.78rem;
+  margin-right: 0.4rem;
+}
