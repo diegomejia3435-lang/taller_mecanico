@@ -30,9 +30,7 @@
   }
 
   &__btn-volver {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
+    display: inline-block;
     background: #1e293b;
     color: #ffffff;
     text-decoration: none;
@@ -57,29 +55,18 @@
 
   &__card-cabecera {
     display: flex;
-    align-items: center;
-    gap: 1rem;
+    flex-direction: column;
+    gap: 0.2rem;
     padding-bottom: 1.25rem;
     border-bottom: 1px solid $border-color;
     margin-bottom: 1.75rem;
-  }
-
-  &__icono-wrap {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    background: #faece7;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.35rem;
   }
 
   &__card-titulo {
     font-size: 1.05rem;
     font-weight: 700;
     color: $secondary;
-    margin: 0 0 0.15rem;
+    margin: 0;
   }
 
   &__card-subtitulo {
@@ -107,9 +94,7 @@
   }
 
   &__btn-guardar {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
+    display: inline-block;
     background: $primary;
     color: #ffffff;
     border: none;
@@ -157,16 +142,9 @@
   gap: 0.4rem;
 
   &__label {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
     font-size: 0.84rem;
     font-weight: 600;
     color: #374151;
-  }
-
-  &__icono {
-    font-size: 0.9rem;
   }
 
   &__input {
@@ -177,6 +155,8 @@
     font-size: 0.92rem;
     color: $text-dark;
     outline: none;
+    width: 100%;
+    box-sizing: border-box;
     transition: all 0.2s ease;
 
     &:focus {

@@ -4,56 +4,36 @@
     <!-- Card 1: Vehículos Registrados -->
     <div class="stat-card stat-card--naranja">
       <div class="stat-card__contenido">
-        <div>
-          <span class="stat-card__etiqueta">Vehículos registrados</span>
-          <h3 class="stat-card__valor">{{ dashboardService.stats().totalVehiculos }}</h3>
-          <span class="stat-card__badge stat-card__badge--verde">+12% este mes</span>
-        </div>
-        <div class="stat-card__icono-wrap stat-card__icono-wrap--naranja">
-          <span class="stat-card__icono">🚗</span>
-        </div>
+        <span class="stat-card__etiqueta">Vehículos registrados</span>
+        <h3 class="stat-card__valor">{{ dashboardService.stats().totalVehiculos }}</h3>
+        <span class="stat-card__badge stat-card__badge--verde">+12% este mes</span>
       </div>
     </div>
 
     <!-- Card 2: Órdenes Activas -->
     <div class="stat-card stat-card--azul">
       <div class="stat-card__contenido">
-        <div>
-          <span class="stat-card__etiqueta">Órdenes activas</span>
-          <h3 class="stat-card__valor">{{ dashboardService.stats().totalOrdenes }}</h3>
-          <span class="stat-card__badge stat-card__badge--azul">+5% en taller</span>
-        </div>
-        <div class="stat-card__icono-wrap stat-card__icono-wrap--azul">
-          <span class="stat-card__icono">📋</span>
-        </div>
+        <span class="stat-card__etiqueta">Órdenes activas</span>
+        <h3 class="stat-card__valor">{{ dashboardService.stats().totalOrdenes }}</h3>
+        <span class="stat-card__badge stat-card__badge--azul">+5% en taller</span>
       </div>
     </div>
 
     <!-- Card 3: Servicios Completados -->
     <div class="stat-card stat-card--verde">
       <div class="stat-card__contenido">
-        <div>
-          <span class="stat-card__etiqueta">Servicios completados</span>
-          <h3 class="stat-card__valor">{{ dashboardService.stats().ordenesTerminadas }}</h3>
-          <span class="stat-card__badge stat-card__badge--verde">+8% satisfacción</span>
-        </div>
-        <div class="stat-card__icono-wrap stat-card__icono-wrap--verde">
-          <span class="stat-card__icono">✅</span>
-        </div>
+        <span class="stat-card__etiqueta">Servicios completados</span>
+        <h3 class="stat-card__valor">{{ dashboardService.stats().ordenesTerminadas }}</h3>
+        <span class="stat-card__badge stat-card__badge--verde">+8% satisfacción</span>
       </div>
     </div>
 
     <!-- Card 4: Mecánicos Activos -->
     <div class="stat-card stat-card--ambar">
       <div class="stat-card__contenido">
-        <div>
-          <span class="stat-card__etiqueta">Mecánicos activos</span>
-          <h3 class="stat-card__valor">{{ dashboardService.stats().totalUsuarios }}</h3>
-          <span class="stat-card__badge stat-card__badge--ambar">Disponibles</span>
-        </div>
-        <div class="stat-card__icono-wrap stat-card__icono-wrap--ambar">
-          <span class="stat-card__icono">👨‍🔧</span>
-        </div>
+        <span class="stat-card__etiqueta">Mecánicos activos</span>
+        <h3 class="stat-card__valor">{{ dashboardService.stats().totalUsuarios }}</h3>
+        <span class="stat-card__badge stat-card__badge--ambar">Disponibles</span>
       </div>
     </div>
   </div>
@@ -122,9 +102,6 @@
       <div class="alertas-lista">
         @for (alerta of dashboardService.alertas(); track alerta.id) {
           <div class="alerta-card" [class.alerta-card--advertencia]="alerta.tipo === 'advertencia'">
-            <span class="alerta-card__icono">
-              {{ alerta.tipo === 'advertencia' ? '⚠️' : '✅' }}
-            </span>
             <div>
               <p class="alerta-card__titulo">{{ alerta.titulo }}</p>
               <small class="alerta-card__subtitulo">{{ alerta.subtitulo }}</small>
@@ -142,21 +119,18 @@
       <div class="dashboard__botones-grid">
         @if (authService.puedeVerOrdenes()) {
           <a routerLink="/ordenes/nuevo" class="dashboard-btn dashboard-btn--primario">
-            <span class="dashboard-btn__icono">➕</span>
             <span>Crear Nueva Orden de Trabajo</span>
           </a>
         }
 
         @if (authService.puedeVerClientes()) {
           <a routerLink="/clientes/nuevo" class="dashboard-btn dashboard-btn--secundario">
-            <span class="dashboard-btn__icono">👤</span>
             <span>Registrar Nuevo Cliente</span>
           </a>
         }
 
         @if (authService.puedeVerVehiculos()) {
           <a routerLink="/vehiculos/nuevo" class="dashboard-btn dashboard-btn--secundario">
-            <span class="dashboard-btn__icono">🚗</span>
             <span>Registrar Nuevo Vehículo</span>
           </a>
         }

@@ -9,7 +9,6 @@
       </nav>
     </div>
     <a routerLink="/clientes/nuevo" class="modulo-clientes__btn-nuevo">
-      <span>➕</span>
       <span>Nuevo Cliente</span>
     </a>
   </div>
@@ -17,7 +16,6 @@
   <!-- BUSCADOR -->
   <div class="modulo-clientes__buscador-card">
     <div class="modulo-clientes__buscador">
-      <span class="modulo-clientes__buscador-icono">🔍</span>
       <input
         type="text"
         class="modulo-clientes__input"
@@ -50,47 +48,45 @@
       <table class="modulo-clientes__tabla">
         <thead>
           <tr>
-            <th style="width: 50px;">N°</th>
-            <th>Nombre Completo</th>
-            <th>DNI</th>
-            <th>Teléfono</th>
-            <th>Correo Electrónico</th>
-            <th style="width: 120px; text-align: center;">Acciones</th>
+            <th class="col-nro">N°</th>
+            <th class="col-nombre">Nombre Completo</th>
+            <th class="col-dni">DNI</th>
+            <th class="col-tel">Teléfono</th>
+            <th class="col-email">Correo Electrónico</th>
+            <th class="col-acciones">Acciones</th>
           </tr>
         </thead>
         <tbody>
           @for (c of clientesFiltrados(); track c.id; let i = $index) {
             <tr>
-              <td class="texto-muted">{{ i + 1 }}</td>
-              <td>
+              <td class="col-nro texto-muted">{{ i + 1 }}</td>
+              <td class="col-nombre">
                 <strong class="cliente-nombre">{{ c.nombreCompleto }}</strong>
               </td>
-              <td>
+              <td class="col-dni">
                 <span class="badge-dni">{{ c.dni }}</span>
               </td>
-              <td>{{ c.telefono || '—' }}</td>
-              <td>
+              <td class="col-tel">{{ c.telefono || '—' }}</td>
+              <td class="col-email">
                 <a [href]="'mailto:' + c.correo" class="cliente-email">
                   {{ c.correo || '—' }}
                 </a>
               </td>
-              <td>
+              <td class="col-acciones">
                 <div class="acciones-btns">
                   <button
                     type="button"
                     class="btn-accion btn-accion--editar"
                     (click)="editar(c.id!)"
-                    title="Editar Cliente"
                   >
-                    ✏️
+                    Editar
                   </button>
                   <button
                     type="button"
                     class="btn-accion btn-accion--eliminar"
                     (click)="eliminar(c.id!, c.nombreCompleto)"
-                    title="Eliminar Cliente"
                   >
-                    🗑
+                    Eliminar
                   </button>
                 </div>
               </td>
@@ -98,7 +94,6 @@
           } @empty {
             <tr>
               <td colspan="6" class="tabla-vacia">
-                <span class="tabla-vacia__icono">👥</span>
                 <p class="tabla-vacia__texto">No se encontraron clientes que coincidan con la búsqueda.</p>
               </td>
             </tr>

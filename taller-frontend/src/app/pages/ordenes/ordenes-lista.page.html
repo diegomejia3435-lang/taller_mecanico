@@ -9,7 +9,6 @@
       </nav>
     </div>
     <a routerLink="/ordenes/nuevo" class="modulo-ordenes__btn-nuevo">
-      <span>➕</span>
       <span>Nueva Orden</span>
     </a>
   </div>
@@ -19,7 +18,6 @@
     <div class="modulo-ordenes__filtros-wrap">
       <!-- Buscador -->
       <div class="modulo-ordenes__buscador">
-        <span class="modulo-ordenes__icono">🔍</span>
         <input
           type="text"
           class="modulo-ordenes__input"
@@ -68,38 +66,38 @@
       <table class="modulo-ordenes__tabla">
         <thead>
           <tr>
-            <th style="width: 70px;">N° Orden</th>
-            <th>Vehículo</th>
-            <th>Cliente</th>
-            <th>Mecánico</th>
-            <th>Ingreso</th>
-            <th>Estado</th>
-            <th>Diagnóstico / Monto</th>
-            <th style="width: 140px; text-align: center;">Acción Estado</th>
+            <th class="col-orden">N° Orden</th>
+            <th class="col-vehiculo">Vehículo</th>
+            <th class="col-cliente">Cliente</th>
+            <th class="col-mecanico">Mecánico</th>
+            <th class="col-ingreso">Fecha Ingreso</th>
+            <th class="col-estado">Estado</th>
+            <th class="col-diag">Diagnóstico y Costo</th>
+            <th class="col-acciones">Acción</th>
           </tr>
         </thead>
         <tbody>
           @for (o of ordenesFiltradas(); track o.id) {
             <tr>
-              <td>
+              <td class="col-orden">
                 <strong class="orden-id">#{{ o.id }}</strong>
               </td>
-              <td>
+              <td class="col-vehiculo">
                 <span class="badge-placa">{{ o.vehiculo.placa }}</span>
                 <span class="vehiculo-nombre">{{ o.vehiculo.marca }}</span>
               </td>
-              <td>
+              <td class="col-cliente">
                 <strong class="cliente-nombre">
                   {{ o.vehiculo.cliente?.nombreCompleto || 'Sin registrar' }}
                 </strong>
               </td>
-              <td>
+              <td class="col-mecanico">
                 <span class="mecanico-tag">
-                  👨‍🔧 {{ o.mecanico?.nombreCompleto || 'Por asignar' }}
+                  {{ o.mecanico?.nombreCompleto || 'Por asignar' }}
                 </span>
               </td>
-              <td class="fecha-ingreso">{{ o.fechaIngreso }}</td>
-              <td>
+              <td class="col-ingreso fecha-ingreso">{{ o.fechaIngreso }}</td>
+              <td class="col-estado">
                 @switch (o.estado) {
                   @case ('PENDIENTE') {
                     <span class="badge-estado badge-estado--pendiente">Pendiente</span>
@@ -115,22 +113,23 @@
                   }
                 }
               </td>
-              <td>
-                <p class="diagnostico-texto">{{ o.diagnosticoTecnico }}</p>
-                @if (o.montoTotal) {
-                  <span class="monto-total">S/ {{ o.montoTotal.toFixed(2) }}</span>
-                }
+              <td class="col-diag">
+                <div class="diag-wrap">
+                  <span class="diagnostico-texto">{{ o.diagnosticoTecnico }}</span>
+                  @if (o.montoTotal) {
+                    <span class="monto-total">S/ {{ o.montoTotal.toFixed(2) }}</span>
+                  }
+                </div>
               </td>
-              <td>
+              <td class="col-acciones">
                 <div class="acciones-orden">
                   @if (o.estado === 'PENDIENTE') {
                     <button
                       type="button"
                       class="btn-estado btn-estado--proceso"
                       (click)="cambiarEstado(o.id!, 'EN_PROCESO')"
-                      title="Pasar a En Proceso"
                     >
-                      ▶ Iniciar
+                      Iniciar
                     </button>
                   }
                   @if (o.estado === 'EN_PROCESO') {
@@ -138,21 +137,19 @@
                       type="button"
                       class="btn-estado btn-estado--terminado"
                       (click)="cambiarEstado(o.id!, 'TERMINADO')"
-                      title="Marcar como Terminado"
                     >
-                      ✓ Finalizar
+                      Finalizar
                     </button>
                   }
                   @if (o.estado === 'TERMINADO') {
-                    <span class="texto-completado">✓ Listo</span>
+                    <span class="texto-completado">Listo</span>
                   }
                   <button
                     type="button"
-                    class="btn-eliminar"
+                    class="btn-anular"
                     (click)="eliminar(o.id!)"
-                    title="Anular orden"
                   >
-                    🗑
+                    Anular
                   </button>
                 </div>
               </td>
@@ -160,7 +157,6 @@
           } @empty {
             <tr>
               <td colspan="8" class="tabla-vacia">
-                <span class="tabla-vacia__icono">📋</span>
                 <p class="tabla-vacia__texto">No se encontraron órdenes que coincidan con los filtros seleccionados.</p>
               </td>
             </tr>

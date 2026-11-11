@@ -53,12 +53,14 @@
       text-transform: uppercase;
       font-weight: 700;
       border-bottom: 1px solid $border-color;
+      white-space: nowrap;
     }
 
     td {
       padding: 0.95rem 1.25rem;
       border-bottom: 1px solid #f1f5f9;
       color: $text-dark;
+      white-space: nowrap;
     }
   }
 }

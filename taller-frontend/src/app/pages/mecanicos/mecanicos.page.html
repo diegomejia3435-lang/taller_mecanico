@@ -25,37 +25,39 @@
     <div class="modulo-mecanicos__tabla-cabecera">
       <h3>Plantilla Técnica</h3>
     </div>
-    <table class="modulo-mecanicos__tabla">
-      <thead>
-        <tr>
-          <th>N°</th>
-          <th>Nombre del Mecánico</th>
-          <th>Especialidad</th>
-          <th>Teléfono</th>
-          <th>Estado</th>
-          <th>Órdenes Asignadas</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (m of mecanicos(); track m.id; let i = $index) {
+    <div class="modulo-mecanicos__tabla-responsive">
+      <table class="modulo-mecanicos__tabla">
+        <thead>
           <tr>
-            <td>{{ i + 1 }}</td>
-            <td>
-              <strong>👨‍🔧 {{ m.nombre }}</strong>
-            </td>
-            <td>{{ m.especialidad }}</td>
-            <td>{{ m.telefono }}</td>
-            <td>
-              <span class="badge-estado" [class.badge-estado--activo]="m.estado === 'Activo'">
-                {{ m.estado }}
-              </span>
-            </td>
-            <td>
-              <strong>{{ m.ordenes }} órdenes</strong>
-            </td>
+            <th style="width: 50px;">N°</th>
+            <th>Nombre del Mecánico</th>
+            <th>Especialidad</th>
+            <th>Teléfono</th>
+            <th>Estado</th>
+            <th>Órdenes Asignadas</th>
           </tr>
-        }
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          @for (m of mecanicos(); track m.id; let i = $index) {
+            <tr>
+              <td>{{ i + 1 }}</td>
+              <td>
+                <strong class="mecanico-nombre">{{ m.nombre }}</strong>
+              </td>
+              <td>{{ m.especialidad }}</td>
+              <td>{{ m.telefono }}</td>
+              <td>
+                <span class="badge-estado" [class.badge-estado--activo]="m.estado === 'Activo'">
+                  {{ m.estado }}
+                </span>
+              </td>
+              <td>
+                <strong>{{ m.ordenes }} órdenes</strong>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>

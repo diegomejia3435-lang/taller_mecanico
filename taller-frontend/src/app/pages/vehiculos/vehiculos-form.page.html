@@ -8,31 +8,22 @@
       <p class="form-vehiculo__subtitulo">Registro técnico y asociación de flota en el taller</p>
     </div>
     <a routerLink="/vehiculos" class="form-vehiculo__btn-volver">
-      <span>←</span>
-      <span>Volver a Vehículos</span>
+      Volver a Vehículos
     </a>
   </div>
 
   <!-- TARJETA DEL FORMULARIO -->
   <div class="form-vehiculo__card">
     <div class="form-vehiculo__card-cabecera">
-      <div class="form-vehiculo__icono-wrap">
-        <span>🚗</span>
-      </div>
-      <div>
-        <h3 class="form-vehiculo__card-titulo">Datos del vehículo y propietario</h3>
-        <small class="form-vehiculo__card-subtitulo">Ingrese los datos técnicos para aperturar órdenes de trabajo</small>
-      </div>
+      <h3 class="form-vehiculo__card-titulo">Datos del vehículo y propietario</h3>
+      <small class="form-vehiculo__card-subtitulo">Ingrese los datos técnicos para aperturar órdenes de trabajo</small>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="guardar()" class="form-vehiculo__form">
       <div class="form-vehiculo__grid">
         <!-- PLACA -->
         <div class="campo">
-          <label class="campo__label">
-            <span class="campo__icono">🏷️</span>
-            <span>Placa (Formato ABC-123) *</span>
-          </label>
+          <label class="campo__label">Placa (Formato ABC-123) *</label>
           <input
             type="text"
             formControlName="placa"
@@ -50,10 +41,7 @@
 
         <!-- MARCA -->
         <div class="campo">
-          <label class="campo__label">
-            <span class="campo__icono">🚘</span>
-            <span>Marca *</span>
-          </label>
+          <label class="campo__label">Marca *</label>
           <input
             type="text"
             formControlName="marca"
@@ -70,10 +58,7 @@
 
         <!-- MODELO -->
         <div class="campo">
-          <label class="campo__label">
-            <span class="campo__icono">🏎️</span>
-            <span>Modelo *</span>
-          </label>
+          <label class="campo__label">Modelo *</label>
           <input
             type="text"
             formControlName="modelo"
@@ -90,10 +75,7 @@
 
         <!-- AÑO DE FABRICACIÓN -->
         <div class="campo">
-          <label class="campo__label">
-            <span class="campo__icono">📅</span>
-            <span>Año de Fabricación *</span>
-          </label>
+          <label class="campo__label">Año de Fabricación *</label>
           <input
             type="number"
             formControlName="anio"
@@ -111,10 +93,7 @@
 
         <!-- TIPO DE MOTOR -->
         <div class="campo">
-          <label class="campo__label">
-            <span class="campo__icono">⚙️</span>
-            <span>Tipo de Combustible / Motor</span>
-          </label>
+          <label class="campo__label">Tipo de Combustible / Motor</label>
           <select formControlName="tipoMotor" class="campo__input">
             <option value="Gasolina">Gasolina</option>
             <option value="Diésel">Diésel</option>
@@ -126,10 +105,7 @@
 
         <!-- CLIENTE PROPIETARIO -->
         <div class="campo">
-          <label class="campo__label">
-            <span class="campo__icono">👤</span>
-            <span>Cliente Propietario *</span>
-          </label>
+          <label class="campo__label">Cliente Propietario *</label>
           <select
             formControlName="clienteId"
             class="campo__input"
@@ -157,8 +133,7 @@
           class="form-vehiculo__btn-guardar"
           [disabled]="form.invalid"
         >
-          <span>💾</span>
-          <span>{{ esEdicion ? 'Actualizar Vehículo' : 'Guardar Vehículo' }}</span>
+          {{ esEdicion ? 'Actualizar Vehículo' : 'Guardar Vehículo' }}
         </button>
 
         <a routerLink="/vehiculos" class="form-vehiculo__btn-cancelar">

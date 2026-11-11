@@ -8,31 +8,22 @@
       <p class="form-cliente__subtitulo">Registro y gestión de clientes del taller</p>
     </div>
     <a routerLink="/clientes" class="form-cliente__btn-volver">
-      <span>←</span>
-      <span>Volver a Clientes</span>
+      Volver a Clientes
     </a>
   </div>
 
   <!-- TARJETA DEL FORMULARIO -->
   <div class="form-cliente__card">
     <div class="form-cliente__card-cabecera">
-      <div class="form-cliente__icono-wrap">
-        <span>👤</span>
-      </div>
-      <div>
-        <h3 class="form-cliente__card-titulo">Datos del cliente</h3>
-        <small class="form-cliente__card-subtitulo">Complete todos los campos requeridos para el registro</small>
-      </div>
+      <h3 class="form-cliente__card-titulo">Datos del cliente</h3>
+      <small class="form-cliente__card-subtitulo">Complete todos los campos requeridos para el registro</small>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="guardar()" class="form-cliente__form">
       <div class="form-cliente__grid">
         <!-- NOMBRE COMPLETO -->
         <div class="campo">
-          <label class="campo__label">
-            <span class="campo__icono">👤</span>
-            <span>Nombre Completo *</span>
-          </label>
+          <label class="campo__label">Nombre Completo *</label>
           <input
             type="text"
             formControlName="nombreCompleto"
@@ -49,10 +40,7 @@
 
         <!-- DNI -->
         <div class="campo">
-          <label class="campo__label">
-            <span class="campo__icono">🪪</span>
-            <span>DNI (8 dígitos) *</span>
-          </label>
+          <label class="campo__label">DNI (8 dígitos) *</label>
           <input
             type="text"
             formControlName="dni"
@@ -70,10 +58,7 @@
 
         <!-- TELEFONO -->
         <div class="campo">
-          <label class="campo__label">
-            <span class="campo__icono">📞</span>
-            <span>Teléfono / Celular</span>
-          </label>
+          <label class="campo__label">Teléfono / Celular</label>
           <input
             type="text"
             formControlName="telefono"
@@ -91,10 +76,7 @@
 
         <!-- CORREO ELECTRÓNICO -->
         <div class="campo">
-          <label class="campo__label">
-            <span class="campo__icono">✉️</span>
-            <span>Correo Electrónico</span>
-          </label>
+          <label class="campo__label">Correo Electrónico</label>
           <input
             type="email"
             formControlName="correo"
@@ -117,8 +99,7 @@
           class="form-cliente__btn-guardar"
           [disabled]="form.invalid"
         >
-          <span>💾</span>
-          <span>{{ esEdicion ? 'Actualizar Cliente' : 'Guardar Cliente' }}</span>
+          {{ esEdicion ? 'Actualizar Cliente' : 'Guardar Cliente' }}
         </button>
 
         <a routerLink="/clientes" class="form-cliente__btn-cancelar">

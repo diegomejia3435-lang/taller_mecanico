@@ -8,31 +8,22 @@
       <p class="form-orden__subtitulo">Apertura y diagnóstico técnico de mantenimiento vehicular</p>
     </div>
     <a routerLink="/ordenes" class="form-orden__btn-volver">
-      <span>←</span>
-      <span>Volver a Órdenes</span>
+      Volver a Órdenes
     </a>
   </div>
 
   <!-- TARJETA DEL FORMULARIO -->
   <div class="form-orden__card">
     <div class="form-orden__card-cabecera">
-      <div class="form-orden__icono-wrap">
-        <span>📋</span>
-      </div>
-      <div>
-        <h3 class="form-orden__card-titulo">Detalles de la Orden</h3>
-        <small class="form-orden__card-subtitulo">Seleccione el vehículo y defina el trabajo a realizar</small>
-      </div>
+      <h3 class="form-orden__card-titulo">Detalles de la Orden</h3>
+      <small class="form-orden__card-subtitulo">Seleccione el vehículo y defina el trabajo a realizar</small>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="guardar()" class="form-orden__form">
       <div class="form-orden__grid">
         <!-- VEHÍCULO -->
         <div class="campo campo--full">
-          <label class="campo__label">
-            <span class="campo__icono">🚗</span>
-            <span>Vehículo a Atender *</span>
-          </label>
+          <label class="campo__label">Vehículo a Atender *</label>
           <select
             formControlName="vehiculoId"
             class="campo__input"
@@ -54,10 +45,7 @@
 
         <!-- DIAGNÓSTICO TÉCNICO -->
         <div class="campo campo--full">
-          <label class="campo__label">
-            <span class="campo__icono">📝</span>
-            <span>Diagnóstico Técnico / Motivo de Ingreso *</span>
-          </label>
+          <label class="campo__label">Diagnóstico Técnico / Motivo de Ingreso *</label>
           <textarea
             formControlName="diagnosticoTecnico"
             rows="3"
@@ -74,10 +62,7 @@
 
         <!-- MONTO TOTAL ESTIMADO -->
         <div class="campo">
-          <label class="campo__label">
-            <span class="campo__icono">💵</span>
-            <span>Costo / Presupuesto Estimado (S/) *</span>
-          </label>
+          <label class="campo__label">Costo / Presupuesto Estimado (S/) *</label>
           <input
             type="number"
             step="0.50"
@@ -94,10 +79,7 @@
 
         <!-- ESTADO INICIAL -->
         <div class="campo">
-          <label class="campo__label">
-            <span class="campo__icono">🚦</span>
-            <span>Estado de la Orden</span>
-          </label>
+          <label class="campo__label">Estado de la Orden</label>
           <select formControlName="estado" class="campo__input">
             <option value="PENDIENTE">PENDIENTE (En espera)</option>
             <option value="EN_PROCESO">EN PROCESO (En bahía)</option>
@@ -113,8 +95,7 @@
           class="form-orden__btn-guardar"
           [disabled]="form.invalid"
         >
-          <span>💾</span>
-          <span>{{ esEdicion ? 'Actualizar Orden' : 'Emitir Orden de Trabajo' }}</span>
+          {{ esEdicion ? 'Actualizar Orden' : 'Emitir Orden de Trabajo' }}
         </button>
 
         <a routerLink="/ordenes" class="form-orden__btn-cancelar">
