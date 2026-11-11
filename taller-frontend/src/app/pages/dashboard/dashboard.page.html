@@ -135,24 +135,32 @@
     </div>
   </div>
 
-  <!-- ACCESOS RÁPIDOS INFERIORES -->
-  <div class="dashboard__accesos">
-    <h4 class="dashboard__accesos-titulo">Acciones Rápidas del Sistema</h4>
-    <div class="dashboard__botones-grid">
-      <a routerLink="/ordenes/nuevo" class="dashboard-btn dashboard-btn--primario">
-        <span class="dashboard-btn__icono">➕</span>
-        <span>Crear Nueva Orden de Trabajo</span>
-      </a>
+  <!-- ACCESOS RÁPIDOS INFERIORES SEGÚN ROL -->
+  @if (authService.puedeVerOrdenes() || authService.puedeVerClientes() || authService.puedeVerVehiculos()) {
+    <div class="dashboard__accesos">
+      <h4 class="dashboard__accesos-titulo">Acciones Rápidas del Sistema</h4>
+      <div class="dashboard__botones-grid">
+        @if (authService.puedeVerOrdenes()) {
+          <a routerLink="/ordenes/nuevo" class="dashboard-btn dashboard-btn--primario">
+            <span class="dashboard-btn__icono">➕</span>
+            <span>Crear Nueva Orden de Trabajo</span>
+          </a>
+        }
 
-      <a routerLink="/clientes/nuevo" class="dashboard-btn dashboard-btn--secundario">
-        <span class="dashboard-btn__icono">👤</span>
-        <span>Registrar Nuevo Cliente</span>
-      </a>
+        @if (authService.puedeVerClientes()) {
+          <a routerLink="/clientes/nuevo" class="dashboard-btn dashboard-btn--secundario">
+            <span class="dashboard-btn__icono">👤</span>
+            <span>Registrar Nuevo Cliente</span>
+          </a>
+        }
 
-      <a routerLink="/vehiculos/nuevo" class="dashboard-btn dashboard-btn--secundario">
-        <span class="dashboard-btn__icono">🚗</span>
-        <span>Registrar Nuevo Vehículo</span>
-      </a>
+        @if (authService.puedeVerVehiculos()) {
+          <a routerLink="/vehiculos/nuevo" class="dashboard-btn dashboard-btn--secundario">
+            <span class="dashboard-btn__icono">🚗</span>
+            <span>Registrar Nuevo Vehículo</span>
+          </a>
+        }
+      </div>
     </div>
-  </div>
+  }
 </section>

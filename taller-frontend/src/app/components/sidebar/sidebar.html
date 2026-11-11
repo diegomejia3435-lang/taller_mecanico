@@ -10,6 +10,7 @@
   <nav class="sidebar__nav">
     <div class="sidebar__section-title">PRINCIPAL</div>
 
+    <!-- Dashboard: accesible para todos los roles (ADMIN, MECANICO, CLIENTE) -->
     <a
       routerLink="/dashboard"
       routerLinkActive="activo"
@@ -20,74 +21,102 @@
       <span>Dashboard</span>
     </a>
 
-    <div class="sidebar__section-title">GESTIÓN</div>
+    <!-- GESTIÓN -->
+    @if (authService.puedeVerClientes() || authService.puedeVerVehiculos() || authService.puedeVerOrdenes()) {
+      <div class="sidebar__section-title">GESTIÓN</div>
 
-    <a
-      routerLink="/clientes"
-      routerLinkActive="activo"
-      class="sidebar__link"
-    >
-      <span class="sidebar__icon">👥</span>
-      <span>Clientes</span>
-    </a>
+      <!-- Clientes: sec:authorize="hasRole('ADMIN')" -->
+      @if (authService.puedeVerClientes()) {
+        <a
+          routerLink="/clientes"
+          routerLinkActive="activo"
+          class="sidebar__link"
+        >
+          <span class="sidebar__icon">👥</span>
+          <span>Clientes</span>
+        </a>
+      }
 
-    <a
-      routerLink="/vehiculos"
-      routerLinkActive="activo"
-      class="sidebar__link"
-    >
-      <span class="sidebar__icon">🚗</span>
-      <span>Vehículos</span>
-    </a>
+      <!-- Vehículos: sec:authorize="hasRole('ADMIN')" -->
+      @if (authService.puedeVerVehiculos()) {
+        <a
+          routerLink="/vehiculos"
+          routerLinkActive="activo"
+          class="sidebar__link"
+        >
+          <span class="sidebar__icon">🚗</span>
+          <span>Vehículos</span>
+        </a>
+      }
 
-    <a
-      routerLink="/ordenes"
-      routerLinkActive="activo"
-      class="sidebar__link"
-    >
-      <span class="sidebar__icon">📋</span>
-      <span>Órdenes de Trabajo</span>
-    </a>
+      <!-- Órdenes: sec:authorize="hasAnyRole('ADMIN', 'MECANICO')" -->
+      @if (authService.puedeVerOrdenes()) {
+        <a
+          routerLink="/ordenes"
+          routerLinkActive="activo"
+          class="sidebar__link"
+        >
+          <span class="sidebar__icon">📋</span>
+          <span>Órdenes de Trabajo</span>
+        </a>
+      }
+    }
 
-    <div class="sidebar__section-title">OPERACIONES</div>
+    <!-- OPERACIONES -->
+    @if (authService.puedeVerMecanicos() || authService.puedeVerHistorial() || authService.puedeVerReportes() || authService.puedeVerExportar()) {
+      <div class="sidebar__section-title">OPERACIONES</div>
 
-    <a
-      routerLink="/mecanicos"
-      routerLinkActive="activo"
-      class="sidebar__link"
-    >
-      <span class="sidebar__icon">🔧</span>
-      <span>Mecánicos</span>
-    </a>
+      <!-- Mecánicos: sec:authorize="hasRole('ADMIN')" -->
+      @if (authService.puedeVerMecanicos()) {
+        <a
+          routerLink="/mecanicos"
+          routerLinkActive="activo"
+          class="sidebar__link"
+        >
+          <span class="sidebar__icon">🔧</span>
+          <span>Mecánicos</span>
+        </a>
+      }
 
-    <a
-      routerLink="/historial"
-      routerLinkActive="activo"
-      class="sidebar__link"
-    >
-      <span class="sidebar__icon">📜</span>
-      <span>Historial</span>
-    </a>
+      <!-- Historial: sec:authorize="hasAnyRole('ADMIN', 'MECANICO', 'CLIENTE')" -->
+      @if (authService.puedeVerHistorial()) {
+        <a
+          routerLink="/historial"
+          routerLinkActive="activo"
+          class="sidebar__link"
+        >
+          <span class="sidebar__icon">📜</span>
+          <span>Historial</span>
+        </a>
+      }
 
-    <a
-      routerLink="/reportes"
-      routerLinkActive="activo"
-      class="sidebar__link"
-    >
-      <span class="sidebar__icon">📈</span>
-      <span>Reportes</span>
-    </a>
+      <!-- Reportes: sec:authorize="hasRole('ADMIN')" -->
+      @if (authService.puedeVerReportes()) {
+        <a
+          routerLink="/reportes"
+          routerLinkActive="activo"
+          class="sidebar__link"
+        >
+          <span class="sidebar__icon">📈</span>
+          <span>Reportes</span>
+        </a>
+      }
 
-    <a
-      routerLink="/exportar"
-      routerLinkActive="activo"
-      class="sidebar__link"
-    >
-      <span class="sidebar__icon">📦</span>
-      <span>Exportar</span>
-    </a>
+      <!-- Exportar: sec:authorize="hasRole('ADMIN')" -->
+      @if (authService.puedeVerExportar()) {
+        <a
+          routerLink="/exportar"
+          routerLinkActive="activo"
+          class="sidebar__link"
+        >
+          <span class="sidebar__icon">📦</span>
+          <span>Exportar</span>
+        </a>
+      }
+    }
 
-    @if (authService.esAdmin()) {
+    <!-- SISTEMA: sec:authorize="hasRole('ADMIN')" -->
+    @if (authService.puedeVerUsuarios()) {
       <div class="sidebar__section-title">SISTEMA</div>
 
       <a
