@@ -88,49 +88,80 @@ Abre en el navegador: http://localhost:4200
 2. INTEGRACION DE TEMAS DEL 3ER AVANCE (FRONTEND + BACKEND)
 --------------------------------------------------------------------------------
 
-El 3er avance integra la aplicacion Frontend en Angular con el Backend en Spring Boot
-cumpliendo con la rubrica de evaluacion por componentes y responsabilidades:
+El proyecto culmina la migracion integral de una arquitectura monolitica (Thymeleaf)
+hacia una arquitectura cliente-servidor desacoplada con Single Page Application (SPA)
+en Angular v22 Standalone y Backend REST API en Spring Boot 3 con Spring Security y JWT:
 
-1. PROYECTO ANGULAR ORGANIZADO:
-   - Estructurado por componentes Standalone (sin NgModules) con responsabilidades claras.
-   - Componente raiz `app.ts` gestionando el catalogo y estado reactivo con Signals.
-   - Componente `encabezado` reutilizable con entradas `input()` y eventos `output()`.
-   - Componente `tarjeta-servicio` reutilizable con `input.required<Servicio>()` y `output()`.
-   - Renderizado declarativo con `@for (s of servicios(); track s.id)`.
-   - Arquitectura de estilos SCSS con tokens en `_variables.scss` ($primary, $radius, $space),
-     mixins configurables en `_mixins.scss` (@mixin boton, @mixin tarjeta-base), anidamiento
-     con selector `&` y diseno adaptativo responsive (Escritorio -> Tablet -> Movil).
-   - Validacion de estado de disponibilidad (`disponible: boolean`) con estilos y boton condicional.
+1. ARQUITECTURA ANGULAR MODULAR Y STANDALONE:
+   - Eliminacion de la dependencia en NgModules: el 100% de la aplicacion opera mediante
+     componentes Standalone organizados en carpetas modulares:
+     * pages/        -> Vistas principales (Login, Dashboard, Clientes, Vehiculos,
+                        Ordenes, Mecanicos, Historial, Reportes, Usuarios, Exportar).
+     * components/   -> Componentes comunes (Sidebar navegacion lateral, Topbar cabecera).
+     * services/     -> Capa asincrona de comunicacion y estado con HttpClient.
+     * models/       -> Interfaces y tipos TypeScript tipados estrictamente.
+     * guards/       -> Guardianes de enrutamiento y autorizacion RBAC.
+   - Estado reactivo impulsado por Signals (`signal()`, `computed()`), asegurando
+     actualizaciones ultrarrapidas sin sobrecargar el ciclo de deteccion de cambios.
+   - Arquitectura SCSS modular basada en tokens (`_variables.scss`), mixins responsive
+     (`_mixins.scss`) y diseno adaptativo completo (Desktop, Tablet y Mobile).
+   - Sidebar con posicionamiento fijo/sticky (`position: sticky; top: 0; height: 100vh;`)
+     que acompana la navegacion durante el scroll continuo, eliminando huecos blancos.
+   - Tablas estilizadas con celdas no rompibles (`white-space: nowrap;`) y anchos
+     definidos, junto a una interfaz sobria sin emojis superfluos en formularios y listados.
 
-2. RUTAS PRINCIPALES:
-   - Configuracion de navegacion en `app.routes.ts` soportada por `<router-outlet />`.
-   - Preparado para transitar entre Login, Dashboard, Clientes, Vehiculos y Ordenes.
+2. SISTEMA DE RUTAS Y SEGURIDAD RBAC (ROLE GUARDS):
+   - Mapeo de rutas centralizado en `app.routes.ts` con proteccion integral mediante `role.guard.ts`.
+   - Control de permisos identico al backend Spring Security:
+     * ROLE_ADMIN: Acceso total a todos los modulos (Dashboard, Clientes, Vehiculos,
+       Ordenes, Mecanicos, Historial, Reportes, Usuarios y Exportar).
+     * ROLE_MECANICO: Acceso restringido exclusivamente a la gestion de ordenes de trabajo
+       asignadas (/ordenes). El Sidebar y Topbar ocultan automaticamente las opciones
+       administrativas, y el Route Guard bloquea e impide el ingreso por URL redirigiendo a /ordenes.
 
-3. FORMULARIOS CON VALIDACION:
-   - Formularios reactivos (ReactiveFormsModule) para la captura de datos con validaciones
-     en tiempo real y mensajes de error visibles para el usuario.
+3. FORMULARIOS REACTIVOS CON VALIDACION ROBUSTA:
+   - Formularios reactivos (ReactiveFormsModule) para Clientes, Vehiculos y Ordenes de Servicio.
+   - Validaciones en tiempo real:
+     * Clientes: DNI (exactamente 8 digitos numericos), telefono (9 digitos), email y nombres.
+     * Vehiculos: Placa vehicular con formato estandar peruano (regex: 3 letras - 3 digitos),
+       ano de fabricacion valido (1990 - 2026), numero de motor y asociacion al propietario.
+     * Ordenes: Descripcion del servicio, diagnostico inicial, seleccion de mecanico y montos.
+   - Mensajes de error claros e integrados visualmente sin desalinear la cuadricula de campos.
 
-4. CONSUMO REAL DE API REST:
-   - Servicios Angular (HttpClient) inyectables configurados para consumir los endpoints
-     de Spring Boot en `http://localhost:8080/api/...`.
-   - CORS habilitado en el Backend para permitir solicitudes desde `http://localhost:4200`.
+4. CONSUMO DE API REST Y ARQUITECTURA MONOREPO:
+   - Desacoplamiento total: se eliminaron los controladores MVC y vistas Thymeleaf
+     redundantes, dejando el backend puramente enfocado en proveer servicios REST API en
+     `http://localhost:8080/api/...`.
+   - Servicios Angular tipados (`auth.service.ts`, `cliente.service.ts`, `vehiculo.service.ts`,
+     `orden.service.ts`, `dashboard.service.ts`) que gestionan solicitudes HTTP asincronas.
+   - CORS habilitado globalmente en Spring Security para solicitudes originadas en `http://localhost:4200`.
 
-5. CRUD VISIBLE DESDE FRONTEND:
-   - Tablas y vistas interactivas para Listar, Crear (POST 201), Modificar (PUT/PATCH)
-     y Eliminar (DELETE 204) recursos principales del taller mecanico.
+5. GESTION CRUD COMPLETA Y EXPERIENCIA INTERACTIVA:
+   - Operaciones de Listar, Registrar (POST 201), Actualizar (PUT/PATCH) y Eliminar (DELETE 204)
+     con refresco instantaneo de la interfaz mediante senales reactivas.
+   - Busqueda y filtrado interactivo en tiempo real en tablas de Clientes, Vehiculos y Ordenes.
+   - Flujo de transicion de estados de ordenes de mantenimiento con un solo clic:
+     * "Iniciar" (En proceso) -> "Finalizar" (Terminada) -> "Listo" (Entregada) -> "Anular".
+   - Modulo de Exportacion con generacion de reportes estructurados en formato Microsoft Excel (.xlsx)
+     y Documentos PDF (.pdf).
 
-6. MANEJO DE ERRORES HTTP:
-   - Interceptor HTTP que captura y muestra alertas legibles ante respuestas 400 (Bad Request),
-     401 (Unauthorized), 403 (Forbidden), 404 (Not Found) o 409 (Conflict).
+6. MANEJO DE ERRORES HTTP Y CONTROL DE EXCEPCIONES:
+   - Tratamiento de codigos de respuesta HTTP con mensajes legibles para el usuario:
+     400 (Bad Request), 401 (Unauthorized), 403 (Forbidden), 404 (Not Found) y 409 (Conflict).
+   - Pagina 404 de contingencia (`no-encontrado.page.ts`) con enlaces rapidos hacia las rutas
+     principales habilitadas segun la sesion activa.
 
-7. AUTENTICACION DESDE ANGULAR:
-   - Pantalla de inicio de sesion (Login), almacenamiento seguro del token JWT en el cliente,
-     AuthInterceptor para inyectar la cabecera `Authorization: Bearer <token>` en peticiones
-     protegidas y AuthGuard para restringir rutas segun rol.
+7. AUTENTICACION JWT Y SESION REACTIVA:
+   - Pantalla de Login conectada con el endpoint de autenticacion de Spring Security.
+   - Almacenamiento seguro del token JWT Bearer y datos del usuario en sesion.
+   - Topbar dinamico que muestra el nombre completo del usuario autenticado, su rol asignado,
+     avatar corporativo con iniciales y boton de cierre de sesion seguro.
 
-8. EVIDENCIA END-TO-END:
-   - Flujo completo observable desde la interfaz Angular, procesado por la logica de negocio
-     en Spring Boot y persistido en la base de datos relacional MySQL.
+8. EVIDENCIA END-TO-END Y LIMPIEZA DE CODIGO FUENTE:
+   - Flujo de datos completo validado: SPA Angular -> Endpoints REST Spring Boot 3 ->
+     JPA / Hibernate -> Base de Datos Relacional MySQL.
+   - Refactorizacion y depuracion de archivos obsoletos (eliminacion de controladores Thymeleaf,
+     plantillas HTML hibridas y codigo duplicado), garantizando un monorepo limpio y optimizado.
 
 
 --------------------------------------------------------------------------------
@@ -252,38 +283,59 @@ taller_modificado/                                 <-- Raiz del Repositorio Mono
 │               ├── repository/                    --> Pruebas de JPQL con base de datos real (ClienteRepositoryTest).
 │               └── service/                       --> Pruebas unitarias Mockito y de Rollback (OrdenServiceTransactionTest).
 │
-└── taller-frontend/                               <-- PROYECTO FRONTEND (Angular v22 + SCSS Standalone)
+└── taller-frontend/                               <-- PROYECTO FRONTEND (Angular v22 Standalone + SCSS)
     ├── package.json                               --> Dependencias Node.js y scripts de Angular.
     ├── angular.json                               --> Configuracion de compilacion y assets de Angular CLI.
     ├── tsconfig.json                              --> Configuracion de TypeScript.
     │
     └── src/
-        ├── main.ts                                --> Punto de arranque de la aplicacion Angular.
+        ├── main.ts                                --> Punto de arranque de la aplicacion Angular Standalone.
         ├── index.html                             --> Plantilla HTML base del navegador.
-        ├── styles.scss                            --> Estilos globales y reset tipografico.
+        ├── styles.scss                            --> Estilos globales, reset y fuentes.
         │
         ├── styles/                                --> Arquitectura de diseno modular SCSS
-        │   ├── _variables.scss                    --> Tokens de color ($primary: #e85d26), radios, espacios y sombras.
-        │   └── _mixins.scss                       --> Mixins de botones (@mixin boton) y responsive (@mixin tablet, mobile).
+        │   ├── _variables.scss                    --> Tokens de color corporativos, radios, espacios y sombras.
+        │   └── _mixins.scss                       --> Mixins para botones y diseno adaptativo (@mixin mobile).
         │
         └── app/
-            ├── app.ts                             --> Componente raiz Standalone con Signals reactivos y catalogo de taller.
-            ├── app.html                           --> Plantilla con @for, comunicacion input/output y <router-outlet />.
-            ├── app.scss                           --> Cuadricula responsive (3 columnas escritorio -> 2 tablet -> 1 movil).
-            ├── app.routes.ts                      --> Definicion de rutas principales de la aplicacion.
+            ├── app.ts                             --> Componente raiz Standalone con integracion de layout.
+            ├── app.html                           --> Layout estructural (Sidebar, Topbar y <router-outlet />).
+            ├── app.scss                           --> Estilos del contenedor general y sticky viewport.
+            ├── app.routes.ts                      --> Definicion de rutas SPA y proteccion con Role Guard.
             │
-            ├── models/
-            │   └── servicio.model.ts              --> Interfaz TypeScript para Servicio automotriz.
+            ├── components/                        --> Componentes comunes de navegacion y cabecera
+            │   ├── sidebar/                       --> Barra lateral corporativa sticky con enlaces segun rol activo.
+            │   └── topbar/                        --> Barra superior con reloj, sesion, avatar e iniciales.
             │
-            └── components/                        --> Componentes Standalone reutilizables
-                ├── encabezado/                    --> Componente de barra superior
-                │   ├── encabezado.ts              --> input() y output() para contadores y eventos.
-                │   ├── encabezado.html            --> Marca, titulo y badge interactivo de servicios.
-                │   └── encabezado.scss            --> Anidamiento SCSS y mixin responsive.
-                │
-                └── tarjeta-servicio/              --> Componente de tarjeta de servicio
-                    ├── tarjeta-servicio.ts        --> input.required<Servicio>() y emision output<Servicio>().
-                    ├── tarjeta-servicio.html      --> Precios, categorias, icono y control de disponibilidad.
-                    └── tarjeta-servicio.scss      --> Uso de @include tarjeta-base y @include boton().
+            ├── guards/                            --> Control de acceso y proteccion de rutas
+            │   └── role.guard.ts                  --> Guardia RBAC (ROLE_ADMIN vs ROLE_MECANICO).
+            │
+            ├── models/                            --> Modelos de datos e interfaces TypeScript tipadas
+            │   ├── cliente.model.ts               --> Interfaz de Cliente.
+            │   ├── vehiculo.model.ts              --> Interfaz de Vehiculo.
+            │   ├── orden.model.ts                 --> Interfaz de Orden de Mantenimiento y estados.
+            │   ├── usuario.model.ts               --> Interfaz de Usuario y roles de seguridad.
+            │   ├── dashboard.model.ts             --> Modelos para metricas y estadisticas.
+            │   └── servicio.model.ts              --> Interfaz de catalogo de Servicios automotrices.
+            │
+            ├── services/                          --> Servicios Angular con HttpClient y Signals
+            │   ├── auth.service.ts                --> Gestion de sesion, login, logout, roles y token JWT.
+            │   ├── cliente.service.ts             --> CRUD de clientes con reactividad y busqueda.
+            │   ├── vehiculo.service.ts            --> CRUD de vehiculos y filtros por placa/propietario.
+            │   ├── orden.service.ts               --> CRUD de ordenes y transiciones de estado de servicio.
+            │   └── dashboard.service.ts           --> Metricas operativas y conteos para el panel principal.
+            │
+            └── pages/                             --> Vistas y modulos de la plataforma SPA
+                ├── login/                         --> Formulario de inicio de sesion seguro.
+                ├── dashboard/                     --> Metricas, resumen de actividad y accesos rapidos.
+                ├── clientes/                      --> Listado con busqueda y formulario reactivo de clientes.
+                ├── vehiculos/                     --> Catalogo con filtros y formulario reactivo con validacion de placa.
+                ├── ordenes/                       --> Tablero de ordenes, transiciones de estado y creacion.
+                ├── mecanicos/                     --> Plantilla tecnica calificada y asignacion de trabajo.
+                ├── historial/                     --> Bitacora de atenciones concluidas e importes.
+                ├── reportes/                      --> Metricas de ingresos y servicios de mayor demanda.
+                ├── usuarios/                      --> Directorio de cuentas y credenciales RBAC.
+                ├── exportar/                      --> Modulo de descarga estructurada en Excel (.xlsx) y PDF (.pdf).
+                └── no-encontrado/                 --> Pagina 404 personalizada con rutas alternativas segun rol.
 
 ================================================================================
