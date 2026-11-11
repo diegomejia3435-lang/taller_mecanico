@@ -11,29 +11,47 @@ las APIs en Postman y entender la arquitectura monorepo del codigo fuente.
 --------------------------------------------------------------------------------
 
 REQUISITOS PREVIOS:
-- Java JDK 21 instalado.
-- Node.js (v20 o superior) y npm instalados.
-- Angular CLI instalado globalmente (`npm install -g @angular/cli`).
-- Servidor MySQL ejecutandose en localhost:3306 con credenciales:
-  * Usuario: root
-  * Contrasena: 1234
-  (MODIFICAR "application.properties" EN "taller-backend/src/main/resources" SI LOS DATOS SON DISTINTOS)
-  * Base de datos: taller_mecanico (se crea automaticamente si no existe)
+- Java JDK 17 o superior (recomendado JDK 21).
+- Node.js (v18 o superior / v20+) y npm instalados.
+- Servidor MySQL ejecutandose en el puerto 3306.
+- Git (opcional, para clonar el repositorio).
 
 --------------------------------------------------
-A. PUESTA EN MARCHA DEL BACKEND (SPRING BOOT 3)
+A. CLONAR O DESCARGAR EL REPOSITORIO
+--------------------------------------------------
+Desde una terminal de comandos:
+   git clone https://github.com/diegomejia3435-lang/taller_mecanico.git
+   cd taller_mecanico
+
+--------------------------------------------------
+B. CONFIGURACION DE LA BASE DE DATOS (MYSQL)
+--------------------------------------------------
+1. Asegurate de que el servicio de MySQL este activo en el puerto 3306.
+2. Abre el archivo "taller-backend/src/main/resources/application.properties" y verifica
+   que las credenciales coincidan con las de tu MySQL local:
+      spring.datasource.url=jdbc:mysql://localhost:3306/taller_mecanico?createDatabaseIfNotExist=true
+      spring.datasource.username=root
+      spring.datasource.password=123456
+   * La base de datos "taller_mecanico" y sus tablas se crearan automaticamente al iniciar el backend.
+
+--------------------------------------------------
+C. PUESTA EN MARCHA DEL BACKEND (SPRING BOOT 3)
 --------------------------------------------------
 1. Abre una terminal en la subcarpeta del backend:
    cd taller-backend
 
 2. Inicia la aplicacion Spring Boot con el wrapper de Maven:
-   .\mvnw.cmd spring-boot:run
+   * En Windows:
+     .\mvnw.cmd spring-boot:run
+   * En Linux / macOS:
+     ./mvnw spring-boot:run
+   (Tambien puedes abrir la carpeta "taller-backend" en IntelliJ IDEA, Eclipse o VS Code
+    y ejecutar la clase principal TallerApplication.java).
 
    La API estara disponible en:
    URL Base: http://localhost:8080
 
-3. Ejecutar la suite completa de 13 pruebas automatizadas del backend:
-   $env:JAVA_HOME="C:\Users\frank\.jdks\ms-21.0.11"
+3. (Opcional) Ejecutar la suite de 13 pruebas automatizadas del backend:
    .\mvnw.cmd test
 
    Pruebas especificas:
@@ -43,19 +61,27 @@ A. PUESTA EN MARCHA DEL BACKEND (SPRING BOOT 3)
    - Contrato REST MockMvc:  .\mvnw.cmd test -Dtest=ClienteRestControllerTest
 
 --------------------------------------------------
-B. PUESTA EN MARCHA DEL FRONTEND (ANGULAR + SCSS)
+D. PUESTA EN MARCHA DEL FRONTEND (ANGULAR + SCSS)
 --------------------------------------------------
-1. Abre una terminal en la subcarpeta del frontend:
+1. Abre una segunda terminal en la subcarpeta del frontend:
    cd taller-frontend
 
-2. (Opcional, si es la primera vez o faltan paquetes):
+2. Instala las dependencias del proyecto:
    npm install
 
 3. Inicia el servidor de desarrollo de Angular:
-   ng serve --open
+   npm start
+   (o: ng serve --open)
 
-   La aplicacion web se abrira automaticamente en el navegador en:
+   La aplicacion web estara disponible en:
    URL Base: http://localhost:4200
+
+--------------------------------------------------
+E. INGRESO AL SISTEMA (CREDENCIALES DE DEMOSTRACION)
+--------------------------------------------------
+Abre en el navegador: http://localhost:4200
+- Administrador: usuario: admin  / clave: 1234 (control total del taller)
+- Mecanico:      usuario: carlos / clave: 1234 (gestion de ordenes asignadas)
 
 
 --------------------------------------------------------------------------------
