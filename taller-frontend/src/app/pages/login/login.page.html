@@ -6,40 +6,62 @@
     </div>
 
     @if (errorMensaje()) {
-      <div class="login-alerta">
+      <div class="login-alerta" role="alert">
         <span>{{ errorMensaje() }}</span>
       </div>
     }
 
-    <form [formGroup]="form" (ngSubmit)="ingresar()" class="login-form">
+    <form [formGroup]="form" (ngSubmit)="ingresar()" class="login-form" novalidate>
       <div class="campo">
-        <label class="campo__label">Usuario / Identificador</label>
+        <label for="username" class="campo__label">Usuario / Identificador *</label>
         <input
+          id="username"
           type="text"
           formControlName="username"
           class="campo__input"
+          [class.campo__input--error]="invalido('username')"
+          [attr.aria-invalid]="invalido('username')"
+          aria-describedby="error-username"
           placeholder="Ej: admin, carlos, 77777777"
         />
-        @if (form.get('username')?.invalid && form.get('username')?.touched) {
-          <small class="campo__error">El usuario es requerido</small>
+        @if (invalido('username')) {
+          <small class="campo__error" id="error-username" role="alert">
+            @if (form.get('username')?.hasError('required')) {
+              El usuario o identificador es obligatorio.
+            } @else if (form.get('username')?.hasError('minlength')) {
+              El usuario debe tener al menos 3 caracteres.
+            } @else {
+              El usuario no puede contener únicamente espacios en blanco.
+            }
+          </small>
         }
       </div>
 
       <div class="campo">
-        <label class="campo__label">Contraseña</label>
+        <label for="password" class="campo__label">Contraseña *</label>
         <input
+          id="password"
           type="password"
           formControlName="password"
           class="campo__input"
+          [class.campo__input--error]="invalido('password')"
+          [attr.aria-invalid]="invalido('password')"
+          aria-describedby="error-password"
           placeholder="••••••••"
         />
-        @if (form.get('password')?.invalid && form.get('password')?.touched) {
-          <small class="campo__error">La contraseña es requerida</small>
+        @if (invalido('password')) {
+          <small class="campo__error" id="error-password" role="alert">
+            @if (form.get('password')?.hasError('required')) {
+              La contraseña es obligatoria.
+            } @else if (form.get('password')?.hasError('minlength')) {
+              La contraseña debe tener al menos 4 caracteres.
+            }
+          </small>
         }
       </div>
 
-      <button type="submit" class="login-btn" [disabled]="form.invalid">
-        Ingresar al Sistema
+      <button type="submit" class="login-btn" [disabled]="enviando() || form.invalid">
+        {{ enviando() ? 'Iniciando Sesión...' : 'Ingresar al Sistema' }}
       </button>
 
       <div class="login-pistas">
