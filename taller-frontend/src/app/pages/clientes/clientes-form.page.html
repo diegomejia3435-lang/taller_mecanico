@@ -19,77 +19,112 @@
       <small class="form-cliente__card-subtitulo">Complete todos los campos requeridos para el registro</small>
     </div>
 
-    <form [formGroup]="form" (ngSubmit)="guardar()" class="form-cliente__form">
+    <!-- ALERTA DE ERROR DEL SERVIDOR -->
+    @if (errorServidor()) {
+      <div class="form-cliente__alerta-servidor" role="alert">
+        {{ errorServidor() }}
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="guardar()" class="form-cliente__form" novalidate>
       <div class="form-cliente__grid">
         <!-- NOMBRE COMPLETO -->
         <div class="campo">
-          <label class="campo__label">Nombre Completo *</label>
+          <label for="nombreCompleto" class="campo__label">Nombre Completo *</label>
           <input
+            id="nombreCompleto"
             type="text"
             formControlName="nombreCompleto"
             class="campo__input"
-            [class.campo__input--error]="form.get('nombreCompleto')?.invalid && form.get('nombreCompleto')?.touched"
+            [class.campo__input--error]="invalido('nombreCompleto')"
+            [attr.aria-invalid]="invalido('nombreCompleto')"
+            aria-describedby="error-nombreCompleto"
             placeholder="Ingrese nombres y apellidos"
           />
-          @if (form.get('nombreCompleto')?.invalid && form.get('nombreCompleto')?.touched) {
-            <div class="campo__error">
-              El nombre completo es obligatorio (mínimo 3 caracteres).
+          @if (invalido('nombreCompleto')) {
+            <div class="campo__error" id="error-nombreCompleto" role="alert">
+              @if (form.get('nombreCompleto')?.hasError('required')) {
+                El nombre completo es obligatorio.
+              } @else if (form.get('nombreCompleto')?.hasError('minlength')) {
+                El nombre debe contener al menos 3 caracteres.
+              } @else {
+                El nombre no puede contener únicamente espacios en blanco.
+              }
             </div>
           }
         </div>
 
         <!-- DNI -->
         <div class="campo">
-          <label class="campo__label">DNI (8 dígitos) *</label>
+          <label for="dni" class="campo__label">DNI (8 dígitos) *</label>
           <input
+            id="dni"
             type="text"
             formControlName="dni"
             maxlength="8"
             class="campo__input"
-            [class.campo__input--error]="form.get('dni')?.invalid && form.get('dni')?.touched"
+            [class.campo__input--error]="invalido('dni')"
+            [attr.aria-invalid]="invalido('dni')"
+            aria-describedby="error-dni"
             placeholder="Ej: 77777777"
           />
-          @if (form.get('dni')?.invalid && form.get('dni')?.touched) {
-            <div class="campo__error">
-              El DNI debe constar de exactamente 8 dígitos numéricos.
+          @if (invalido('dni')) {
+            <div class="campo__error" id="error-dni" role="alert">
+              @if (form.get('dni')?.hasError('required')) {
+                El DNI es obligatorio.
+              } @else if (form.get('dni')?.hasError('pattern')) {
+                El DNI debe constar de exactamente 8 dígitos numéricos.
+              }
             </div>
           }
         </div>
 
         <!-- TELEFONO -->
         <div class="campo">
-          <label class="campo__label">Teléfono / Celular</label>
+          <label for="telefono" class="campo__label">Teléfono / Celular</label>
           <input
+            id="telefono"
             type="text"
             formControlName="telefono"
             maxlength="9"
             class="campo__input"
-            [class.campo__input--error]="form.get('telefono')?.invalid && form.get('telefono')?.touched"
+            [class.campo__input--error]="invalido('telefono')"
+            [attr.aria-invalid]="invalido('telefono')"
+            aria-describedby="error-telefono"
             placeholder="Ej: 955555555"
           />
-          @if (form.get('telefono')?.invalid && form.get('telefono')?.touched) {
-            <div class="campo__error">
-              El teléfono debe constar de 9 dígitos válidos.
+          @if (invalido('telefono')) {
+            <div class="campo__error" id="error-telefono" role="alert">
+              El teléfono debe constar de 9 dígitos numéricos válidos.
             </div>
           }
         </div>
 
         <!-- CORREO ELECTRÓNICO -->
         <div class="campo">
-          <label class="campo__label">Correo Electrónico</label>
+          <label for="correo" class="campo__label">Correo Electrónico</label>
           <input
+            id="correo"
             type="email"
             formControlName="correo"
             class="campo__input"
-            [class.campo__input--error]="form.get('correo')?.invalid && form.get('correo')?.touched"
+            [class.campo__input--error]="invalido('correo')"
+            [attr.aria-invalid]="invalido('correo')"
+            aria-describedby="error-correo"
             placeholder="ejemplo@correo.com"
           />
-          @if (form.get('correo')?.invalid && form.get('correo')?.touched) {
-            <div class="campo__error">
+          @if (invalido('correo')) {
+            <div class="campo__error" id="error-correo" role="alert">
               Por favor ingrese un formato de correo electrónico válido.
             </div>
           }
         </div>
+      </div>
+
+      <!-- BARRA DE ESTADO DEL FORMULARIO REACTIVO (Semana 13) -->
+      <div class="form-cliente__estado-barra">
+        <span class="badge-estado-form">Estado: <strong>{{ form.status }}</strong></span>
+        <span class="badge-estado-sub">Modificado: {{ form.dirty ? 'Sí' : 'No' }} · Tocado: {{ form.touched ? 'Sí' : 'No' }}</span>
       </div>
 
       <!-- BOTONES DE ACCIÓN -->
@@ -97,9 +132,18 @@
         <button
           type="submit"
           class="form-cliente__btn-guardar"
-          [disabled]="form.invalid"
+          [disabled]="enviando() || form.invalid"
         >
-          {{ esEdicion ? 'Actualizar Cliente' : 'Guardar Cliente' }}
+          {{ enviando() ? 'Guardando...' : (esEdicion ? 'Actualizar Cliente' : 'Guardar Cliente') }}
+        </button>
+
+        <button
+          type="button"
+          class="form-cliente__btn-limpiar"
+          [disabled]="enviando()"
+          (click)="limpiar()"
+        >
+          Limpiar
         </button>
 
         <a routerLink="/clientes" class="form-cliente__btn-cancelar">
