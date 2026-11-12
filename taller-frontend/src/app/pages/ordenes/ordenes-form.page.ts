@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { OrdenService } from '../../services/orden.service';
@@ -21,10 +21,13 @@ export class OrdenesFormPage implements OnInit {
 
   ordenId: number | null = null;
   esEdicion = false;
+  readonly enviando = signal(false);
+  readonly errorServidor = signal('');
 
-  form: FormGroup = this.fb.group({
+  // Formulario reactivo con validaciones rigurosas (Semana 13 - UTP)
+  readonly form: FormGroup = this.fb.group({
     vehiculoId: [null, [Validators.required]],
-    diagnosticoTecnico: ['', [Validators.required, Validators.minLength(5)]],
+    diagnosticoTecnico: ['', [Validators.required, Validators.minLength(5), Validators.pattern(/.*\S.*/)]],
     montoTotal: [100.0, [Validators.required, Validators.min(0)]],
     estado: ['PENDIENTE', [Validators.required]],
   });
@@ -48,16 +51,27 @@ export class OrdenesFormPage implements OnInit {
     }
   }
 
+  invalido(campo: string): boolean {
+    const control = this.form.get(campo);
+    return !!(control && control.invalid && (control.touched || control.dirty));
+  }
+
   guardar(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
+    if (this.enviando()) return;
+    this.form.markAllAsTouched();
+    if (this.form.invalid) return;
+
+    this.enviando.set(true);
+    this.errorServidor.set('');
 
     const { vehiculoId, diagnosticoTecnico, montoTotal, estado } = this.form.value;
     const vehiculoSeleccionado = this.vehiculoService.buscarPorId(Number(vehiculoId));
 
-    if (!vehiculoSeleccionado) return;
+    if (!vehiculoSeleccionado) {
+      this.enviando.set(false);
+      this.errorServidor.set('El vehículo seleccionado no existe en el catálogo.');
+      return;
+    }
 
     const datos = {
       id: this.ordenId ?? undefined,
@@ -68,12 +82,30 @@ export class OrdenesFormPage implements OnInit {
         nombreCompleto: 'Carlos Mendoza',
         especialidad: 'Motor y Frenos',
       },
-      diagnosticoTecnico,
+      diagnosticoTecnico: (diagnosticoTecnico as string).trim(),
       montoTotal: Number(montoTotal),
       estado: estado as EstadoOrden,
     };
 
-    this.ordenService.guardar(datos);
-    this.router.navigate(['/ordenes']);
+    try {
+      this.ordenService.guardar(datos);
+      this.enviando.set(false);
+      this.router.navigate(['/ordenes']);
+    } catch {
+      this.enviando.set(false);
+      this.errorServidor.set('Error al procesar la orden de trabajo.');
+    }
+  }
+
+  limpiar(): void {
+    this.form.reset({
+      vehiculoId: null,
+      diagnosticoTecnico: '',
+      montoTotal: 0,
+      estado: 'PENDIENTE',
+    });
+    this.form.markAsPristine();
+    this.form.markAsUntouched();
+    this.errorServidor.set('');
   }
 }

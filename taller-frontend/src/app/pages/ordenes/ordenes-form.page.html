@@ -19,15 +19,25 @@
       <small class="form-orden__card-subtitulo">Seleccione el vehículo y defina el trabajo a realizar</small>
     </div>
 
-    <form [formGroup]="form" (ngSubmit)="guardar()" class="form-orden__form">
+    <!-- ALERTA DE ERROR DEL SERVIDOR -->
+    @if (errorServidor()) {
+      <div class="form-orden__alerta-servidor" role="alert">
+        {{ errorServidor() }}
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="guardar()" class="form-orden__form" novalidate>
       <div class="form-orden__grid">
         <!-- VEHÍCULO -->
         <div class="campo campo--full">
-          <label class="campo__label">Vehículo a Atender *</label>
+          <label for="vehiculoId" class="campo__label">Vehículo a Atender *</label>
           <select
+            id="vehiculoId"
             formControlName="vehiculoId"
             class="campo__input"
-            [class.campo__input--error]="form.get('vehiculoId')?.invalid && form.get('vehiculoId')?.touched"
+            [class.campo__input--error]="invalido('vehiculoId')"
+            [attr.aria-invalid]="invalido('vehiculoId')"
+            aria-describedby="error-vehiculoId"
           >
             <option [ngValue]="null">-- Seleccione el vehículo por placa --</option>
             @for (v of vehiculoService.vehiculos(); track v.id) {
@@ -36,51 +46,67 @@
               </option>
             }
           </select>
-          @if (form.get('vehiculoId')?.invalid && form.get('vehiculoId')?.touched) {
-            <div class="campo__error">
-              Debe seleccionar un vehículo para emitir la orden.
+          @if (invalido('vehiculoId')) {
+            <div class="campo__error" id="error-vehiculoId" role="alert">
+              Debe seleccionar un vehículo para emitir la orden de trabajo.
             </div>
           }
         </div>
 
         <!-- DIAGNÓSTICO TÉCNICO -->
         <div class="campo campo--full">
-          <label class="campo__label">Diagnóstico Técnico / Motivo de Ingreso *</label>
+          <label for="diagnosticoTecnico" class="campo__label">Diagnóstico Técnico / Motivo de Ingreso *</label>
           <textarea
+            id="diagnosticoTecnico"
             formControlName="diagnosticoTecnico"
             rows="3"
             class="campo__input campo__textarea"
-            [class.campo__input--error]="form.get('diagnosticoTecnico')?.invalid && form.get('diagnosticoTecnico')?.touched"
+            [class.campo__input--error]="invalido('diagnosticoTecnico')"
+            [attr.aria-invalid]="invalido('diagnosticoTecnico')"
+            aria-describedby="error-diagnosticoTecnico"
             placeholder="Describa la falla, revisión o servicio preventivo solicitado..."
           ></textarea>
-          @if (form.get('diagnosticoTecnico')?.invalid && form.get('diagnosticoTecnico')?.touched) {
-            <div class="campo__error">
-              El diagnóstico es obligatorio (mínimo 5 caracteres).
+          @if (invalido('diagnosticoTecnico')) {
+            <div class="campo__error" id="error-diagnosticoTecnico" role="alert">
+              @if (form.get('diagnosticoTecnico')?.hasError('required')) {
+                El diagnóstico técnico es obligatorio.
+              } @else if (form.get('diagnosticoTecnico')?.hasError('minlength')) {
+                El diagnóstico debe contener al menos 5 caracteres descriptivos.
+              } @else {
+                El campo no puede contener únicamente espacios en blanco.
+              }
             </div>
           }
         </div>
 
         <!-- MONTO TOTAL ESTIMADO -->
         <div class="campo">
-          <label class="campo__label">Costo / Presupuesto Estimado (S/) *</label>
+          <label for="montoTotal" class="campo__label">Costo / Presupuesto Estimado (S/) *</label>
           <input
+            id="montoTotal"
             type="number"
             step="0.50"
             formControlName="montoTotal"
             class="campo__input"
-            [class.campo__input--error]="form.get('montoTotal')?.invalid && form.get('montoTotal')?.touched"
+            [class.campo__input--error]="invalido('montoTotal')"
+            [attr.aria-invalid]="invalido('montoTotal')"
+            aria-describedby="error-montoTotal"
           />
-          @if (form.get('montoTotal')?.invalid && form.get('montoTotal')?.touched) {
-            <div class="campo__error">
-              Ingrese un monto válido mayor o igual a 0.
+          @if (invalido('montoTotal')) {
+            <div class="campo__error" id="error-montoTotal" role="alert">
+              @if (form.get('montoTotal')?.hasError('required')) {
+                El presupuesto estimado es obligatorio.
+              } @else if (form.get('montoTotal')?.hasError('min')) {
+                El monto no puede ser negativo (mínimo S/ 0.00).
+              }
             </div>
           }
         </div>
 
         <!-- ESTADO INICIAL -->
         <div class="campo">
-          <label class="campo__label">Estado de la Orden</label>
-          <select formControlName="estado" class="campo__input">
+          <label for="estado" class="campo__label">Estado de la Orden *</label>
+          <select id="estado" formControlName="estado" class="campo__input">
             <option value="PENDIENTE">PENDIENTE (En espera)</option>
             <option value="EN_PROCESO">EN PROCESO (En bahía)</option>
             <option value="TERMINADO">TERMINADO (Listo para entrega)</option>
@@ -88,14 +114,29 @@
         </div>
       </div>
 
+      <!-- BARRA DE ESTADO DEL FORMULARIO REACTIVO (Semana 13) -->
+      <div class="form-orden__estado-barra">
+        <span class="badge-estado-form">Estado: <strong>{{ form.status }}</strong></span>
+        <span class="badge-estado-sub">Modificado: {{ form.dirty ? 'Sí' : 'No' }} · Tocado: {{ form.touched ? 'Sí' : 'No' }}</span>
+      </div>
+
       <!-- BOTONES -->
       <div class="form-orden__acciones">
         <button
           type="submit"
           class="form-orden__btn-guardar"
-          [disabled]="form.invalid"
+          [disabled]="enviando() || form.invalid"
         >
-          {{ esEdicion ? 'Actualizar Orden' : 'Emitir Orden de Trabajo' }}
+          {{ enviando() ? 'Guardando...' : (esEdicion ? 'Actualizar Orden' : 'Emitir Orden de Trabajo') }}
+        </button>
+
+        <button
+          type="button"
+          class="form-orden__btn-limpiar"
+          [disabled]="enviando()"
+          (click)="limpiar()"
+        >
+          Limpiar
         </button>
 
         <a routerLink="/ordenes" class="form-orden__btn-cancelar">
