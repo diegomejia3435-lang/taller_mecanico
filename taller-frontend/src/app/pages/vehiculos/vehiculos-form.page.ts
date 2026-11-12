@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { VehiculoService } from '../../services/vehiculo.service';
@@ -20,22 +20,25 @@ export class VehiculosFormPage implements OnInit {
 
   vehiculoId: number | null = null;
   esEdicion = false;
+  readonly enviando = signal(false);
+  readonly errorServidor = signal('');
 
-  form: FormGroup = this.fb.group({
+  // Formulario reactivo con validaciones rigurosas (Semana 13 - UTP)
+  readonly form: FormGroup = this.fb.group({
     placa: [
       '',
       [
         Validators.required,
-        Validators.pattern('^[A-Z0-9]{3}-[A-Z0-9]{3}$'),
+        Validators.pattern(/^[A-Za-z0-9]{3}-[A-Za-z0-9]{3}$/),
       ],
     ],
-    marca: ['', [Validators.required, Validators.minLength(2)]],
-    modelo: ['', [Validators.required]],
+    marca: ['', [Validators.required, Validators.minLength(2), Validators.pattern(/.*\S.*/)]],
+    modelo: ['', [Validators.required, Validators.minLength(2), Validators.pattern(/.*\S.*/)]],
     anio: [
       new Date().getFullYear(),
       [Validators.required, Validators.min(1980), Validators.max(2027)],
     ],
-    tipoMotor: ['Gasolina'],
+    tipoMotor: ['Gasolina', [Validators.required]],
     clienteId: [null, [Validators.required]],
   });
 
@@ -60,26 +63,53 @@ export class VehiculosFormPage implements OnInit {
     }
   }
 
+  invalido(campo: string): boolean {
+    const control = this.form.get(campo);
+    return !!(control && control.invalid && (control.touched || control.dirty));
+  }
+
   guardar(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
+    if (this.enviando()) return;
+    this.form.markAllAsTouched();
+    if (this.form.invalid) return;
+
+    this.enviando.set(true);
+    this.errorServidor.set('');
 
     const { placa, marca, modelo, anio, tipoMotor, clienteId } = this.form.value;
     const clienteSeleccionado = this.clienteService.buscarPorId(Number(clienteId));
 
     const datos = {
       id: this.vehiculoId ?? undefined,
-      placa: (placa as string).toUpperCase(),
-      marca,
-      modelo,
+      placa: (placa as string).trim().toUpperCase(),
+      marca: (marca as string).trim(),
+      modelo: (modelo as string).trim(),
       anio: Number(anio),
       tipoMotor,
       cliente: clienteSeleccionado,
     };
 
-    this.vehiculoService.guardar(datos);
-    this.router.navigate(['/vehiculos']);
+    try {
+      this.vehiculoService.guardar(datos);
+      this.enviando.set(false);
+      this.router.navigate(['/vehiculos']);
+    } catch {
+      this.enviando.set(false);
+      this.errorServidor.set('Error al procesar el registro del vehículo.');
+    }
+  }
+
+  limpiar(): void {
+    this.form.reset({
+      placa: '',
+      marca: '',
+      modelo: '',
+      anio: new Date().getFullYear(),
+      tipoMotor: 'Gasolina',
+      clienteId: null,
+    });
+    this.form.markAsPristine();
+    this.form.markAsUntouched();
+    this.errorServidor.set('');
   }
 }
