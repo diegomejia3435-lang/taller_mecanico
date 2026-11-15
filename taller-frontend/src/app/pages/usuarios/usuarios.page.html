@@ -1,0 +1,42 @@
+<section class="modulo-usuarios">
+  <div class="modulo-usuarios__header">
+    <div>
+      <h2 class="modulo-usuarios__titulo">Gestión de Usuarios & Seguridad</h2>
+      <p class="modulo-usuarios__subtitulo">Cuentas de acceso, credenciales y asignación de roles RBAC</p>
+    </div>
+  </div>
+
+  <div class="modulo-usuarios__card">
+    <div class="modulo-usuarios__cabecera">
+      <h3>Cuentas Registradas en Spring Security</h3>
+    </div>
+    <table class="modulo-usuarios__tabla">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+          <th>Nombre Completo</th>
+          <th>Rol Asignado</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (u of usuarios(); track u.id) {
+          <tr>
+            <td>#{{ u.id }}</td>
+            <td><strong>{{ u.username }}</strong></td>
+            <td>{{ u.nombreCompleto }}</td>
+            <td>
+              <span class="badge-rol" [class.badge-rol--admin]="u.rol === 'ROLE_ADMIN'">
+                {{ u.rol }}
+              </span>
+            </td>
+            <td>
+              <span class="badge-estado">{{ u.estado }}</span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

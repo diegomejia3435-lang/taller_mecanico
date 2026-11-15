@@ -1,0 +1,35 @@
+<header class="topbar">
+  <div class="topbar__izq">
+    <h1 class="topbar__titulo">Sistema Taller Mecánico</h1>
+    <p class="topbar__subtitulo">Gestión Integral de Mantenimiento y Flota</p>
+  </div>
+
+  <div class="topbar__der">
+    <!-- Fecha actual -->
+    <div class="topbar__fecha">
+      <span>{{ fechaHoy }}</span>
+    </div>
+
+    <!-- Perfil del usuario autenticado -->
+    <div class="topbar__usuario">
+      <div class="topbar__avatar">
+        {{ authService.usuario().nombreCompleto.charAt(0) || 'U' }}
+      </div>
+      <div class="topbar__usuario-info">
+        <strong class="topbar__usuario-nombre">{{ authService.usuario().nombreCompleto }}</strong>
+        <span class="topbar__usuario-rol">{{ authService.usuario().rol }}</span>
+      </div>
+    </div>
+
+    <!-- Botón de Cerrar Sesión / Login -->
+    @if (authService.estaAutenticado()) {
+      <button type="button" class="topbar__btn-logout" (click)="cerrarSesion()" title="Cerrar sesión">
+        Cerrar sesión
+      </button>
+    } @else {
+      <a routerLink="/login" class="topbar__btn-login">
+        Iniciar sesión
+      </a>
+    }
+  </div>
+</header>

@@ -1,0 +1,124 @@
+<aside class="sidebar">
+  <div class="sidebar__brand">
+    <h2 class="sidebar__title">Taller Mecánico</h2>
+    <span class="sidebar__badge">Gestión Vehicular</span>
+  </div>
+
+  <nav class="sidebar__nav">
+    <div class="sidebar__section-title">PRINCIPAL</div>
+
+    <!-- Dashboard: accesible para todos los roles (ADMIN, MECANICO, CLIENTE) -->
+    <a
+      routerLink="/dashboard"
+      routerLinkActive="activo"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="sidebar__link"
+    >
+      <span>Dashboard</span>
+    </a>
+
+    <!-- GESTIÓN -->
+    @if (authService.puedeVerClientes() || authService.puedeVerVehiculos() || authService.puedeVerOrdenes()) {
+      <div class="sidebar__section-title">GESTIÓN</div>
+
+      <!-- Clientes: sec:authorize="hasRole('ADMIN')" -->
+      @if (authService.puedeVerClientes()) {
+        <a
+          routerLink="/clientes"
+          routerLinkActive="activo"
+          class="sidebar__link"
+        >
+          <span>Clientes</span>
+        </a>
+      }
+
+      <!-- Vehículos: sec:authorize="hasRole('ADMIN')" -->
+      @if (authService.puedeVerVehiculos()) {
+        <a
+          routerLink="/vehiculos"
+          routerLinkActive="activo"
+          class="sidebar__link"
+        >
+          <span>Vehículos</span>
+        </a>
+      }
+
+      <!-- Órdenes: sec:authorize="hasAnyRole('ADMIN', 'MECANICO')" -->
+      @if (authService.puedeVerOrdenes()) {
+        <a
+          routerLink="/ordenes"
+          routerLinkActive="activo"
+          class="sidebar__link"
+        >
+          <span>Órdenes de Trabajo</span>
+        </a>
+      }
+    }
+
+    <!-- OPERACIONES -->
+    @if (authService.puedeVerMecanicos() || authService.puedeVerHistorial() || authService.puedeVerReportes() || authService.puedeVerExportar()) {
+      <div class="sidebar__section-title">OPERACIONES</div>
+
+      <!-- Mecánicos: sec:authorize="hasRole('ADMIN')" -->
+      @if (authService.puedeVerMecanicos()) {
+        <a
+          routerLink="/mecanicos"
+          routerLinkActive="activo"
+          class="sidebar__link"
+        >
+          <span>Mecánicos</span>
+        </a>
+      }
+
+      <!-- Historial: sec:authorize="hasAnyRole('ADMIN', 'MECANICO', 'CLIENTE')" -->
+      @if (authService.puedeVerHistorial()) {
+        <a
+          routerLink="/historial"
+          routerLinkActive="activo"
+          class="sidebar__link"
+        >
+          <span>Historial</span>
+        </a>
+      }
+
+      <!-- Reportes: sec:authorize="hasRole('ADMIN')" -->
+      @if (authService.puedeVerReportes()) {
+        <a
+          routerLink="/reportes"
+          routerLinkActive="activo"
+          class="sidebar__link"
+        >
+          <span>Reportes</span>
+        </a>
+      }
+
+      <!-- Exportar: sec:authorize="hasRole('ADMIN')" -->
+      @if (authService.puedeVerExportar()) {
+        <a
+          routerLink="/exportar"
+          routerLinkActive="activo"
+          class="sidebar__link"
+        >
+          <span>Exportar</span>
+        </a>
+      }
+    }
+
+    <!-- SISTEMA: sec:authorize="hasRole('ADMIN')" -->
+    @if (authService.puedeVerUsuarios()) {
+      <div class="sidebar__section-title">SISTEMA</div>
+
+      <a
+        routerLink="/usuarios"
+        routerLinkActive="activo"
+        class="sidebar__link"
+      >
+        <span>Usuarios & Roles</span>
+      </a>
+    }
+  </nav>
+
+  <div class="sidebar__footer">
+    <div class="sidebar__version">v2.0 • Angular Standalone</div>
+  </div>
+</aside>

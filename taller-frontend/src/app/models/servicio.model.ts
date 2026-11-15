@@ -6,4 +6,7 @@ export interface Servicio {
   disponible: boolean;
   icono: string;
   categoria: string;
+  tiempoEstimado: string;
+  garantia: string;
+  incluye: string[];
 }
