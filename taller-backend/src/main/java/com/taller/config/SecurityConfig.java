@@ -24,6 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import com.taller.security.SqlInjectionFilter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -77,6 +78,8 @@ public class SecurityConfig {
                         .accessDeniedHandler((req, res, e) ->
                                 escribirError(req, res, 403, "Forbidden", "No tienes permisos para este recurso"))
                 )
+                .addFilterBefore(new SqlInjectionFilter(),
+                        UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtAuthFilter(jwtService, customUserDetailsService),
                         UsernamePasswordAuthenticationFilter.class);
 
