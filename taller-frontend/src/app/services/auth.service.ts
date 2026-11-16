@@ -37,7 +37,7 @@ export class AuthService {
   readonly token = this._tokenState.asReadonly();
   readonly usuario = this._usuarioActual.asReadonly();
   readonly estaAutenticado = computed(
-    () => !!this.usuario().username && this.usuario().rol !== 'INVITADO'
+    () => !!this._tokenState() && !!this.usuario().username && this.usuario().rol !== 'INVITADO'
   );
 
   // Normalización de roles (ADMIN, MECANICO, CLIENTE)
@@ -75,20 +75,21 @@ export class AuthService {
 
   private readInitialUser(): UsuarioSesion {
     if (typeof sessionStorage !== 'undefined') {
+      const token = sessionStorage.getItem(this.tokenKey);
       const guardado = sessionStorage.getItem(this.userKey);
-      if (guardado) {
+      if (token && guardado) {
         try {
           return JSON.parse(guardado) as UsuarioSesion;
         } catch {
           sessionStorage.removeItem(this.userKey);
+          sessionStorage.removeItem(this.tokenKey);
         }
       }
     }
-    // Usuario por defecto administrativo inicial
     return {
-      username: 'admin',
-      nombreCompleto: 'Administrador General',
-      rol: 'ROLE_ADMIN',
+      username: '',
+      nombreCompleto: 'Invitado',
+      rol: 'INVITADO',
     };
   }
 

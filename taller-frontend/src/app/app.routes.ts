@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './guards/auth.guard';
 import { adminGuard, ordenesGuard } from './guards/role.guard';
 
 /**
@@ -16,6 +17,7 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/dashboard/dashboard.page').then((m) => m.DashboardPage),
     title: 'Dashboard | Taller Mecánico',
@@ -100,6 +102,7 @@ export const routes: Routes = [
   },
   {
     path: 'historial',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/historial/historial.page').then((m) => m.HistorialPage),
     title: 'Historial | Taller Mecánico',

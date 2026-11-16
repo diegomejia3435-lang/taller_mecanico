@@ -1,7 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { NotificacionService } from '../../services/notificacion.service';
 
 @Component({
   selector: 'app-login-page',
@@ -13,7 +14,9 @@ import { AuthService } from '../../services/auth.service';
 export class LoginPage {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
+  private notificaciones = inject(NotificacionService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   readonly errorMensaje = signal<string>('');
   readonly enviando = signal<boolean>(false);
@@ -42,9 +45,11 @@ export class LoginPage {
     const p = (password as string).trim();
 
     this.authService.loginApi({ username: u, password: p }).subscribe({
-      next: () => {
+      next: (res) => {
         this.enviando.set(false);
-        this.router.navigate(['/dashboard']);
+        this.notificaciones.exito(`Bienvenido al sistema, ${res.username}`);
+        const destino = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+        this.router.navigateByUrl(destino);
       },
       error: (err) => {
         if (err && err.status === 401) {
@@ -58,9 +63,11 @@ export class LoginPage {
           if ((u === 'admin' && p === '1234') || (u === 'carlos' && p === '1234') || (u === '77777777' && p === '1234')) {
             const rol = u === 'admin' ? 'ADMIN' : (u === 'carlos' ? 'MECANICO' : 'CLIENTE');
             const nombre = u === 'admin' ? 'Administrador General' : (u === 'carlos' ? 'Carlos Mendoza' : 'Juan Pérez');
-            this.authService.login(u, nombre, rol);
+            this.authService.login(u, nombre, rol, 'demo-offline-jwt-token');
             this.enviando.set(false);
-            this.router.navigate(['/dashboard']);
+            this.notificaciones.exito(`Sesión iniciada (modo offline): ${nombre}`);
+            const destino = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+            this.router.navigateByUrl(destino);
             return;
           }
         }

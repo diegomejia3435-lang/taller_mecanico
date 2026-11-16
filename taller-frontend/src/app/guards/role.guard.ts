@@ -8,9 +8,13 @@ import { AuthService } from '../services/auth.service';
  * - adminGuard: sec:authorize="hasRole('ADMIN')"
  * - ordenesGuard: sec:authorize="hasAnyRole('ADMIN', 'MECANICO')"
  */
-export const adminGuard: CanActivateFn = () => {
+export const adminGuard: CanActivateFn = (_route, state) => {
   const auth = inject(AuthService);
   const router = inject(Router);
+
+  if (!auth.estaAutenticado()) {
+    return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
+  }
 
   if (auth.esAdmin()) {
     return true;
@@ -21,9 +25,13 @@ export const adminGuard: CanActivateFn = () => {
   return false;
 };
 
-export const ordenesGuard: CanActivateFn = () => {
+export const ordenesGuard: CanActivateFn = (_route, state) => {
   const auth = inject(AuthService);
   const router = inject(Router);
+
+  if (!auth.estaAutenticado()) {
+    return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
+  }
 
   if (auth.puedeVerOrdenes()) {
     return true;
