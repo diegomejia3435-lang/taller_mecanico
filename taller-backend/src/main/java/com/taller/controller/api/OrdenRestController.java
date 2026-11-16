@@ -28,6 +28,25 @@ public class OrdenRestController {
         return o != null ? ResponseEntity.ok(o) : ResponseEntity.notFound().build();
     }
 
+    @PostMapping
+    public ResponseEntity<OrdenMantenimiento> crear(@RequestBody OrdenMantenimiento orden) {
+        OrdenMantenimiento guardada = ordenService.guardar(orden);
+        return ResponseEntity.ok(guardada);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<OrdenMantenimiento> actualizar(@PathVariable Long id, @RequestBody OrdenMantenimiento orden) {
+        orden.setId(id);
+        OrdenMantenimiento guardada = ordenService.guardar(orden);
+        return ResponseEntity.ok(guardada);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        ordenService.eliminar(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/estadisticas/por-estado")
     public List<Map<String, Object>> contarPorEstado() {
         List<Object[]> resultados = ordenService.contarOrdenesPorEstado();

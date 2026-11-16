@@ -26,7 +26,10 @@ export class VehiculosListaPage {
 
   eliminar(id: number, placa: string): void {
     if (confirm(`¿Está seguro de eliminar el vehículo con placa "${placa}"?`)) {
-      this.vehiculoService.eliminar(id);
+      this.vehiculoService.eliminar(id).subscribe({
+        next: () => {},
+        error: (err) => console.error('Error al eliminar vehículo en la API:', err),
+      });
     }
   }
 }

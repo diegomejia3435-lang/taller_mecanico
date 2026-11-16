@@ -23,12 +23,18 @@ export class OrdenesListaPage {
   });
 
   cambiarEstado(id: number, nuevoEstado: string): void {
-    this.ordenService.cambiarEstado(id, nuevoEstado as EstadoOrden);
+    this.ordenService.cambiarEstado(id, nuevoEstado as EstadoOrden).subscribe({
+      next: () => {},
+      error: (err) => console.error('Error al actualizar estado en la API:', err),
+    });
   }
 
   eliminar(id: number): void {
     if (confirm(`¿Está seguro de anular la orden de trabajo #${id}?`)) {
-      this.ordenService.eliminar(id);
+      this.ordenService.eliminar(id).subscribe({
+        next: () => {},
+        error: (err) => console.error('Error al anular orden en la API:', err),
+      });
     }
   }
 }

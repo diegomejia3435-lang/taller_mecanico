@@ -1,10 +1,16 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { EstadoOrden, OrdenMantenimiento } from '../models/orden.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class OrdenService {
+  private readonly http = inject(HttpClient);
+  private readonly url = `${environment.apiUrl}/api/ordenes`;
+
   private readonly _ordenes = signal<OrdenMantenimiento[]>([
     {
       id: 1,
@@ -82,15 +88,82 @@ export class OrdenService {
   ]);
 
   readonly ordenes = this._ordenes.asReadonly();
+  readonly cargando = signal<boolean>(false);
+  readonly error = signal<string>('');
 
-  listar(): OrdenMantenimiento[] {
-    return this.ordenes();
+  constructor() {
+    this.cargar();
   }
 
-  buscarPorId(id: number): OrdenMantenimiento | undefined {
+  /**
+   * Carga reactiva de órdenes consultando la API REST de Spring Boot (GET /api/ordenes)
+   */
+  cargar(): void {
+    this.cargando.set(true);
+    this.error.set('');
+    this.http.get<OrdenMantenimiento[]>(this.url).subscribe({
+      next: (datos) => {
+        if (datos && datos.length > 0) {
+          this._ordenes.set(datos);
+        }
+        this.cargando.set(false);
+      },
+      error: () => {
+        this.error.set('No se pudo conectar con la API REST de Órdenes en Spring Boot.');
+        this.cargando.set(false);
+      },
+    });
+  }
+
+  /**
+   * Consumo HTTP GET /api/ordenes
+   */
+  listar(): Observable<OrdenMantenimiento[]> {
+    return this.http.get<OrdenMantenimiento[]>(this.url).pipe(
+      tap((datos) => this._ordenes.set(datos))
+    );
+  }
+
+  /**
+   * Consumo HTTP GET /api/ordenes/{id}
+   */
+  buscarPorId(id: number): Observable<OrdenMantenimiento> {
+    return this.http.get<OrdenMantenimiento>(`${this.url}/${id}`);
+  }
+
+  /**
+   * Búsqueda síncrona en caché reactiva para Signals y formularios
+   */
+  buscarPorIdLocal(id: number): OrdenMantenimiento | undefined {
     return this.ordenes().find((o) => o.id === id);
   }
 
+  /**
+   * Consumo HTTP GET /api/ordenes/estadisticas/por-estado (JPQL GROUP BY)
+   */
+  obtenerEstadisticasPorEstado(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.url}/estadisticas/por-estado`);
+  }
+
+  /**
+   * Consumo HTTP POST /api/ordenes/transacciones/reemplazar-mecanico (Operación atómica @Transactional)
+   */
+  reemplazarMecanico(ordenId: number, nuevoMecanicoId: number): Observable<OrdenMantenimiento> {
+    return this.http.post<OrdenMantenimiento>(
+      `${this.url}/transacciones/reemplazar-mecanico?ordenId=${ordenId}&nuevoMecanicoId=${nuevoMecanicoId}`,
+      {}
+    ).pipe(
+      tap((actualizada) => {
+        this._ordenes.update((lista) =>
+          lista.map((o) => (o.id === ordenId ? actualizada : o))
+        );
+      })
+    );
+  }
+
+  /**
+   * Filtro reactivo local para búsqueda interactiva en tiempo real
+   */
   filtrar(termino?: string, estado?: string): OrdenMantenimiento[] {
     let resultado = this.ordenes();
 
@@ -102,59 +175,78 @@ export class OrdenService {
       const t = termino.toLowerCase().trim();
       resultado = resultado.filter(
         (o) =>
-          o.vehiculo.placa.toLowerCase().includes(t) ||
-          o.vehiculo.marca.toLowerCase().includes(t) ||
-          (o.vehiculo.cliente &&
-            o.vehiculo.cliente.nombreCompleto.toLowerCase().includes(t)) ||
-          (o.diagnosticoTecnico &&
-            o.diagnosticoTecnico.toLowerCase().includes(t)) ||
-          o.id?.toString().includes(t)
+          o.vehiculo?.placa?.toLowerCase().includes(t) ||
+          o.vehiculo?.marca?.toLowerCase().includes(t) ||
+          o.vehiculo?.cliente?.nombreCompleto?.toLowerCase().includes(t) ||
+          o.mecanico?.nombreCompleto?.toLowerCase().includes(t) ||
+          o.diagnosticoTecnico?.toLowerCase().includes(t) ||
+          String(o.id).includes(t)
       );
     }
 
     return resultado;
   }
 
-  guardar(orden: OrdenMantenimiento): OrdenMantenimiento {
-    if (orden.id) {
-      this._ordenes.update((lista) =>
-        lista.map((o) => (o.id === orden.id ? { ...orden } : o))
-      );
-      return orden;
-    } else {
-      const nuevoId =
-        this.ordenes().reduce((max, o) => Math.max(max, o.id || 0), 0) + 1;
-      const nuevaOrden: OrdenMantenimiento = {
-        ...orden,
-        id: nuevoId,
-        fechaIngreso:
-          orden.fechaIngreso ||
-          new Date().toISOString().replace('T', ' ').substring(0, 16),
-      };
-      this._ordenes.update((lista) => [...lista, nuevaOrden]);
-      return nuevaOrden;
-    }
-  }
-
-  cambiarEstado(id: number, nuevoEstado: EstadoOrden): void {
-    this._ordenes.update((lista) =>
-      lista.map((o) => {
-        if (o.id === id) {
-          const salida =
-            nuevoEstado === 'TERMINADO'
-              ? new Date().toISOString().replace('T', ' ').substring(0, 16)
-              : o.fechaSalida;
-          return { ...o, estado: nuevoEstado, fechaSalida: salida };
-        }
-        return o;
+  /**
+   * Consumo HTTP POST /api/ordenes (Registro)
+   */
+  crear(orden: Partial<OrdenMantenimiento>): Observable<OrdenMantenimiento> {
+    return this.http.post<OrdenMantenimiento>(this.url, orden).pipe(
+      tap((creada) => {
+        this._ordenes.update((lista) => [...lista, creada]);
       })
     );
   }
 
-  eliminar(id: number): boolean {
-    const existe = this.buscarPorId(id);
-    if (!existe) return false;
-    this._ordenes.update((lista) => lista.filter((o) => o.id !== id));
-    return true;
+  /**
+   * Consumo HTTP PUT /api/ordenes/{id} (Actualización)
+   */
+  actualizar(id: number, orden: Partial<OrdenMantenimiento>): Observable<OrdenMantenimiento> {
+    return this.http.put<OrdenMantenimiento>(`${this.url}/${id}`, orden).pipe(
+      tap((actualizada) => {
+        this._ordenes.update((lista) =>
+          lista.map((o) => (o.id === id ? actualizada : o))
+        );
+      })
+    );
+  }
+
+  /**
+   * Guardado polimórfico (POST o PUT)
+   */
+  guardar(orden: Partial<OrdenMantenimiento>): Observable<OrdenMantenimiento> {
+    if (orden.id) {
+      return this.actualizar(orden.id, orden);
+    } else {
+      return this.crear(orden);
+    }
+  }
+
+  /**
+   * Consumo HTTP DELETE /api/ordenes/{id}
+   */
+  eliminar(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.url}/${id}`).pipe(
+      tap(() => {
+        this._ordenes.update((lista) => lista.filter((o) => o.id !== id));
+      })
+    );
+  }
+
+  /**
+   * Transición de estados de la orden con persistencia HTTP PUT
+   */
+  cambiarEstado(id: number, nuevoEstado: EstadoOrden): Observable<OrdenMantenimiento> {
+    const ordenActual = this.buscarPorIdLocal(id);
+    const ahora = new Date().toISOString().replace('T', ' ').substring(0, 16);
+
+    const actualizacion: Partial<OrdenMantenimiento> = {
+      ...(ordenActual || {}),
+      id,
+      estado: nuevoEstado,
+      fechaSalida: nuevoEstado === 'TERMINADO' ? ahora : undefined,
+    };
+
+    return this.actualizar(id, actualizacion);
   }
 }

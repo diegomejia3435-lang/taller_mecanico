@@ -41,24 +41,33 @@ export class LoginPage {
     const u = (username as string).trim();
     const p = (password as string).trim();
 
-    // Simulación de respuesta con validación de credenciales (DataInitializer)
-    setTimeout(() => {
-      if (u === 'admin' && p === '1234') {
-        this.authService.login('admin', 'Administrador General', 'ADMIN');
+    this.authService.loginApi({ username: u, password: p }).subscribe({
+      next: () => {
         this.enviando.set(false);
         this.router.navigate(['/dashboard']);
-      } else if (u === 'carlos' && p === '1234') {
-        this.authService.login('carlos', 'Carlos Mendoza', 'MECANICO');
+      },
+      error: (err) => {
+        if (err && err.status === 401) {
+          this.enviando.set(false);
+          this.errorMensaje.set('Usuario o contraseña incorrectos. Verifique sus credenciales de acceso.');
+          return;
+        }
+
+        // Si Spring Boot no está iniciado en puerto 8080 (status 0), permitir sesión demostrativa
+        if (err && err.status === 0) {
+          if ((u === 'admin' && p === '1234') || (u === 'carlos' && p === '1234') || (u === '77777777' && p === '1234')) {
+            const rol = u === 'admin' ? 'ADMIN' : (u === 'carlos' ? 'MECANICO' : 'CLIENTE');
+            const nombre = u === 'admin' ? 'Administrador General' : (u === 'carlos' ? 'Carlos Mendoza' : 'Juan Pérez');
+            this.authService.login(u, nombre, rol);
+            this.enviando.set(false);
+            this.router.navigate(['/dashboard']);
+            return;
+          }
+        }
+
         this.enviando.set(false);
-        this.router.navigate(['/dashboard']);
-      } else if (u === '77777777' && p === '1234') {
-        this.authService.login('77777777', 'Juan Pérez', 'CLIENTE');
-        this.enviando.set(false);
-        this.router.navigate(['/dashboard']);
-      } else {
-        this.enviando.set(false);
-        this.errorMensaje.set('Usuario o contraseña incorrectos. Verifique sus credenciales de acceso.');
-      }
-    }, 200);
+        this.errorMensaje.set('No se pudo conectar con la API REST de autenticación (Spring Boot :8080).');
+      },
+    });
   }
 }

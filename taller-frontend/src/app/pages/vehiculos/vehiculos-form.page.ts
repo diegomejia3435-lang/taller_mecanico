@@ -46,19 +46,34 @@ export class VehiculosFormPage implements OnInit {
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       this.vehiculoId = Number(idParam);
-      const vehiculo = this.vehiculoService.buscarPorId(this.vehiculoId);
-      if (vehiculo) {
+      const vehiculoLocal = this.vehiculoService.buscarPorIdLocal(this.vehiculoId);
+      if (vehiculoLocal) {
         this.esEdicion = true;
         this.form.patchValue({
-          placa: vehiculo.placa,
-          marca: vehiculo.marca,
-          modelo: vehiculo.modelo || '',
-          anio: vehiculo.anio || new Date().getFullYear(),
-          tipoMotor: vehiculo.tipoMotor || 'Gasolina',
-          clienteId: vehiculo.cliente?.id || null,
+          placa: vehiculoLocal.placa,
+          marca: vehiculoLocal.marca,
+          modelo: vehiculoLocal.modelo || '',
+          anio: vehiculoLocal.anio || new Date().getFullYear(),
+          tipoMotor: vehiculoLocal.tipoMotor || 'Gasolina',
+          clienteId: vehiculoLocal.cliente?.id || null,
         });
       } else {
-        this.router.navigate(['/vehiculos']);
+        this.vehiculoService.buscarPorId(this.vehiculoId).subscribe({
+          next: (vehiculo) => {
+            if (vehiculo) {
+              this.esEdicion = true;
+              this.form.patchValue({
+                placa: vehiculo.placa,
+                marca: vehiculo.marca,
+                modelo: vehiculo.modelo || '',
+                anio: vehiculo.anio || new Date().getFullYear(),
+                tipoMotor: vehiculo.tipoMotor || 'Gasolina',
+                clienteId: vehiculo.cliente?.id || null,
+              });
+            }
+          },
+          error: () => this.router.navigate(['/vehiculos']),
+        });
       }
     }
   }
@@ -77,7 +92,7 @@ export class VehiculosFormPage implements OnInit {
     this.errorServidor.set('');
 
     const { placa, marca, modelo, anio, tipoMotor, clienteId } = this.form.value;
-    const clienteSeleccionado = this.clienteService.buscarPorId(Number(clienteId));
+    const clienteSeleccionado = this.clienteService.buscarPorIdLocal(Number(clienteId));
 
     const datos = {
       id: this.vehiculoId ?? undefined,
@@ -89,14 +104,16 @@ export class VehiculosFormPage implements OnInit {
       cliente: clienteSeleccionado,
     };
 
-    try {
-      this.vehiculoService.guardar(datos);
-      this.enviando.set(false);
-      this.router.navigate(['/vehiculos']);
-    } catch {
-      this.enviando.set(false);
-      this.errorServidor.set('Error al procesar el registro del vehículo.');
-    }
+    this.vehiculoService.guardar(datos).subscribe({
+      next: () => {
+        this.enviando.set(false);
+        this.router.navigate(['/vehiculos']);
+      },
+      error: () => {
+        this.enviando.set(false);
+        this.errorServidor.set('Error al comunicar con la API REST de Vehículos.');
+      },
+    });
   }
 
   limpiar(): void {

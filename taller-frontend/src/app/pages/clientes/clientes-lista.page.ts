@@ -26,7 +26,10 @@ export class ClientesListaPage {
 
   eliminar(id: number, nombre: string): void {
     if (confirm(`¿Está seguro de eliminar al cliente "${nombre}"?`)) {
-      this.clienteService.eliminar(id);
+      this.clienteService.eliminar(id).subscribe({
+        next: () => {},
+        error: (err) => console.error('Error al eliminar cliente en la API:', err),
+      });
     }
   }
 }

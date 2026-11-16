@@ -36,17 +36,30 @@ export class OrdenesFormPage implements OnInit {
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       this.ordenId = Number(idParam);
-      const orden = this.ordenService.buscarPorId(this.ordenId);
-      if (orden) {
+      const ordenLocal = this.ordenService.buscarPorIdLocal(this.ordenId);
+      if (ordenLocal) {
         this.esEdicion = true;
         this.form.patchValue({
-          vehiculoId: orden.vehiculo.id,
-          diagnosticoTecnico: orden.diagnosticoTecnico || '',
-          montoTotal: orden.montoTotal || 0,
-          estado: orden.estado,
+          vehiculoId: ordenLocal.vehiculo.id,
+          diagnosticoTecnico: ordenLocal.diagnosticoTecnico || '',
+          montoTotal: ordenLocal.montoTotal || 0,
+          estado: ordenLocal.estado,
         });
       } else {
-        this.router.navigate(['/ordenes']);
+        this.ordenService.buscarPorId(this.ordenId).subscribe({
+          next: (orden) => {
+            if (orden) {
+              this.esEdicion = true;
+              this.form.patchValue({
+                vehiculoId: orden.vehiculo.id,
+                diagnosticoTecnico: orden.diagnosticoTecnico || '',
+                montoTotal: orden.montoTotal || 0,
+                estado: orden.estado,
+              });
+            }
+          },
+          error: () => this.router.navigate(['/ordenes']),
+        });
       }
     }
   }
@@ -65,7 +78,7 @@ export class OrdenesFormPage implements OnInit {
     this.errorServidor.set('');
 
     const { vehiculoId, diagnosticoTecnico, montoTotal, estado } = this.form.value;
-    const vehiculoSeleccionado = this.vehiculoService.buscarPorId(Number(vehiculoId));
+    const vehiculoSeleccionado = this.vehiculoService.buscarPorIdLocal(Number(vehiculoId));
 
     if (!vehiculoSeleccionado) {
       this.enviando.set(false);
@@ -87,14 +100,16 @@ export class OrdenesFormPage implements OnInit {
       estado: estado as EstadoOrden,
     };
 
-    try {
-      this.ordenService.guardar(datos);
-      this.enviando.set(false);
-      this.router.navigate(['/ordenes']);
-    } catch {
-      this.enviando.set(false);
-      this.errorServidor.set('Error al procesar la orden de trabajo.');
-    }
+    this.ordenService.guardar(datos).subscribe({
+      next: () => {
+        this.enviando.set(false);
+        this.router.navigate(['/ordenes']);
+      },
+      error: () => {
+        this.enviando.set(false);
+        this.errorServidor.set('Error al comunicar con la API REST de Órdenes.');
+      },
+    });
   }
 
   limpiar(): void {

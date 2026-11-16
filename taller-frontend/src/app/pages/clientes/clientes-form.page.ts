@@ -33,17 +33,31 @@ export class ClientesFormPage implements OnInit {
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       this.clienteId = Number(idParam);
-      const cliente = this.clienteService.buscarPorId(this.clienteId);
-      if (cliente) {
+      const clienteLocal = this.clienteService.buscarPorIdLocal(this.clienteId);
+      if (clienteLocal) {
         this.esEdicion = true;
         this.form.patchValue({
-          nombreCompleto: cliente.nombreCompleto,
-          dni: cliente.dni,
-          telefono: cliente.telefono || '',
-          correo: cliente.correo || '',
+          nombreCompleto: clienteLocal.nombreCompleto,
+          dni: clienteLocal.dni,
+          telefono: clienteLocal.telefono || '',
+          correo: clienteLocal.correo || '',
         });
       } else {
-        this.router.navigate(['/clientes']);
+        // Consulta asíncrona a la API REST si no estaba en caché
+        this.clienteService.buscarPorId(this.clienteId).subscribe({
+          next: (cliente) => {
+            if (cliente) {
+              this.esEdicion = true;
+              this.form.patchValue({
+                nombreCompleto: cliente.nombreCompleto,
+                dni: cliente.dni,
+                telefono: cliente.telefono || '',
+                correo: cliente.correo || '',
+              });
+            }
+          },
+          error: () => this.router.navigate(['/clientes']),
+        });
       }
     }
   }
@@ -69,14 +83,16 @@ export class ClientesFormPage implements OnInit {
       correo: this.form.value.correo?.trim() || null,
     };
 
-    try {
-      this.clienteService.guardar(datos);
-      this.enviando.set(false);
-      this.router.navigate(['/clientes']);
-    } catch {
-      this.enviando.set(false);
-      this.errorServidor.set('Error al procesar el registro del cliente.');
-    }
+    this.clienteService.guardar(datos).subscribe({
+      next: () => {
+        this.enviando.set(false);
+        this.router.navigate(['/clientes']);
+      },
+      error: () => {
+        this.enviando.set(false);
+        this.errorServidor.set('Error al comunicar con la API REST de Clientes.');
+      },
+    });
   }
 
   limpiar(): void {

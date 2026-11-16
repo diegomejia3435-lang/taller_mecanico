@@ -1,4 +1,7 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface UsuarioSesion {
   username: string;
@@ -7,17 +10,31 @@ export interface UsuarioSesion {
   token?: string;
 }
 
+export interface LoginResponse {
+  token?: string;
+  accessToken?: string;
+  tipo?: string;
+  tokenType?: string;
+  username: string;
+  rol: string;
+  expiraEnSegundos?: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  // Estado reactivo de sesión con Signals (Semana 12 - Slide 25)
-  private readonly _usuarioActual = signal<UsuarioSesion>({
-    username: 'admin',
-    nombreCompleto: 'Administrador',
-    rol: 'ADMIN',
-  });
+  private readonly http = inject(HttpClient);
+  private readonly tokenKey = 'taller_access_token';
+  private readonly userKey = 'taller_auth_user';
 
+  private readonly _tokenState = signal<string | null>(
+    typeof sessionStorage !== 'undefined' ? sessionStorage.getItem(this.tokenKey) : null
+  );
+
+  private readonly _usuarioActual = signal<UsuarioSesion>(this.readInitialUser());
+
+  readonly token = this._tokenState.asReadonly();
   readonly usuario = this._usuarioActual.asReadonly();
   readonly estaAutenticado = computed(
     () => !!this.usuario().username && this.usuario().rol !== 'INVITADO'
@@ -56,16 +73,71 @@ export class AuthService {
     () => this.esAdmin() || this.esMecanico() || this.esCliente()
   );
 
+  private readInitialUser(): UsuarioSesion {
+    if (typeof sessionStorage !== 'undefined') {
+      const guardado = sessionStorage.getItem(this.userKey);
+      if (guardado) {
+        try {
+          return JSON.parse(guardado) as UsuarioSesion;
+        } catch {
+          sessionStorage.removeItem(this.userKey);
+        }
+      }
+    }
+    // Usuario por defecto administrativo inicial
+    return {
+      username: 'admin',
+      nombreCompleto: 'Administrador General',
+      rol: 'ROLE_ADMIN',
+    };
+  }
+
+  loginApi(credentials: { username: string; password: string }): Observable<LoginResponse> {
+    return this.http
+      .post<LoginResponse>(`${environment.apiUrl}/api/auth/login`, credentials)
+      .pipe(
+        tap((res) => {
+          const jwtToken = res.accessToken || res.token || '';
+          const rolLimpio = res.rol || 'ROLE_USER';
+          const usuario: UsuarioSesion = {
+            username: res.username,
+            nombreCompleto: res.username === 'carlos' ? 'Carlos Mendoza' : (res.username === 'admin' ? 'Administrador General' : res.username),
+            rol: rolLimpio,
+            token: jwtToken,
+          };
+
+          if (typeof sessionStorage !== 'undefined') {
+            sessionStorage.setItem(this.tokenKey, jwtToken);
+            sessionStorage.setItem(this.userKey, JSON.stringify(usuario));
+          }
+
+          this._tokenState.set(jwtToken);
+          this._usuarioActual.set(usuario);
+        })
+      );
+  }
+
   login(username: string, nombreCompleto: string, rol: string, token?: string): void {
-    this._usuarioActual.set({
+    const usuario: UsuarioSesion = {
       username,
       nombreCompleto,
       rol,
       token,
-    });
+    };
+    if (typeof sessionStorage !== 'undefined') {
+      if (token) sessionStorage.setItem(this.tokenKey, token);
+      sessionStorage.setItem(this.userKey, JSON.stringify(usuario));
+    }
+    if (token) this._tokenState.set(token);
+    this._usuarioActual.set(usuario);
   }
 
   logout(): void {
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.removeItem(this.tokenKey);
+      sessionStorage.removeItem(this.userKey);
+    }
+    this._tokenState.set(null);
     this._usuarioActual.set({
       username: '',
       nombreCompleto: 'Invitado',

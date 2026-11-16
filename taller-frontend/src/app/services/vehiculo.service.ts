@@ -1,10 +1,16 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { Vehiculo } from '../models/vehiculo.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class VehiculoService {
+  private readonly http = inject(HttpClient);
+  private readonly url = `${environment.apiUrl}/api/vehiculos`;
+
   private readonly _vehiculos = signal<Vehiculo[]>([
     {
       id: 1,
@@ -61,15 +67,66 @@ export class VehiculoService {
   ]);
 
   readonly vehiculos = this._vehiculos.asReadonly();
+  readonly cargando = signal<boolean>(false);
+  readonly error = signal<string>('');
 
-  listar(): Vehiculo[] {
-    return this.vehiculos();
+  constructor() {
+    this.cargar();
   }
 
-  buscarPorId(id: number): Vehiculo | undefined {
+  /**
+   * Carga reactiva de vehículos consultando la API REST de Spring Boot (GET /api/vehiculos)
+   */
+  cargar(): void {
+    this.cargando.set(true);
+    this.error.set('');
+    this.http.get<Vehiculo[]>(this.url).subscribe({
+      next: (datos) => {
+        if (datos && datos.length > 0) {
+          this._vehiculos.set(datos);
+        }
+        this.cargando.set(false);
+      },
+      error: () => {
+        this.error.set('No se pudo conectar con la API REST de Vehículos en Spring Boot.');
+        this.cargando.set(false);
+      },
+    });
+  }
+
+  /**
+   * Consumo HTTP GET /api/vehiculos
+   */
+  listar(): Observable<Vehiculo[]> {
+    return this.http.get<Vehiculo[]>(this.url).pipe(
+      tap((datos) => this._vehiculos.set(datos))
+    );
+  }
+
+  /**
+   * Consumo HTTP GET /api/vehiculos/{id}
+   */
+  buscarPorId(id: number): Observable<Vehiculo> {
+    return this.http.get<Vehiculo>(`${this.url}/${id}`);
+  }
+
+  /**
+   * Búsqueda síncrona en caché reactiva para Signals y formularios
+   */
+  buscarPorIdLocal(id: number): Vehiculo | undefined {
     return this.vehiculos().find((v) => v.id === id);
   }
 
+  /**
+   * Consumo HTTP GET /api/vehiculos/rango-anio?min={min}&max={max} (JPQL BETWEEN)
+   */
+  buscarPorRangoAnio(min: number, max: number): Observable<Vehiculo[]> {
+    return this.http.get<Vehiculo[]>(`${this.url}/rango-anio?min=${min}&max=${max}`);
+  }
+
+  /**
+   * Filtro reactivo local para búsqueda interactiva en tiempo real
+   */
   buscar(termino: string): Vehiculo[] {
     if (!termino || !termino.trim()) return this.vehiculos();
     const t = termino.toLowerCase().trim();
@@ -82,25 +139,49 @@ export class VehiculoService {
     );
   }
 
-  guardar(vehiculo: Vehiculo): Vehiculo {
+  /**
+   * Consumo HTTP POST /api/vehiculos (Registro)
+   */
+  crear(vehiculo: Partial<Vehiculo>): Observable<Vehiculo> {
+    return this.http.post<Vehiculo>(this.url, vehiculo).pipe(
+      tap((creado) => {
+        this._vehiculos.update((lista) => [...lista, creado]);
+      })
+    );
+  }
+
+  /**
+   * Consumo HTTP PUT /api/vehiculos/{id} (Actualización)
+   */
+  actualizar(id: number, vehiculo: Partial<Vehiculo>): Observable<Vehiculo> {
+    return this.http.put<Vehiculo>(`${this.url}/${id}`, vehiculo).pipe(
+      tap((actualizado) => {
+        this._vehiculos.update((lista) =>
+          lista.map((v) => (v.id === id ? actualizado : v))
+        );
+      })
+    );
+  }
+
+  /**
+   * Método polimórfico de guardado que despacha a POST o PUT según id
+   */
+  guardar(vehiculo: Partial<Vehiculo>): Observable<Vehiculo> {
     if (vehiculo.id) {
-      this._vehiculos.update((lista) =>
-        lista.map((v) => (v.id === vehiculo.id ? { ...vehiculo } : v))
-      );
-      return vehiculo;
+      return this.actualizar(vehiculo.id, vehiculo);
     } else {
-      const nuevoId =
-        this.vehiculos().reduce((max, v) => Math.max(max, v.id || 0), 0) + 1;
-      const nuevoVehiculo: Vehiculo = { ...vehiculo, id: nuevoId };
-      this._vehiculos.update((lista) => [...lista, nuevoVehiculo]);
-      return nuevoVehiculo;
+      return this.crear(vehiculo);
     }
   }
 
-  eliminar(id: number): boolean {
-    const existe = this.buscarPorId(id);
-    if (!existe) return false;
-    this._vehiculos.update((lista) => lista.filter((v) => v.id !== id));
-    return true;
+  /**
+   * Consumo HTTP DELETE /api/vehiculos/{id} (Eliminación)
+   */
+  eliminar(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.url}/${id}`).pipe(
+      tap(() => {
+        this._vehiculos.update((lista) => lista.filter((v) => v.id !== id));
+      })
+    );
   }
 }
