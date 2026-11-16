@@ -32,7 +32,7 @@ export class LoginPage {
     return !!(control && control.invalid && (control.touched || control.dirty));
   }
 
-  ingresar(): void {
+   ingresar(): void {
     if (this.enviando()) return;
     this.form.markAllAsTouched();
     if (this.form.invalid) return;
@@ -52,29 +52,19 @@ export class LoginPage {
         this.router.navigateByUrl(destino);
       },
       error: (err) => {
-        if (err && err.status === 401) {
-          this.enviando.set(false);
-          this.errorMensaje.set('Usuario o contraseña incorrectos. Verifique sus credenciales de acceso.');
-          return;
-        }
-
-        // Si Spring Boot no está iniciado en puerto 8080 (status 0), permitir sesión demostrativa
-        if (err && err.status === 0) {
-          if ((u === 'admin' && p === '1234') || (u === 'carlos' && p === '1234') || (u === '77777777' && p === '1234')) {
-            const rol = u === 'admin' ? 'ADMIN' : (u === 'carlos' ? 'MECANICO' : 'CLIENTE');
-            const nombre = u === 'admin' ? 'Administrador General' : (u === 'carlos' ? 'Carlos Mendoza' : 'Juan Pérez');
-            this.authService.login(u, nombre, rol, 'demo-offline-jwt-token');
-            this.enviando.set(false);
-            this.notificaciones.exito(`Sesión iniciada (modo offline): ${nombre}`);
-            const destino = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
-            this.router.navigateByUrl(destino);
-            return;
-          }
-        }
-
         this.enviando.set(false);
-        this.errorMensaje.set('No se pudo conectar con la API REST de autenticación (Spring Boot :8080).');
+        if (err?.status === 401) {
+          this.errorMensaje.set('Usuario o contraseña incorrectos. Verifique sus credenciales de acceso.');
+        } else if (err?.status === 403) {
+          this.errorMensaje.set(err?.error?.message || 'Acceso denegado (403).');
+        } else if (err?.status === 400) {
+          this.errorMensaje.set('Datos inválidos. Revise usuario y contraseña.');
+        } else if (err?.status === 0) {
+          this.errorMensaje.set('No se pudo conectar con el servidor. Verifique que el backend esté en ejecución (puerto 8080).');
+        } else {
+          this.errorMensaje.set('Error inesperado al iniciar sesión.');
+        }
       },
     });
+   }
   }
-}

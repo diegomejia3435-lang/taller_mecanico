@@ -15,9 +15,9 @@ import { describirError } from '../../utils/http-error';
 export class ClientesFormPage implements OnInit {
   private fb = inject(FormBuilder);
   private clienteService = inject(ClienteService);
-  private notificaciones = inject(NotificacionService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private notificaciones = inject(NotificacionService);
 
   clienteId: number | null = null;
   esEdicion = false;
@@ -59,7 +59,13 @@ export class ClientesFormPage implements OnInit {
               });
             }
           },
-          error: () => this.router.navigate(['/clientes']),
+           error: (err) => {
+            const info = describirError(err);
+            if (info.status === 404) {
+              this.notificaciones.error(info.mensaje, info.titulo);
+            }
+            this.router.navigate(['/clientes']);
+          },
         });
       }
     }
@@ -89,16 +95,15 @@ export class ClientesFormPage implements OnInit {
     this.clienteService.guardar(datos).subscribe({
       next: () => {
         this.enviando.set(false);
-        this.notificaciones.exito(
-          this.esEdicion ? 'Cliente actualizado correctamente' : 'Cliente registrado con éxito'
-        );
         this.router.navigate(['/clientes']);
       },
-      error: (err) => {
+       error: (err) => {
         this.enviando.set(false);
         const info = describirError(err);
-        this.errorServidor.set(info.mensaje);
-        this.notificaciones.error(info.mensaje, info.titulo);
+        // 401, 403, sin conexión y 5xx los muestra el interceptor
+        if ([400, 404, 409].includes(info.status)) {
+          this.errorServidor.set(info.mensaje);
+        }
       },
     });
   }
