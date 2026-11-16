@@ -4,6 +4,8 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { OrdenService } from '../../services/orden.service';
 import { VehiculoService } from '../../services/vehiculo.service';
 import { EstadoOrden } from '../../models/orden.model';
+import { NotificacionService } from '../../services/notificacion.service';
+import { describirError } from '../../utils/http-error';
 
 @Component({
   selector: 'app-ordenes-form-page',
@@ -16,6 +18,7 @@ export class OrdenesFormPage implements OnInit {
   private fb = inject(FormBuilder);
   private ordenService = inject(OrdenService);
   readonly vehiculoService = inject(VehiculoService);
+  private notificaciones = inject(NotificacionService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -103,11 +106,16 @@ export class OrdenesFormPage implements OnInit {
     this.ordenService.guardar(datos).subscribe({
       next: () => {
         this.enviando.set(false);
+        this.notificaciones.exito(
+          this.esEdicion ? 'Orden de trabajo actualizada correctamente' : 'Orden de trabajo registrada con éxito'
+        );
         this.router.navigate(['/ordenes']);
       },
-      error: () => {
+      error: (err) => {
         this.enviando.set(false);
-        this.errorServidor.set('Error al comunicar con la API REST de Órdenes.');
+        const info = describirError(err);
+        this.errorServidor.set(info.mensaje);
+        this.notificaciones.error(info.mensaje, info.titulo);
       },
     });
   }

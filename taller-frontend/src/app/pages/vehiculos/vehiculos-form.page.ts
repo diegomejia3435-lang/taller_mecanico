@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { VehiculoService } from '../../services/vehiculo.service';
 import { ClienteService } from '../../services/cliente.service';
+import { NotificacionService } from '../../services/notificacion.service';
+import { describirError } from '../../utils/http-error';
 
 @Component({
   selector: 'app-vehiculos-form-page',
@@ -15,6 +17,7 @@ export class VehiculosFormPage implements OnInit {
   private fb = inject(FormBuilder);
   private vehiculoService = inject(VehiculoService);
   readonly clienteService = inject(ClienteService);
+  private notificaciones = inject(NotificacionService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -107,11 +110,16 @@ export class VehiculosFormPage implements OnInit {
     this.vehiculoService.guardar(datos).subscribe({
       next: () => {
         this.enviando.set(false);
+        this.notificaciones.exito(
+          this.esEdicion ? 'Vehículo actualizado correctamente' : 'Vehículo registrado con éxito'
+        );
         this.router.navigate(['/vehiculos']);
       },
-      error: () => {
+      error: (err) => {
         this.enviando.set(false);
-        this.errorServidor.set('Error al comunicar con la API REST de Vehículos.');
+        const info = describirError(err);
+        this.errorServidor.set(info.mensaje);
+        this.notificaciones.error(info.mensaje, info.titulo);
       },
     });
   }

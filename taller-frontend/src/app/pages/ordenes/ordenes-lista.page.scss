@@ -383,6 +383,22 @@
   padding: 0.35rem 0.5rem;
 }
 
+.btn-editar {
+  background: #e6f1fb;
+  color: #185fa5;
+  border: none;
+  border-radius: 6px;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #d0e5f9;
+  }
+}
+
 .btn-anular {
   background: #fcebeb;
   color: #a32d2d;

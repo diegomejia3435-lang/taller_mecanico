@@ -2,6 +2,8 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { VehiculoService } from '../../services/vehiculo.service';
+import { NotificacionService } from '../../services/notificacion.service';
+import { describirError } from '../../utils/http-error';
 
 @Component({
   selector: 'app-vehiculos-lista-page',
@@ -12,6 +14,7 @@ import { VehiculoService } from '../../services/vehiculo.service';
 })
 export class VehiculosListaPage {
   readonly vehiculoService = inject(VehiculoService);
+  private notificaciones = inject(NotificacionService);
   private router = inject(Router);
 
   terminoBusqueda = signal<string>('');
@@ -27,8 +30,16 @@ export class VehiculosListaPage {
   eliminar(id: number, placa: string): void {
     if (confirm(`¿Está seguro de eliminar el vehículo con placa "${placa}"?`)) {
       this.vehiculoService.eliminar(id).subscribe({
-        next: () => {},
-        error: (err) => console.error('Error al eliminar vehículo en la API:', err),
+        next: () => this.notificaciones.exito(`Vehículo con placa ${placa} eliminado correctamente`),
+        error: (err) => {
+          const info = describirError(err);
+          if ([400, 404, 409].includes(info.status)) {
+            this.notificaciones.error(info.mensaje, info.titulo);
+          }
+          if (info.status === 404) {
+            this.vehiculoService.cargar();
+          }
+        },
       });
     }
   }

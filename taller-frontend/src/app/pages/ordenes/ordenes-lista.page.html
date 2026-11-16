@@ -146,6 +146,13 @@
                   }
                   <button
                     type="button"
+                    class="btn-editar"
+                    (click)="editar(o.id!)"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    type="button"
                     class="btn-anular"
                     (click)="eliminar(o.id!)"
                   >
